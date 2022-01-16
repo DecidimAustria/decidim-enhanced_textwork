@@ -1,0 +1,26 @@
+<div class="paragraph__overview" id="paragraph__overview">
+
+      <h2><%= present(@paragraph).title_if_enabled %></h2>
+
+      <div class="amendments">
+        <h3 class="section-heading">
+          <%= @paragraph.amendments.size %> <%= Decidim::Amendment.model_name.human(count: @paragraph.amendments.size) %>
+        </h3>
+
+        <% @amendments.each_with_index do |amendment, index| %>
+          <div class="<%= "toggle--hidden" if index > 2 %>">
+            <%= cell("decidim/enhanced_textwork/amendment", amendment) %>
+          </div>
+        <% end %>
+        <% if @amendments.size > 3 %>
+          <button data-toggle-class="toggle--hidden" data-toggle="show" class="link margin-top-1">
+            <%= t("decidim.enhanced_textwork.overview.expand_amendments") %> (<%= @amendments.size %>)
+          </button>
+          <button data-toggle-class="toggle--hidden" data-toggle="hide" class="link margin-top-1 toggle--hidden">
+            <%= t("decidim.enhanced_textwork.overview.shrink_amendments") %>
+          </button>
+        <% end %>
+      </div>
+
+    <%= cell("decidim/enhanced_textwork/comments", @paragraph) %>
+</div>

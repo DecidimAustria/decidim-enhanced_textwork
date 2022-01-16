@@ -1,0 +1,29 @@
+<%= render partial: "decidim/shared/component_announcement" %>
+
+<div class="row">
+  <div class="columns">
+    <div class="paragraph__layout">
+      <div class="paragraph__main">
+        <div class="m-bottom paragraph__back-button">
+          <%= link_to paragraphs_path(filter_link_params), class: "small hollow" do %>
+            <%= icon "chevron-left", class: "icon--small", role: "img", "aria-hidden": true %>
+            <%= t("decidim.enhanced_textwork.paragraphs.show.back_to_list") %>
+          <% end %>
+        </div>
+        <h2 class="heading2 margin-bottom-1"><%= render_participatory_text_title(@participatory_text) %></h2>
+        <%= render partial: "decidim/enhanced_textwork/paragraphs/participatory_texts/view_index" %>
+        <div class="card" id="paragraphs">
+          <% @paragraphs.each do |paragraph| %>
+            <%= cell("decidim/enhanced_textwork/participatory_text_paragraph", paragraph, active_paragraph: local_assigns[:active_paragraph], context: { current_user: current_user }) %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="paragraph__sidebar">
+        <% if local_assigns[:active_paragraph].presence %>
+          <%= render partial: "decidim/enhanced_textwork/paragraphs/participatory_texts/overview", locals: { paragraph: active_paragraph } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

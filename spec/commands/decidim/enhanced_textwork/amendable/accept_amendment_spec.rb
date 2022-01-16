@@ -1,0 +1,37 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+
+module Decidim
+  module Amendable
+    describe Accept do
+      let!(:component) { create(:paragraph_component) }
+      let!(:amendable) { create(:paragraph, component: component) }
+      let!(:emendation) { create(:paragraph, component: component) }
+      let!(:amendment) { create :amendment, amendable: amendable, emendation: emendation }
+      let(:command) { described_class.new(form) }
+
+      let(:emendation_params) do
+        {
+          title: translated(emendation.title),
+          body: translated(emendation.body)
+        }
+      end
+
+      let(:form_params) do
+        {
+          id: amendment.id,
+          emendation_params: emendation_params
+        }
+      end
+
+      let(:form) { Decidim::Amendable::ReviewForm.from_params(form_params) }
+
+      include_examples "accept amendment" do
+        it "changes the emendation state" do
+          expect { command.call }.to change { emendation.reload[:state] }.from(nil).to("accepted")
+        end
+      end
+    end
+  end
+end

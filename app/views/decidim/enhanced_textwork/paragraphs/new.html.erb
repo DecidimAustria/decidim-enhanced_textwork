@@ -1,0 +1,38 @@
+<% add_decidim_page_title(paragraph_wizard_step_title(action_name)) %>
+
+<div class="row">
+  <%= render partial: "decidim/enhanced_textwork/paragraphs/wizard_aside" %>
+
+  <div class="columns large-6">
+    <%= render partial: "decidim/enhanced_textwork/paragraphs/wizard_header" %>
+
+    <div class="card">
+      <div class="card__content">
+        <%= decidim_form_for(@form) do |form| %>
+          <%= form_required_explanation %>
+
+          <div class="field hashtags__container">
+            <%= form.text_field :title, class: "js-hashtags" %>
+          </div>
+
+          <div class="field hashtags__container">
+            <%= text_editor_for_paragraph_body(form) %>
+          </div>
+
+          <% if current_organization.user_groups_enabled? && Decidim::UserGroups::ManageableUserGroups.for(current_user).verified.any? %>
+            <div class="field">
+              <%= user_group_select_field form, :user_group_id %>
+            </div>
+          <% end %>
+
+          <div class="actions">
+            <%= form.submit t(".send"), class: "button expanded mt-s mb-none", data: { disable: true } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="columns large-3"></div>
+</div>
+
+<%= javascript_pack_tag "decidim_enhanced_textwork" %>

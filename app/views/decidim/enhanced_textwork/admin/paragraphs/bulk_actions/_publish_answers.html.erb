@@ -1,0 +1,14 @@
+<div id="js-publish-answers-actions" class="hide js-bulk-action-form">
+  <%= form_tag(publish_answers_paragraphs_path, method: :post, remote: true, id: "js-form-publish-answers", class: "flex--cc flex-gap--1") do %>
+    <div class="checkboxes hide">
+      <% paragraphs.each do |paragraph| %>
+        <%= check_box_tag "paragraph_ids[]", paragraph.id, false, class: "js-check-all-paragraph js-paragraph-id-#{paragraph.id}" %>
+      <% end %>
+    </div>
+    <p><%= t("decidim.enhanced_textwork.admin.paragraphs.publish_answers.number_of_paragraphs", number: '<span id="js-form-publish-answers-number"></span>').html_safe %></p>
+
+    <%= submit_tag(t("decidim.enhanced_textwork.admin.paragraphs.index.publish"), id: "js-submit-publish-answers", class: "button small button--simple float-left") %>
+
+    <button id="js-cancel-publish-answers" class="button tiny clear compact js-cancel-bulk-action" type="button"><%= t("decidim.enhanced_textwork.admin.paragraphs.index.cancel") %></button>
+  <% end %>
+</div>

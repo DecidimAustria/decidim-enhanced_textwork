@@ -1,0 +1,41 @@
+<% add_decidim_page_title(paragraph_wizard_step_title(action_name)) %>
+
+<div class="row">
+  <%= render partial: "wizard_aside" %>
+
+  <div class="columns large-9">
+    <%= render partial: "wizard_header", locals: { callout_help_text_class: "warning" } %>
+    <div class="card card__content">
+      <div class="row column view-header">
+        <h3 class="heading3"><%= present(@paragraph).title(links: true, html_escape: true) %></h3>
+        <% unless component_settings.participatory_texts_enabled? %>
+          <%= cell("decidim/coauthorships", @paragraph, has_actions: false, size: 3, context: { current_user: current_user }) %>
+        <% end %>
+
+        <%= render_paragraph_body(@paragraph) %>
+      </div>
+      <div class="row column">
+        <%= cell "decidim/enhanced_textwork/paragraph_tags", @paragraph %>
+      </div>
+    </div>
+    <% if component_settings.geocoding_enabled? %>
+      <% if has_position?(@paragraph) %>
+      <div class="row column">
+        <h3 class="section-heading"><%= t("decidim.application.geocoding.geocoded_address") %></h3>
+            <%= render partial: "decidim/shared/static_map", locals: { icon_name: "paragraphs", geolocalizable: @paragraph } %>
+      </div>
+      <% end %>
+    <% end %>
+    <div class="row column">
+      <%= attachments_for @paragraph %>
+    </div>
+
+    <div class="p-l">
+      <div class="row column flex-center">
+        <%= link_to t(".modify"), edit_draft_paragraph_path(@paragraph) %>
+        <%= button_to t(".publish"), publish_paragraph_path(@paragraph), method: :post, class: "button button--nomargin small" %>
+      </div>
+    </div>
+  </div>
+  <div class="columns large-3"></div>
+</div>

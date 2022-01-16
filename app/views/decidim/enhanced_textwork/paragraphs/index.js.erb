@@ -1,0 +1,10 @@
+var $paragraphs = $('#paragraphs');
+var $paragraphsCount = $('#paragraphs-count');
+var $orderFilterInput = $('.order_filter');
+
+$paragraphs.html('<%= j(render partial: "paragraphs").strip.html_safe %>');
+$paragraphsCount.html('<%= j(render partial: "count").strip.html_safe %>');
+$orderFilterInput.val('<%= order %>');
+
+var $dropdownMenu = $('.dropdown.menu', $paragraphs);
+$dropdownMenu.foundation();

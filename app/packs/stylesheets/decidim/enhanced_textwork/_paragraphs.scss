@@ -1,0 +1,199 @@
+@import "stylesheets/decidim/enhanced_textwork/paragraphs/preview";
+
+#paragraphs {
+  background-color: $white;
+  padding: 1.125rem;
+}
+
+.paragraphs-overview {
+  overflow: unset;
+}
+
+.toggle--hidden {
+  display: none;
+}
+
+.paragraph {
+  padding: 1rem;
+  border: 1px solid $white;
+  border-bottom-color: #f4f4f4;
+
+  &__back-button {
+    display: none;
+  }
+  &__layout {
+    display: flex;
+  }
+  &__main {
+    width: 66.6667%;
+    padding-right: 10px;
+  }
+  &__sidebar {
+    width: 33.333%;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 3rem 0 3rem 10px;
+    overflow: scroll;
+    scroll-behavior: smooth;
+  }
+  a {
+    color: inherit;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  &__actions {
+    .right-column {
+      display: flex;
+      justify-content: space-between;
+    }
+    a {
+      color: $secondary;
+      font-weight: 600;
+      font-size: .9rem;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__overview {
+    h2 {
+      fonz-size: 1.625rem;
+    }
+    h3 {
+      font-size:  1.125rem;
+    }
+    .link {
+      font-size: .9rem;
+    }
+    .amendments, .comments {
+      background-color: #f4f4f4;
+      padding: 1.125rem;
+    }
+    .amendments {
+      margin-bottom: 1.125rem;
+      h3 {
+        margin: 0;
+      }
+      .card {
+        margin-bottom: 0;
+        margin-top: .5rem;
+      }
+    }
+    .comments__header {
+      h3 {
+        float: left;
+      }
+      a {
+        float: right;
+        font-size: .9rem;
+      }
+    }
+  }
+}
+
+.paragraph--active {
+  border: 1px solid #3c393b;
+  background-color: #f4f4f4;
+  border-radius: 4px;
+}
+
+.emendation {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+  .amendment__header {
+    padding: 1rem 1rem 0.5rem 1rem;
+  }
+
+  .amendment__author {
+    display: flex;
+  }
+
+  .amendment__date {
+    font-style: italic;
+    color: #9b9b9b;
+    font-size: 0.7rem;
+  }
+
+  .amendment__body {
+    padding: 0.5rem 1rem;
+  }
+
+  .amendment__actions {
+    padding: 0rem 1rem 1rem 1rem;
+    font-size: .9rem;
+  }
+}
+
+
+.hover-section{
+  .paragraph-actions {
+    color: #9b9b9b;
+  }
+
+  &:hover{
+    .paragraph {
+      background-color: #f4f4f4;
+    }
+
+    .paragraph-actions {
+      color: #3d393c;
+    }
+  }
+
+  .hidden-section{
+    display: none;
+  }
+}
+
+/* Mobile */
+
+@media screen and (max-width: 1125px) {
+  .paragraph {
+    &__layout {
+      display: block;
+    }
+    &__sidebar {
+      width: 100%;
+      padding: 0;
+      overflow: auto;
+      height: auto;
+      display: none;
+    }
+  }
+  .paragraph__main {
+    width: 100%;
+    padding: 0;
+  }
+  .paragraphs-overview {
+    .paragraph {
+      display: none;
+      &__sidebar {
+        display: block;
+        overflow: auto;
+        height: auto;
+      }
+      &__back-button {
+        display: block;
+      }
+      &--active {
+        display: block;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .paragraph {
+    &__actions .right-column {
+      flex-direction: column;
+      a {
+        margin-top: .5rem;
+      }
+    }
+  }
+}

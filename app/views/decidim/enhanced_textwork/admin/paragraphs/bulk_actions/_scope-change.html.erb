@@ -1,0 +1,25 @@
+<div id="js-scope-change-paragraphs-actions" class="hide js-bulk-action-form">
+  <%= form_tag(update_scope_paragraphs_path, method: :post, remote: true, id: "js-form-scope-change-paragraphs", class: "flex--cc flex-gap--1") do %>
+    <div class="checkboxes hide">
+      <% paragraphs.each do |paragraph| %>
+        <%= check_box_tag "paragraph_ids[]", paragraph.id, false, class: "js-check-all-paragraph js-paragraph-id-#{paragraph.id}" %>
+      <% end %>
+    </div>
+
+    <%= scopes_picker_tag(
+          :scope_id,
+          try(:current_participatory_space)&.scope,
+          field: t("models.paragraph.fields.scope", scope: "decidim.enhanced_textwork")
+        ) %>
+
+    <%= submit_tag(
+          t("decidim.enhanced_textwork.admin.paragraphs.index.update_scope_button"),
+          id: "js-submit-scope-change-paragraphs",
+          class: "button small button--simple float-left"
+        ) %>
+
+    <button id="js-cancel-scope-change-paragraphs" class="button tiny clear compact js-cancel-bulk-action" type="button">
+      <%= t("decidim.enhanced_textwork.admin.paragraphs.index.cancel") %>
+    </button>
+  <% end %>
+</div>

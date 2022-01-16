@@ -1,0 +1,42 @@
+<% if @step == :step_4 %>
+    <% body_messages = [t("decidim.enhanced_textwork.paragraphs.preview.announcement_body")]
+    if component_settings.paragraph_edit_time == "limited"
+      body_messages << t("decidim.enhanced_textwork.paragraphs.preview.paragraph_edit_before_minutes", count: component_settings.paragraph_edit_before_minutes)
+    end %>
+
+  <%= cell(
+    "decidim/announcement",
+    {
+      title: t("decidim.enhanced_textwork.paragraphs.preview.announcement_title"),
+      body: body_messages
+    },
+    callout_class: "warning"
+  ) %>
+<% else %>
+  <%= cell("decidim/announcement", component_settings.new_paragraph_help_text) %>
+<% end %>
+
+<% if paragraph_wizard_step_help_text?(@step) %>
+  <div class="paragraph_wizard_help_text">
+    <% callout_step_help_text_class ||= nil %>
+    <%= cell(
+      "decidim/announcement",
+      component_settings.try("paragraph_wizard_#{@step}_help_text"),
+      callout_class: callout_step_help_text_class
+    ) %>
+  </div>
+<% end %>
+
+<h2 class="section-heading">
+  <%= paragraph_wizard_step_title action_name %>
+  <%= "(#{@similar_paragraphs.count})" if @similar_paragraphs.present? %>
+</h2>
+
+<div class="hide-for-large m-bottom">
+  <div><%= paragraph_wizard_steps_title %></div>
+  <div><%= paragraph_wizard_current_step_of(@step) %></div>
+
+  <div id="steps" class="wizard__steps steps-toggle is-hidden" data-toggler=".is-hidden">
+    <%= paragraph_wizard_stepper(@step) %>
+  </div>
+</div>

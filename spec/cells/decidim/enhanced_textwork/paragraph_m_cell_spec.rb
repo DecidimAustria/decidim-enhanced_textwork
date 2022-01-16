@@ -1,0 +1,275 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+
+module Decidim::EnhancedTextwork
+  describe ParagraphMCell, type: :cell do
+    controller Decidim::EnhancedTextwork::ParagraphsController
+
+    subject { cell_html }
+
+    let(:my_cell) { cell("decidim/enhanced_textwork/paragraph_m", paragraph, context: { show_space: show_space }) }
+    let(:cell_html) { my_cell.call }
+    let(:created_at) { Time.current - 1.month }
+    let(:published_at) { Time.current }
+    let(:component) { create(:paragraph_component, :with_attachments_allowed) }
+    let!(:paragraph) { create(:paragraph, component: component, created_at: created_at, published_at: published_at) }
+    let(:model) { paragraph }
+    let(:user) { create :user, organization: paragraph.participatory_space.organization }
+    let!(:emendation) { create(:paragraph) }
+    let!(:amendment) { create :amendment, amendable: paragraph, emendation: emendation }
+
+    before do
+      allow(controller).to receive(:current_user).and_return(user)
+    end
+
+    it_behaves_like "has space in m-cell"
+
+    context "when rendering" do
+      let(:show_space) { false }
+
+      it "renders the card" do
+        expect(subject).to have_css(".card--paragraph")
+      end
+
+      it "renders the published_at date" do
+        published_date = I18n.l(published_at.to_date, format: :decidim_short)
+        creation_date = I18n.l(created_at.to_date, format: :decidim_short)
+
+        expect(subject).to have_css(".creation_date_status", text: published_date)
+        expect(subject).not_to have_css(".creation_date_status", text: creation_date)
+      end
+
+      context "and is a paragraph" do
+        it "renders the paragraph state (nil by default)" do
+          expect(subject).to have_css(".muted")
+          expect(subject).not_to have_css(".card__text--status")
+        end
+      end
+
+      context "and is an emendation" do
+        subject { cell_html }
+
+        let(:my_cell) { cell("decidim/enhanced_textwork/paragraph_m", emendation, context: { show_space: show_space }) }
+        let(:cell_html) { my_cell.call }
+
+        it "renders the emendation state (evaluating by default)" do
+          expect(subject).to have_css(".warning")
+          expect(subject).to have_css(".card__text--status", text: emendation.state.capitalize)
+        end
+      end
+
+      context "when it is a paragraph preview" do
+        subject { cell_html }
+
+        let(:my_cell) { cell("decidim/enhanced_textwork/paragraph_m", model, preview: true) }
+        let(:cell_html) { my_cell.call }
+
+        it "renders the card with no status info" do
+          expect(subject).to have_css(".card__header")
+          expect(subject).to have_css(".card__text")
+          expect(subject).to have_no_css(".card-data__item")
+        end
+      end
+
+      context "and has an image attachment" do
+        let!(:attachment_1_pdf) { create(:attachment, :with_pdf, attached_to: paragraph) }
+        let!(:attachment_2_img) { create(:attachment, :with_image, attached_to: paragraph) }
+        let!(:attachment_3_pdf) { create(:attachment, :with_pdf, attached_to: paragraph) }
+
+        it "renders the first image in the card whatever the order between attachments" do
+          expect(subject).to have_css(".card__image")
+          expect(subject.find(".card__image")[:src]).to eq(attachment_2_img.url)
+        end
+      end
+    end
+
+    describe "#cache_hash" do
+      let(:my_cell) { cell("decidim/enhanced_textwork/paragraph_m", paragraph) }
+
+      it "generate a unique hash" do
+        old_hash = my_cell.send(:cache_hash)
+
+        expect(my_cell.send(:cache_hash)).to eq(old_hash)
+      end
+
+      context "when locale change" do
+        let(:alt_locale) { :ca }
+
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          allow(I18n).to receive(:locale).and_return(alt_locale)
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when model is updated" do
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          paragraph.update!(title: { en: "New title" })
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when new endorsement" do
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          create(:endorsement, resource: paragraph, author: build(:user, organization: paragraph.participatory_space.organization))
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when new vote" do
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          create(:paragraph_vote, paragraph: paragraph)
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when component settings changes" do
+        it "generate a different hash" do
+          component_settings = component.settings
+          old_hash = my_cell.send(:cache_hash)
+          component.settings = { foo: "bar" }
+          component.save!
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+
+          component.settings = component_settings
+        end
+      end
+
+      context "when model has preview" do
+        let(:my_cell) { cell("decidim/enhanced_textwork/paragraph_m", model, preview: true) }
+
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          create(:attachment, :with_image, attached_to: paragraph)
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when no current user" do
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          allow(controller).to receive(:current_user).and_return(nil)
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when followers changes" do
+        let(:another_user) { create :user, organization: paragraph.participatory_space.organization }
+
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          create(:follow, followable: paragraph, user: another_user)
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when user follows paragraph" do
+        it "generate a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          create(:follow, followable: paragraph, user: user)
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when authors changes" do
+        context "when new co-author" do
+          it "generate a different hash" do
+            old_hash = my_cell.send(:cache_hash)
+            model.add_coauthor(user)
+
+            expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+          end
+
+          context "when author updates profile" do
+            it "generate a different hash" do
+              old_hash = my_cell.send(:cache_hash)
+              model.authors.first.update(personal_url: "new personal url")
+
+              expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+            end
+          end
+        end
+      end
+
+      context "when caching multiple paragraphs" do
+        let!(:paragraphs) { create_list(:paragraph, 5, component: component, created_at: created_at, published_at: published_at) }
+
+        let(:cached_paragraphs) do
+          paragraphs.map { |paragraph| cell("decidim/enhanced_textwork/paragraph_m", paragraph).send(:cache_hash) }
+        end
+
+        it "returns different hashes" do
+          expect(cached_paragraphs.uniq.length).to eq(5)
+        end
+      end
+
+      context "when space is rendered" do
+        it "generates a different hash" do
+          old_hash = my_cell.send(:cache_hash)
+          my_cell.context.merge!({ show_space: true })
+
+          expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+        end
+      end
+
+      context "when the active participatory space step change" do
+        let(:step_1) { create(:participatory_process_step, participatory_process: participatory_process, active: step_1_active) }
+        let(:step_1_active) { true }
+        let(:step_2) { create(:participatory_process_step, participatory_process: participatory_process, active: step_2_active) }
+        let(:step_2_active) { false }
+        let(:step_3) { create(:participatory_process_step, participatory_process: participatory_process, active: step_3_active) }
+        let(:step_3_active) { false }
+        let(:component) do
+          create(:paragraph_component,
+                 participatory_space: participatory_process,
+                 step_settings: {
+                   step_1.id => { votes_enabled: false },
+                   step_2.id => { votes_enabled: true },
+                   step_3.id => { votes_enabled: false }
+                 })
+        end
+        let(:participatory_process) { create(:participatory_process) }
+
+        context "when the voting period starts" do
+          it "generates a different hash" do
+            old_hash = my_cell.send(:cache_hash)
+
+            step_1.update!(active: false)
+            step_2.update!(active: true)
+            paragraph.reload
+
+            expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+          end
+        end
+
+        context "when the voting period ends" do
+          let(:step_1_active) { false }
+          let(:step_2_active) { true }
+
+          it "generates a different hash" do
+            old_hash = my_cell.send(:cache_hash)
+
+            step_2.update!(active: false)
+            step_3.update!(active: true)
+            paragraph.reload
+
+            expect(my_cell.send(:cache_hash)).not_to eq(old_hash)
+          end
+        end
+      end
+    end
+  end
+end

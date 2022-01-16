@@ -1,0 +1,963 @@
+---
+en:
+  activemodel:
+    attributes:
+      collaborative_draft:
+        address: Address
+        body: Body
+        category_id: Category
+        decidim_scope_id: Scope
+        has_address: Has address
+        scope_id: Scope
+        state: State
+        title: Title
+        user_group_id: Create collaborative draft as
+      paragraph:
+        address: Address
+        answer: Answer
+        answered_at: Answered at
+        automatic_hashtags: Hashtags automatically added
+        body: Body
+        category_id: Category
+        decidim_scope_id: Scope
+        has_address: Has address
+        scope_id: Scope
+        state: State
+        suggested_hashtags: Suggested hashtags
+        title: Title
+        user_group_id: Create paragraph as
+      paragraph_answer:
+        answer: Answer
+        cost: Cost
+        cost_report: Cost report
+        execution_period: Execution period
+      paragraphs_copy:
+        copy_paragraphs: I understand that this will import all paragraphs from the selected component to the current one and that this action can't be reversed.
+        origin_component_id: Component to copy the paragraphs from
+      paragraphs_import:
+        import_paragraphs: Import paragraphs
+        keep_answers: Keep state and answers
+        keep_authors: Keep original authors
+      valuation_assignment:
+        admin_log:
+          valuator_role_id: Valuator name
+    errors:
+      models:
+        participatory_text:
+          attributes:
+            document:
+              invalid_document_type: 'Invalid document type. Accepted formats are: %{valid_mime_types}'
+        paragraph:
+          attributes:
+            add_documents:
+              needs_to_be_reattached: Needs to be reattached
+            add_photos:
+              needs_to_be_reattached: Needs to be reattached
+            body:
+              cant_be_equal_to_template: cannot be equal to the template
+              identical: AND title cannot be identical
+            title:
+              identical: AND body cannot be identical
+        paragraphs_merge:
+          attributes:
+            base:
+              not_official: Are not official
+              supported: Have received support or endorsements
+        paragraphs_split:
+          attributes:
+            base:
+              not_official: Are not official
+              supported: Have received support or endorsements
+    models:
+      decidim/enhanced_textwork/accepted_paragraph_event: Paragraph accepted
+      decidim/enhanced_textwork/admin/update_paragraph_category_event: Paragraph category changed
+      decidim/enhanced_textwork/admin/update_paragraph_scope_event: Paragraph scope changed
+      decidim/enhanced_textwork/creation_enabled_event: Paragraph creation enabled
+      decidim/enhanced_textwork/endorsing_enabled_event: Paragraph endorsing enabled
+      decidim/enhanced_textwork/evaluating_paragraph_event: Paragraph is being evaluated
+      decidim/enhanced_textwork/paragraph_mentioned_event: Paragraph mentioned
+      decidim/enhanced_textwork/publish_paragraph_event: Paragraph published
+      decidim/enhanced_textwork/rejected_paragraph_event: Paragraph rejected
+      decidim/enhanced_textwork/voting_enabled_event: Paragraph voting enabled
+  activerecord:
+    models:
+      decidim/enhanced_textwork/collaborative_draft:
+        one: Collaborative draft
+        other: Collaborative drafts
+      decidim/enhanced_textwork/paragraph:
+        one: Paragraph
+        other: Paragraphs
+      decidim/enhanced_textwork/paragraph_note:
+        one: Note
+        other: Notes
+      decidim/enhanced_textwork/paragraph_vote:
+        one: Support
+        other: Supports
+  decidim:
+    admin:
+      filters:
+        paragraphs:
+          category_id_eq:
+            label: Category
+          is_emendation_true:
+            label: Type
+            values:
+              'false': Paragraphs
+              'true': Amendments
+          scope_id_eq:
+            label: Scope
+          state_eq:
+            label: State
+            values:
+              accepted: Accepted
+              evaluating: Evaluating
+              published: Published
+              rejected: Rejected
+              validating: Technical validation
+              withdrawn: Withdrawn
+          state_null:
+            label: State
+            values:
+              'true': Not answered
+          valuator_role_ids_has:
+            label: Assigned to valuator
+        search_placeholder:
+          id_string_or_title_cont: Search %{collection} by ID or title.
+    components:
+      paragraphs:
+        actions:
+          amend: Amend
+          comment: Comment
+          create: Create
+          endorse: Endorse
+          vote: Support
+          vote_comment: Vote comment
+          withdraw: Withdraw
+        name: Paragraphs
+        settings:
+          global:
+            amendments_enabled: Amendments enabled
+            amendments_enabled_help: If active, configure Amendment features for each step.
+            amendments_wizard_help_text: Amendments Wizard help text
+            announcement: Announcement
+            attachments_allowed: Allow attachments
+            can_accumulate_supports_beyond_threshold: Can accumulate supports beyond threshold
+            collaborative_drafts_enabled: Collaborative drafts enabled
+            comments_enabled: Comments enabled
+            comments_max_length: Comments max length (Leave 0 for default value)
+            default_sort_order: Default paragraph sorting
+            default_sort_order_help: Default means that if the supports are enabled, the paragraphs will be shown sorted by random, and if the supports are blocked, then they will be sorted by the most supported.
+            default_sort_order_options:
+              default: Default
+              most_commented: Most commented
+              most_endorsed: Most endorsed
+              most_followed: Most followed
+              most_voted: Most supported
+              random: Random
+              recent: Recent
+              with_more_authors: With more authors
+            geocoding_enabled: Geocoding enabled
+            minimum_votes_per_user: Minimum supports per user
+            new_paragraph_body_template: New paragraph body template
+            new_paragraph_body_template_help: You can define prefilled text that the new Paragraphs will have
+            new_paragraph_help_text: New paragraph help text
+            official_paragraphs_enabled: Official paragraphs enabled
+            participatory_texts_enabled: Participatory texts enabled
+            participatory_texts_enabled_readonly: Cannot interact with this setting if there are existing paragraphs. Please, create a new `Paragraphs component` if you want to enable this feature or discard all imported paragraphs in the `Participatory Texts` menu if you want to disable it.
+            hide_participatory_text_titles_enabled: Hide participatory text titles if they consist only of numbers
+            paragraph_answering_enabled: Paragraph answering enabled
+            paragraph_edit_before_minutes: Paragraphs can be edited by authors before this many minutes passes
+            paragraph_edit_time: Paragraph editing
+            paragraph_edit_time_choices:
+              infinite: Allow editing paragraphs for an infinite amount of time
+              limited: Allow editing of paragraphs within a specific timeframe
+            paragraph_length: Maximum paragraph body length
+            paragraph_limit: Paragraph limit per participant
+            paragraph_wizard_step_1_help_text: Paragraph wizard "Create" step help text
+            paragraph_wizard_step_2_help_text: Paragraph wizard "Compare" step help text
+            paragraph_wizard_step_3_help_text: Paragraph wizard "Complete" step help text
+            paragraph_wizard_step_4_help_text: Paragraph wizard "Publish" step help text
+            resources_permissions_enabled: Actions permissions can be set for each paragraph
+            scope_id: Scope
+            scopes_enabled: Scopes enabled
+            threshold_per_paragraph: Threshold per paragraph
+            vote_limit: Support limit per participant
+          step:
+            amendment_creation_enabled: Amendment creation enabled
+            amendment_creation_enabled_help: Participant can amend paragraphs.
+            amendment_promotion_enabled: Amendment promotion enabled
+            amendment_promotion_enabled_help: Emandation authors will be able to promote to Paragraph the rejected emendation.
+            amendment_reaction_enabled: Amendment reaction enabled
+            amendment_reaction_enabled_help: Paragraph's authors will be able to accept or reject Participant's emendations.
+            amendments_visibility: Amendments visibility
+            amendments_visibility_choices:
+              all: Amendments are visible to all
+              participants: Amendments are visible only to their authors
+            amendments_visibility_help: If the option "Amendments are visible only to their authors" is selected, participant must be logged in to see the amendments made.
+            announcement: Announcement
+            answers_with_costs: Enable costs on paragraph answers
+            automatic_hashtags: Hashtags added to all paragraphs
+            comments_blocked: Comments blocked
+            creation_enabled: Paragraph creation enabled
+            default_sort_order: Default paragraph sorting
+            default_sort_order_help: Default it means that if the supports are enabled, the paragraphs will be shown sorted by random, and if the supports are blocked, then they will be sorted by the most supported.
+            default_sort_order_options:
+              default: Default
+              most_commented: Most commented
+              most_endorsed: Most endorsed
+              most_followed: Most followed
+              most_voted: Most supported
+              random: Random
+              recent: Recent
+              with_more_authors: With more authors
+            endorsements_blocked: Endorsements blocked
+            endorsements_enabled: Endorsements enabled
+            paragraph_answering_enabled: Paragraph answering enabled
+            publish_answers_immediately: Publish paragraph answers immediately
+            suggested_hashtags: Hashtags suggested to participants for new paragraphs
+            votes_blocked: Supports blocked
+            votes_enabled: Supports enabled
+            votes_hidden: Supports hidden (if supports are enabled, checking this will hide the number of supports)
+    events:
+      paragraphs:
+        admin:
+          paragraph_note_created:
+            email_intro: Someone has left a note on the paragraph "%{resource_title}". Check it out at <a href="%{admin_paragraph_info_url}">the admin panel</a>
+            email_outro: You have received this notification because you can valuate the paragraph.
+            email_subject: Someone left a note on paragraph %{resource_title}.
+            notification_title: Someone has left a note on the paragraph <a href="%{resource_path}">%{resource_title}</a>. Check it out at <a href="%{admin_paragraph_info_path}">the admin panel</a>
+        collaborative_draft_access_accepted:
+          email_intro: '%{requester_name} has been accepted to access as a contributor of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.'
+          email_outro: You have received this notification because you are a collaborator of <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{requester_name} has been accepted to access as a contributor of the %{resource_title}."
+          notification_title: <a href="%{requester_path}">%{requester_name} %{requester_nickname}</a> has been <strong>accepted to access as a contributor</strong> of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+        collaborative_draft_access_rejected:
+          email_intro: '%{requester_name} has been rejected to access as a contributor of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.'
+          email_outro: You have received this notification because you are a collaborator of <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{requester_name} has been rejected to access as a contributor of the %{resource_title} collaborative draft."
+          notification_title: <a href="%{requester_path}">%{requester_name} %{requester_nickname}</a> has been <strong>rejected to access as a contributor</strong> of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+        collaborative_draft_access_requested:
+          email_intro: '%{requester_name} requested access as a contributor. You can <strong>accept or reject the request</strong> from the <a href="%{resource_path}">%{resource_title}</a> collaborative draft page.'
+          email_outro: You have received this notification because you are a collaborator of <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{requester_name} requested access to contribute to %{resource_title}."
+          notification_title: <a href="%{requester_path}">%{requester_name} %{requester_nickname}</a> requested access to contribute to the <a href="%{resource_path}">%{resource_title}</a> collaborative draft. Please <strong>accept or reject the request</strong>.
+        collaborative_draft_access_requester_accepted:
+          email_intro: You have been accepted to access as a contributor of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+          email_outro: You have received this notification because you requested to become a collaborator of <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: You have been accepted as a contributor of %{resource_title}.
+          notification_title: You have been <strong>accepted to access as a contributor</strong> of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+        collaborative_draft_access_requester_rejected:
+          email_intro: You have been rejected to access as a contributor of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+          email_outro: You have received this notification because you requested to become a collaborator of <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: You have been rejected as a contributor of %{resource_title}.
+          notification_title: You have been <strong>rejected to access as a contributor</strong> of the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+        collaborative_draft_withdrawn:
+          email_intro: <a href="%{author_path}">%{author_name} %{author_nickname}</a> withdrawn the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+          email_outro: You have received this notification because you are a collaborator of <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{author_name} %{author_nickname} withdrawn the %{resource_title} collaborative draft."
+          notification_title: <a href="%{author_path}">%{author_name} %{author_nickname}</a> <strong>withdrawn</strong> the <a href="%{resource_path}">%{resource_title}</a> collaborative draft.
+        creation_enabled:
+          email_intro: 'You can now create new paragraphs in %{participatory_space_title}! Start participating in this page:'
+          email_outro: You have received this notification because you are following %{participatory_space_title}. You can stop receiving notifications following the previous link.
+          email_subject: Paragraphs now available in %{participatory_space_title}
+          notification_title: You can now put forward <a href="%{resource_path}">new paragraphs</a> in <a href="%{participatory_space_url}">%{participatory_space_title}</a>
+        endorsing_enabled:
+          email_intro: 'You can endorse paragraphs in %{participatory_space_title}! Start participating in this page:'
+          email_outro: You have received this notification because you are following %{participatory_space_title}. You can stop receiving notifications following the previous link.
+          email_subject: Paragraphs endorsing has started for %{participatory_space_title}
+          notification_title: You can now start <a href="%{resource_path}">endorsing paragraphs</a> in <a href="%{participatory_space_url}">%{participatory_space_title}</a>
+        paragraph_accepted:
+          affected_user:
+            email_intro: 'Your paragraph "%{resource_title}" has been accepted. You can read the answer in this page:'
+            email_outro: You have received this notification because you are an author of "%{resource_title}".
+            email_subject: Your paragraph has been accepted
+            notification_title: Your paragraph <a href="%{resource_path}">%{resource_title}</a> has been accepted.
+          follower:
+            email_intro: 'The paragraph "%{resource_title}" has been accepted. You can read the answer in this page:'
+            email_outro: You have received this notification because you are following "%{resource_title}". You can unfollow it from the previous link.
+            email_subject: A paragraph you're following has been accepted
+            notification_title: The <a href="%{resource_path}">%{resource_title}</a> paragraph has been accepted.
+        paragraph_evaluating:
+          affected_user:
+            email_intro: 'Your paragraph "%{resource_title}" is currently being evaluated. You can check for an answer in this page:'
+            email_outro: You have received this notification because you are an author of "%{resource_title}".
+            email_subject: Your paragraph is being evaluated
+            notification_title: Your paragraph <a href="%{resource_path}">%{resource_title}</a> is being evaluated.
+          follower:
+            email_intro: 'The paragraph "%{resource_title}" is currently being evaluated. You can check for an answer in this page:'
+            email_outro: You have received this notification because you are following "%{resource_title}". You can unfollow it from the previous link.
+            email_subject: A paragraph you're following is being evaluated
+            notification_title: The <a href="%{resource_path}">%{resource_title}</a> paragraph is being evaluated.
+        paragraph_mentioned:
+          email_intro: Your paragraph "%{mentioned_paragraph_title}" has been mentioned <a href="%{resource_url}">in this space</a> in the comments.
+          email_outro: You have received this notification because you are an author of "%{resource_title}".
+          email_subject: Your paragraph "%{mentioned_paragraph_title}" has been mentioned
+          notification_title: Your paragraph "%{mentioned_paragraph_title}" has been mentioned <a href="%{resource_path}">in this space</a> in the comments.
+        paragraph_published:
+          email_intro: '%{author_name} %{author_nickname}, who you are following, has published a new paragraph called "%{resource_title}". Check it out and contribute:'
+          email_outro: You have received this notification because you are following %{author_nickname}. You can stop receiving notifications following the previous link.
+          email_subject: New paragraph "%{resource_title}" by %{author_nickname}
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> paragraph was published by <a href="%{author_path}">%{author_name} %{author_nickname}</a>.
+        paragraph_published_for_space:
+          email_intro: The paragraph "%{resource_title}" has been added to "%{participatory_space_title}" that you are following.
+          email_outro: You have received this notification because you are following "%{participatory_space_title}". You can stop receiving notifications following the previous link.
+          email_subject: New paragraph "%{resource_title}" added to %{participatory_space_title}
+          notification_title: The paragraph <a href="%{resource_path}">%{resource_title}</a> has been added to %{participatory_space_title}
+        paragraph_rejected:
+          affected_user:
+            email_intro: 'Your paragraph "%{resource_title}" has been rejected. You can read the answer in this page:'
+            email_outro: You have received this notification because you are an author of "%{resource_title}".
+            email_subject: Your paragraph been rejected
+            notification_title: Your paragraph <a href="%{resource_path}">%{resource_title}</a> has been rejected.
+          follower:
+            email_intro: 'The paragraph "%{resource_title}" has been rejected. You can read the answer in this page:'
+            email_outro: You have received this notification because you are following "%{resource_title}". You can unfollow it from the previous link.
+            email_subject: A paragraph you're following has been rejected
+            notification_title: The <a href="%{resource_path}">%{resource_title}</a> paragraph has been rejected.
+        paragraph_update_category:
+          email_intro: 'An admin has updated the category of your paragraph "%{resource_title}", check it out in this page:'
+          email_outro: You have received this notification because you are the author of the paragraph.
+          email_subject: The %{resource_title} paragraph category has been updated
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> paragraph category has been updated by an admin.
+        paragraph_update_scope:
+          email_intro: 'An admin has updated the scope of your paragraph "%{resource_title}", check it out in this page:'
+          email_outro: You have received this notification because you are the author of the paragraph.
+          email_subject: The %{resource_title} paragraph scope has been updated
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> paragraph scope has been updated by an admin.
+        voting_enabled:
+          email_intro: 'You can support paragraphs in %{participatory_space_title}! Start participating in this page:'
+          email_outro: You have received this notification because you are following %{participatory_space_title}. You can stop receiving notifications following the previous link.
+          email_subject: Paragraph support has started for %{participatory_space_title}
+          notification_title: You can now start <a href="%{resource_path}">supporting paragraphs</a> in <a href="%{participatory_space_url}">%{participatory_space_title}</a>
+    gamification:
+      badges:
+        accepted_paragraphs:
+          conditions:
+          - Choose the participation space of your interest with submission for paragraphs enabled
+          - Try to make paragraphs that can be carried out. This way they are more likely to be accepted.
+          description: This badge is granted when you actively participate with new paragraphs and these are accepted.
+          description_another: This participant had %{score} accepted paragraphs.
+          description_own: You got %{score} paragraphs accepted.
+          name: Accepted paragraphs
+          next_level_in: Get %{score} more paragraphs accepted to reach the next level!
+          unearned_another: This participant has not yet had any accepted paragraphs.
+          unearned_own: You got no paragraphs accepted yet.
+        paragraph_votes:
+          conditions:
+          - Browse and spend some time reading other people's paragraphs
+          - Give support to the paragraphs you like or find interesting
+          description: This badge is granted when you support other people's paragraphs.
+          description_another: This participant has given support to %{score} paragraphs.
+          description_own: You have given support to %{score} paragraphs.
+          name: Paragraph supports
+          next_level_in: Give support to %{score} more paragraphs to reach the next level!
+          unearned_another: This participant hasn't given support to any paragraphs yet.
+          unearned_own: You have given support to no paragraphs yet.
+        paragraphs:
+          conditions:
+          - Choose the participation space of your interest with submission for paragraphs enabled
+          - Create a new paragraph
+          description: This badge is granted when you actively participate with new paragraphs.
+          description_another: This participant has created %{score} paragraphs.
+          description_own: You have created %{score} paragraphs.
+          name: Paragraphs
+          next_level_in: Create %{score} more paragraphs to reach the next level!
+          unearned_another: This participant hasn't created any paragraphs yet.
+          unearned_own: You have created no paragraphs yet.
+    metrics:
+      accepted_paragraphs:
+        description: Number of paragraphs accepted
+        object: paragraphs
+        title: Accepted paragraphs
+      endorsements:
+        description: Number of endorsements to paragraphs
+        object: endorsements
+        title: Endorsements
+      paragraphs:
+        description: Number of paragraphs
+        object: paragraphs
+        title: Paragraphs
+      votes:
+        description: Number of supports to paragraphs
+        object: supports
+        title: Supports
+    participatory_spaces:
+      highlighted_paragraphs:
+        see_all: See all paragraphs (%{count})
+    paragraphs:
+      actions:
+        answer_paragraph: Answer paragraph
+        edit_paragraph: Edit paragraph
+        import: Import from another component
+        new: New paragraph
+        participatory_texts: Participatory texts
+        show: Show paragraph
+        show_amendment: Show amendment
+        show_details: Show details
+        add_comment: Add comment
+        title: Actions
+      admin:
+        actions:
+          preview: Preview
+        exports:
+          paragraph_comments: Comments
+          paragraphs: Paragraphs
+        models:
+          paragraph:
+            name: Paragraph
+        participatory_texts:
+          article-preview:
+            title_hint: Empty title-fields will automatically be filled with numbers, but will be hidden on the public page when consisting of numbers only.
+          bulk-actions:
+            are_you_sure: Are you sure to discard the whole participatory text draft?
+            discard_all: Discard all
+            import_doc: Import document
+            write_document: Write document
+          discard:
+            success: All participatory text drafts have been discarded.
+          import:
+            invalid: The form is invalid!
+            invalid_file: The file contains some error, please try to edit the content of the file and re-upload it again.
+            success: Congratulations, the following sections have been converted to paragraphs. Now you can review and adjust them before publishing.
+          index:
+            info_1: The following sections have been converted to paragraphs. Now you can review and adjust them before publishing.
+            publish_document: Publish document
+            save_draft: Save draft
+            title: Preview participatory text
+            discard: Delete
+            discard_confirmation: Are you sure you want to discard this section draft?
+          new_editor:
+            title: Write text
+            bottom_hint: "(You will be able to preview and sort document sections)"
+            editor_description: "Write or paste your document. Use Heading 1 to define sections, Heading 2 for subsections and simple paragraphs to split text into articles."
+            import: Import
+          new_import:
+            accepted_mime_types:
+              md: Markdown
+              odt: ODT
+            bottom_hint: "(You will be able to preview and sort document sections)"
+            document_legend: 'Add a document lesser than 2MB, each section until 3 levels deep will be parsed into paragraphs. Suported formats are: %{valid_mime_types}'
+            title: Add document
+            upload_document: Upload document
+          publish:
+            invalid: Could not publish paragraphs
+            success: All paragraphs have been published
+          sections:
+            article: "<em>Article</em>"
+            section: "<em>Section:</em> <strong>%{title}</strong>"
+            sub-section: "<em>Subsection:</em> %{title}"
+          update:
+            success: Participatory text successfully updated.
+        paragraph_answers:
+          form:
+            accepted: Accepted
+            answer_paragraph: Answer
+            evaluating: Evaluating
+            rejected: Rejected
+            title: Answer for paragraph %{title}
+        paragraph_notes:
+          create:
+            error: There was a problem creating this paragraph note
+            success: Paragraph note successfully created
+          form:
+            note: Note
+            submit: Submit
+          leave_your_note: Leave your note
+          title: Private notes
+        paragraphs:
+          answer:
+            invalid: There's been a problem answering this paragraph
+            success: Paragraph successfully answered
+          create:
+            invalid: There's been a problem creating this paragraph
+            success: Paragraph successfully created
+          edit:
+            title: Update paragraph
+            update: Update
+          form:
+            attachment_legend: "(Optional) Add an attachment"
+            created_in_meeting: This paragraph comes from a meeting
+            delete_attachment: Delete attachment
+            select_a_category: Select a category
+            select_a_meeting: Select a meeting
+          index:
+            actions: Actions
+            assign_to_valuator: Assign to valuator
+            assign_to_valuator_button: Assign
+            cancel: Cancel
+            change_category: Change category
+            change_scope: Change scope
+            merge: Merge into a new one
+            merge_button: Merge
+            publish: Publish
+            publish_answers: Publish answers
+            select_component: Select a component
+            selected: selected
+            split: Split paragraphs
+            split_button: Split
+            title: Paragraphs
+            unassign_from_valuator: Unassign from valuator
+            unassign_from_valuator_button: Unassign
+            update: Update
+            update_scope_button: Update Scope
+          new:
+            create: Create
+            title: Create paragraph
+          publish_answers:
+            number_of_paragraphs: Answers for %{number} paragraphs will be published.
+            select_a_paragraph: Please select a paragraph
+          show:
+            amendments_count: Amendments count
+            assigned_valuators: Assigned valuators
+            authors: Authors
+            body: Body
+            comments_count: Comments count
+            comments_negative_count: Against
+            comments_neutral_count: Neutral
+            comments_positive_count: Favor
+            created_at: Creation date
+            documents: Documents
+            endorsements_count: Endorsements count
+            endorsements_ranking: Ranking by endorsements
+            endorsers: Endorsers
+            link: Link
+            n_more_endorsers:
+              one: and 1 more
+              other: and %{count} more
+            photos: Photos
+            paragraphs: Paragraphs
+            ranking: "%{ranking} of %{total}"
+            related_meetings: Related meetings
+            remove_assignment: Remove assignment
+            remove_assignment_confirmation: Are you sure you want to remove the valuator from this paragraph?
+            valuators: Valuators
+            votes_count: Supports count
+            votes_ranking: Ranking by supports
+          update_category:
+            invalid: 'These paragraphs already had the %{subject_name} category: %{paragraphs}.'
+            select_a_category: Please select a category
+            select_a_paragraph: Please select a paragraph
+            success: 'Paragraphs successfully updated to the %{subject_name} category: %{paragraphs}.'
+          update_scope:
+            invalid: 'These paragraphs already had the %{subject_name} scope: %{paragraphs}.'
+            select_a_paragraph: Please select a paragraph
+            select_a_scope: Please select a scope
+            success: 'Paragraphs successfully updated to the %{subject_name} scope: %{paragraphs}.'
+        paragraphs_imports:
+          create:
+            invalid: There was a problem importing the paragraphs
+            success: "%{number} paragraphs successfully imported"
+          new:
+            create: Import paragraphs
+            no_components: There are no other paragraph components in this participatory space to import the paragraphs from.
+            select_component: Please select a component
+            select_states: Check the status of the paragraphs to import
+            title: Import paragraphs
+        paragraphs_merges:
+          create:
+            invalid: 'There has been a problem merging the selected paragraphs because some of them:'
+            success: Successfully merged the paragraphs into a new one.
+        paragraphs_splits:
+          create:
+            invalid: 'There has been a problem splitting the selected paragraphs because some of them:'
+            success: Successfully splitted the paragraphs into new ones.
+        valuation_assignments:
+          create:
+            invalid: There was an error assigning paragraphs to a valuator
+            success: Paragraphs assigned to a valuator successfully
+          delete:
+            invalid: There was an error unassigning paragraphs from a valuator
+            success: Valuator unassigned from paragraphs successfully
+      admin_log:
+        paragraph:
+          answer: "%{user_name} answered the %{resource_name} paragraph on the %{space_name} space"
+          create: "%{user_name} created the %{resource_name} paragraph on the %{space_name} space as an official paragraph"
+          publish_answer: "%{user_name} published the answer to %{resource_name} paragraph on the %{space_name} space"
+          update: "%{user_name} updated the %{resource_name} official paragraph on the %{space_name} space"
+        paragraph_note:
+          create: "%{user_name} left a private note on the %{resource_name} paragraph on the %{space_name} space"
+        valuation_assignment:
+          create: "%{user_name} assigned the %{resource_name} paragraph to a valuator"
+          delete: "%{user_name} unassigned a valuator from the %{paragraph_title} paragraph"
+      answers:
+        accepted: Accepted
+        evaluating: Evaluating
+        not_answered: Not answered
+        rejected: Rejected
+        withdrawn: Withdrawn
+      application_helper:
+        filter_category_values:
+          all: All
+        filter_origin_values:
+          all: All
+          citizens: Citizens
+          meetings: Meetings
+          official: Official
+          user_groups: Groups
+        filter_scope_values:
+          all: All
+        filter_state_values:
+          accepted: Accepted
+          all: All
+          evaluating: Evaluating
+          not_answered: Not answered
+          rejected: Rejected
+        filter_type_values:
+          all: All
+          amendments: Amendments
+          paragraphs: Paragraphs
+      collaborative_drafts:
+        collaborative_draft:
+          publish:
+            error: There was a problem publishing the collaborative draft.
+            irreversible_action_modal:
+              body: After publishing the draft as a paragraph, the draft won't be editable anymore. The paragraph won't accept new authors or contributions.
+              cancel: Cancel
+              ok: Publish as a Paragraph
+              title: The following action is irreversible
+            success: Collaborative draft published successfully as a paragraph.
+          view_collaborative_draft: View Collaborative Draft
+          withdraw:
+            error: There was a problem closing the collaborative draft.
+            irreversible_action_modal:
+              body: After closing the draft, the draft won't be editable anymore. The draft won't accept new authors or contributions.
+              cancel: Cancel
+              ok: Withdraw the collaborative draft
+              title: The following action is irreversible
+            success: Collaborative draft withdrawn successfully.
+        count:
+          drafts_count:
+            one: "%{count} collaborative draft"
+            other: "%{count} collaborative drafts"
+        create:
+          error: There was a problem creating this collaborative drafts
+          success: Collaborative draft successfully created.
+        edit:
+          attachment_legend: "(Optional) Add an attachment"
+          back: Back
+          select_a_category: Please select a category
+          send: Send
+          title: Edit collaborative draft
+        filters:
+          all: All
+          amendment: Amendments
+          category: Category
+          open: Open
+          published: Published
+          related_to: Related to
+          scope: Scope
+          search: Search
+          state: Status
+          withdrawn: Withdrawn
+        filters_small_view:
+          close_modal: Close modal
+          filter: Filter
+          filter_by: Filter by
+          unfold: Unfold
+        new:
+          send: Continue
+        new_collaborative_draft_button:
+          new_collaborative_draft: New collaborative draft
+        orders:
+          label: 'Order drafts by:'
+          most_contributed: Most contributed
+          random: Random
+          recent: Recent
+        requests:
+          accepted_request:
+            error: Could not be accepted as a collaborator, please try again later.
+            success: "@%{user} has been accepted as a collaborator successfully"
+          access_requested:
+            error: Your request could not be completed, please try again later.
+            success: Your request to collaborate has been successfully sent
+          collaboration_requests:
+            accept_request: Accept
+            reject_request: Reject
+            title: Collaboration requests
+          rejected_request:
+            error: Could not be rejected as a collaborator, please try again later.
+            success: "@%{user} has been successfully rejected as a collaborator"
+        show:
+          back: Back
+          edit: Edit collaborative draft
+          final_paragraph: final paragraph
+          final_paragraph_help_text: This draft is finished. Check out the final paragraph
+          hidden_authors_count:
+            one: and %{count} more person
+            other: and %{count} more people
+          info-message: This is a <strong>collaborative draft</strong> for a paragraph. This means that you can help their authors to shape the paragraph using the comment section below or improve it directly by requesting access to edit it. Once the authors grant you access, you'll be able to make changes to this draft.
+          publish: Publish
+          publish_info: Publish this version of the draft or
+          published_paragraph: published paragraph
+          request_access: Request access
+          requested_access: Access requested
+          version_history: see version history for this paragraph
+          withdraw: withdraw the draft
+        states:
+          open: Open
+          published: Published
+          withdrawn: Withdrawn
+        update:
+          error: There was a problem saving the collaborative draft.
+          success: Collaborative draft successfully updated.
+        wizard_aside:
+          back_from_collaborative_draft: Back to collaborative drafts
+          info: You are creating a <strong>collaborative draft</strong>.
+        wizard_header:
+          title: Create your collaborative draft
+      content_blocks:
+        highlighted_paragraphs:
+          paragraphs: Paragraphs
+      create:
+        error: There was a problem saving the paragraph.
+        success: Paragraph successfully created. Saved as a Draft.
+      destroy_draft:
+        error: There was a problem deleting the collaborative draft.
+        success: Paragraph draft was successfully deleted.
+      last_activity:
+        new_paragraph_at_html: "<span>New paragraph at %{link}</span>"
+        paragraph_updated_at_html: "<span>Paragraph updated at %{link}</span>"
+      models:
+        collaborative_draft:
+          fields:
+            authors: Authors
+            comments: Comments
+            contributions: Contributions
+        paragraph:
+          fields:
+            category: Category
+            comments: Comments
+            id: ID
+            notes: Notes
+            official_paragraph: Official paragraph
+            published_answer: Published answer
+            published_at: Published at
+            scope: Scope
+            state: Status
+            title: Title
+            valuator: Valuator
+            valuators: Valuators
+            votes: Votes
+      new:
+        limit_reached: You can't create new paragraphs since you've exceeded the limit.
+      overview:
+        expand_amendments: Show all
+        shrink_amendments: Show less
+      participatory_text_paragraph:
+        alternative_title: There are no participatory texts at the moment
+        buttons:
+          amend: Amend
+          comment: Comment
+          comments: Comments
+      paragraph_votes:
+        create:
+          error: There was a problem supporting the paragraph.
+      paragraphs:
+        compare:
+          continue: Continue
+          no_similars_found: Well done! No similar paragraphs found
+          title: Similar Paragraphs
+        complete:
+          send: Send
+          title: Complete your paragraph
+        count:
+          paragraphs_count:
+            one: "%{count} paragraph"
+            other: "%{count} paragraphs"
+        dynamic_map_instructions:
+          description: The coordinates will be updated when clicking on 'preview' button. However, the address does not change.
+          instructions: You can move the point on the map.
+        edit:
+          add_documents: Documents
+          add_images: File
+          attachment_legend: "(Optional) Add an attachment"
+          back: Back
+          delete_document: Delete Document
+          delete_image: Delete Image
+          gallery_legend: "(Optional) Add an image to the paragraph card"
+          select_a_category: Please select a category
+          send: Send
+          title: Edit paragraph
+        edit_draft:
+          discard: Discard this draft
+          discard_confirmation: Are you sure you want to discard this paragraph draft?
+          send: Preview
+          title: Edit Paragraph Draft
+        filters:
+          activity: My activity
+          all: All
+          amendment_type: Type
+          category: Category
+          my_paragraphs: My paragraphs
+          origin: Origin
+          related_to: Related to
+          scope: Scope
+          search: Search
+          state: Status
+          type: Type
+          voted: Supported
+        filters_small_view:
+          close_modal: Close modal
+          filter: Filter
+          filter_by: Filter by
+          unfold: Unfold
+        index:
+          click_here: See all paragraphs
+          collaborative_drafts_list: Access collaborative drafts
+          new_paragraph: New paragraph
+          see_all: See all paragraphs
+          see_all_withdrawn: See all withdrawn paragraphs
+          text_banner: You are viewing the list of paragraphs withdrawn by their authors. %{go_back_link}.
+          view_paragraph: View paragraph
+        linked_paragraphs:
+          paragraph_votes:
+            one: support
+            other: supports
+        new:
+          send: Continue
+          title: Create Your Paragraph
+        orders:
+          label: 'Order paragraphs by:'
+          most_commented: Most commented
+          most_endorsed: Most endorsed
+          most_followed: Most followed
+          most_voted: Most supported
+          random: Random
+          recent: Recent
+          with_more_authors: With more authors
+        participatory_texts:
+          index:
+            document_index: Document index
+          view_index:
+            see_index: See index
+        placeholder:
+          address: 37 Homewood Drive Brownsburg, IN 46112
+        preview:
+          announcement_body: Your paragraph has been saved as a draft. It needs to be published for it to appear on the site.
+          announcement_title: Your paragraph has not yet been published
+          modify: Modify the paragraph
+          paragraph_edit_before_minutes:
+            one: You will be able to edit this paragraph during the first minute after the paragraph is published. Once this time window passes, you will not be able to edit the paragraph.
+            other: You will be able to edit this paragraph during the first %{count} minutes after the paragraph is published. Once this time window passes, you will not be able to edit the paragraph.
+          publish: Publish
+          title: Publish your paragraph
+        paragraph:
+          creation_date: 'Creation: %{date}'
+          view_paragraph: View paragraph
+        paragraphs:
+          empty: There is no paragraph yet
+          empty_filters: There isn't any paragraph with this criteria
+        show:
+          answer: Answer
+          back_to: Back to
+          back_to_list: Back to list
+          changes_at_title: Amendment to "%{title}"
+          comments: Comments
+          edit_paragraph: Edit paragraph
+          endorsements_list: List of Endorsements
+          estimated_cost: Estimated cost
+          hidden_endorsers_count:
+            one: and %{count} more person
+            other: and %{count} more people
+          link_to_collaborative_draft_help_text: This paragraph is the result of a collaborative draft. Review the history
+          link_to_collaborative_draft_text: See the collaborative draft
+          link_to_promoted_emendation_help_text: This paragraph is a promoted emendation
+          link_to_promoted_emendation_text: See the rejected emendation.
+          link_to_paragraph_from_emendation_help_text: This is a rejected emendation
+          link_to_paragraph_from_emendation_text: See the Paragraph
+          paragraph_accepted_reason: 'This paragraph has been accepted because:'
+          paragraph_in_evaluation_reason: This paragraph is being evaluated
+          paragraph_rejected_reason: 'This paragraph has been rejected because:'
+          read_less: Read less
+          read_more: Read more
+          report: Report
+          withdraw_btn_hint: You can withdraw your paragraph if you change your mind, as long as you have not received any support. The paragraph is not deleted, it will appear in the list of withdrawn paragraphs.
+          withdraw_confirmation_html: Are you sure you want to withdraw this paragraph?<br><br><strong>This action cannot be cancelled!</strong>
+          withdraw_paragraph: Withdraw paragraph
+        tags:
+          changed_from: "(changed from <u>%{previous_name}</u> by an administrator)"
+        update:
+          title: Update paragraph
+        vote_button:
+          already_voted: Already supported
+          already_voted_hover: Withdraw support
+          maximum_votes_reached: Support limit reached
+          no_votes_remaining: No supports remaining
+          vote: Support
+          votes_blocked: Supports disabled
+        votes_count:
+          count:
+            one: Support
+            other: Supports
+          most_popular_paragraph: Most popular paragraph
+          need_more_votes: Need more supports
+        voting_rules:
+          can_accumulate_supports_beyond_threshold:
+            description: Each paragraph can accumulate more than %{limit} supports
+          minimum_votes_per_user:
+            description: You must distribute a minimum of %{votes} supports among different paragraphs.
+            given_enough_votes: You've given enough supports.
+            supports_remaining: You have to support %{remaining_votes} more paragraphs for your supports to be taken into account.
+          paragraph_limit:
+            description: You can create up to %{limit} paragraphs.
+          threshold_per_paragraph:
+            description: In order to be validated paragraphs need to reach %{limit} supports
+          title: 'Supports are subject to the following rules:'
+          vote_limit:
+            description: You can support up to %{limit} paragraphs.
+            left: Remaining
+            votes: Supports
+        wizard_aside:
+          back: Back
+          back_from_step_1: Back to paragraphs
+          back_from_step_2: Back to paragraphs
+          back_from_step_3: Back to compare paragraphs
+          back_from_step_4: Back to edit draft
+          info: You are creating a <strong>paragraph</strong>.
+        wizard_steps:
+          current_step: Current step
+          see_steps: see steps
+          step_1: Create your paragraph
+          step_2: Compare
+          step_3: Complete
+          step_4: Publish your paragraph
+          step_of: Step %{current_step_num} of %{total_steps}
+          title: Paragraph creation steps
+      paragraphs_picker:
+        choose_paragraphs: Choose paragraphs
+        close: Close
+        more_paragraphs: There are %{number} more paragraphs. Refine your search to locate them.
+        no_paragraphs: No paragraphs match your search criteria or there isn't any paragraphs.
+      publish:
+        error: There was a problem publishing the paragraph.
+        success: Paragraph successfully published.
+      publish_answers:
+        success: Paragraphs answers successfully published.
+      update:
+        error: There was a problem saving the paragraph.
+        success: Paragraph successfully updated.
+      update_draft:
+        error: There was a problem saving the collaborative draft.
+        success: Paragraph draft successfully updated.
+      versions:
+        collaborative_drafts:
+          back_to_resource: Go back to collaborative draft
+        index:
+          title: Versions
+        paragraphs:
+          back_to_resource: Go back to paragraph
+      withdraw:
+        errors:
+          has_supports: This paragraph can not be withdrawn because it already has supports.
+    resource_links:
+      copied_from_component:
+        paragraph_paragraph: Related paragraphs
+      included_projects:
+        project_result: 'Results appearing in this project:'
+      included_paragraphs:
+        paragraph_project: 'Paragraph appearing in these projects:'
+        paragraph_result: 'Paragraph appearing in these results:'
+    statistics:
+      paragraphs_accepted: Accepted Paragraphs
+      paragraphs_count: Paragraphs
+      supports_count: Supports

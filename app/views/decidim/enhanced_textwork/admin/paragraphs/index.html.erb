@@ -1,0 +1,84 @@
+<div class="card with-overflow">
+  <div class="card-divider">
+    <h2 class="card-title flex--sbc">
+      <div>
+        <%= t(".title") %>
+        <span id="js-selected-paragraphs-count" class="component-counter component-counter--inline" title="<%= t("decidim.enhanced_textwork.admin.paragraphs.index.selected") %>"></span>
+      </div>
+      <%= render partial: "bulk-actions" %>
+    </h2>
+  </div>
+  <%= admin_filter_selector(:paragraphs) %>
+  <div class="card-section">
+    <div class="table-scroll">
+      <table class="table-list">
+        <thead>
+          <tr>
+            <th>
+              <%= check_box_tag "paragraphs_bulk", "all", false, class: "js-check-all" %>
+            </th>
+            <th>
+              <%= sort_link(query, :id, t("models.paragraph.fields.id", scope: "decidim.enhanced_textwork"), default_order: :desc ) %>
+            </th>
+            <th>
+              <%= sort_link(query, :title, t("models.paragraph.fields.title", scope: "decidim.enhanced_textwork") ) %>
+            </th>
+            <th>
+              <%= sort_link(query, :category_name, t("models.paragraph.fields.category", scope: "decidim.enhanced_textwork") ) %>
+            </th>
+
+            <% if resource_with_scopes_enabled? %>
+              <th>
+                <%= sort_link(query, :scope_name, t("models.paragraph.fields.scope", scope: "decidim.enhanced_textwork") ) %>
+              </th>
+            <% end %>
+
+            <th>
+              <%= sort_link(query, :state, [:state, :is_emendation], t("models.paragraph.fields.state", scope: "decidim.enhanced_textwork") ) %>
+            </th>
+
+            <% unless current_settings.publish_answers_immediately? %>
+              <th>
+                <%= sort_link(query, :state_published, t("models.paragraph.fields.published_answer", scope: "decidim.enhanced_textwork") ) %>
+              </th>
+            <% end %>
+
+            <% if current_settings.votes_enabled? %>
+              <th>
+                <%= sort_link(query, :paragraph_votes_count, t("models.paragraph.fields.votes", scope: "decidim.enhanced_textwork") ) %>
+              </th>
+            <% end %>
+
+            <% if current_component.settings.comments_enabled? and !current_settings.comments_blocked? %>
+              <th>
+                <%= sort_link(query, :comments_count, t("models.paragraph.fields.comments", scope: "decidim.enhanced_textwork") ) %>
+              </th>
+            <% end %>
+
+            <th>
+              <%= sort_link(query, :paragraph_notes_count, t("models.paragraph.fields.notes", scope: "decidim.enhanced_textwork") ) %>
+            </th>
+
+            <th>
+              <%= sort_link(query, :valuation_assignments_count, t("models.paragraph.fields.valuators", scope: "decidim.enhanced_textwork") ) %>
+            </th>
+
+            <th>
+              <%= sort_link(query, :published_at, t("models.paragraph.fields.published_at", scope: "decidim.enhanced_textwork") ) %>
+            </th>
+
+            <th class="actions"><%= t("actions.title", scope: "decidim.enhanced_textwork") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% paragraphs.each do |paragraph| %>
+            <%= render partial: "paragraph-tr", locals: { paragraph: paragraph } %>
+          <% end %>
+        </tbody>
+      </table>
+      <%= paginate paragraphs, theme: "decidim" %>
+    </div>
+  </div>
+</div>
+
+<%= javascript_pack_tag "decidim_enhanced_textwork_admin" %>

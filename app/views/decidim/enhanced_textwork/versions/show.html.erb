@@ -1,0 +1,18 @@
+<% add_decidim_page_title(t("changes_at_title", scope: "decidim.version.show", title: versioned_resource.title)) %>
+<% add_decidim_page_title(t("decidim.enhanced_textwork.versions.index.title")) %>
+<%
+if versioned_resource.is_a?(Decidim::EnhancedTextwork::CollaborativeDraft)
+  add_decidim_page_title(Decidim::EnhancedTextwork::CollaborativeDraft.model_name.human(count: 2))
+end
+%>
+
+<div class="row">
+  <%= cell(
+    "decidim/version",
+    current_version,
+    index: params[:id],
+    versioned_resource: versioned_resource,
+    versions_path: proc { url_for(action: :index) },
+    i18n_scope: "decidim.enhanced_textwork.versions.#{item_name.to_s.pluralize}"
+  ) %>
+</div>

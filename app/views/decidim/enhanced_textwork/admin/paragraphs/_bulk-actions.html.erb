@@ -1,0 +1,33 @@
+<div class="flex--cc flex-gap--1">
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/dropdown" %>
+
+  <div id="js-other-actions-wrapper">
+    <% if component_settings.participatory_texts_enabled? %>
+      <%= link_to t("actions.participatory_texts", scope: "decidim.enhanced_textwork"), participatory_texts_path, id: "participatory_texts", class: "button tiny button--simple" %>
+    <% end %>
+
+    <% if allowed_to? :export, :paragraphs %>
+      <%= export_dropdown %>
+    <% end %>
+
+    <% if allowed_to? :import, :paragraphs %>
+      <%= import_dropdown do %>
+        <% content_tag :li do %>
+          <% link_to t("actions.import", scope: "decidim.enhanced_textwork", name: t("models.paragraph.name", scope: "decidim.enhanced_textwork.admin")), new_paragraphs_import_path %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if allowed_to? :create, :paragraph %>
+      <%= link_to t("actions.new", scope: "decidim.enhanced_textwork"), new_paragraph_path, class: "button tiny button--simple" %>
+    <% end %>
+  </div>
+
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/recategorize" %>
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/scope-change" %>
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/merge" %>
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/split" %>
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/assign_to_valuator" %>
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/unassign_from_valuator" %>
+  <%= render partial: "decidim/enhanced_textwork/admin/paragraphs/bulk_actions/publish_answers" %>
+</div>

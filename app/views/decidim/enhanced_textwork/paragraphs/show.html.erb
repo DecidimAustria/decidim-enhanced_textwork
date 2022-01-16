@@ -1,0 +1,143 @@
+<% add_decidim_meta_tags({
+  description: present(@paragraph).body,
+  title: present(@paragraph).title,
+  url: paragraph_url(@paragraph.id)
+}) %>
+
+<%
+edit_link(
+  resource_locator(@paragraph).edit,
+  :edit,
+  :paragraph,
+  paragraph: @paragraph
+)
+%>
+
+<%
+extra_admin_link(
+  resource_locator(@paragraph).show(anchor: "paragraph-answer"),
+  :create,
+  :paragraph_answer,
+  { paragraph: @paragraph },
+  { name: t(".answer"), icon: "comment-square" }
+)
+%>
+
+<%= render partial: "voting_rules" %>
+<% if component_settings.participatory_texts_enabled? %>
+  <div class="row column">
+    <div class="section text-medium">
+      <%= t(".back_to") %> <u><%= link_to translated_attribute(@participatory_text.title), main_component_path(current_component) %></u>
+    </div>
+  </div>
+<% end %>
+<%= emendation_announcement_for @paragraph %>
+<div class="row column view-header">
+
+  <div class="m-bottom">
+    <%= link_to paragraphs_path(filter_link_params), class: "small hollow" do %>
+      <%= icon "chevron-left", class: "icon--small", role: "img", "aria-hidden": true %>
+      <%= t(".back_to_list") %>
+    <% end %>
+  </div>
+
+  <% if show_paragraph_title?(@paragraph) %>
+    <% if @paragraph.emendation? %>
+      <h3 class="heading3"><%= t(".changes_at_title", title: present(@paragraph.amendable).title(links: true, html_escape: true)) %></h3>
+    <% else %>
+      <h3 class="heading3"><%= present(@paragraph).title(links: true, html_escape: true) %></h3>
+    <% end %>
+  <% end %>
+  <% unless component_settings.participatory_texts_enabled? %>
+    <%= cell("decidim/coauthorships", @paragraph, has_actions: true, size: 3, context: { current_user: current_user }) %>
+  <% end %>
+</div>
+<div class="row">
+  <div class="columns mediumlarge-8 large-9">
+    <div class="section">
+      <% if @paragraph.emendation? %>
+        <%= cell("decidim/diff", paragraph_presenter.versions.last) %>
+      <% elsif not ["section","subsection"].include? @paragraph.participatory_text_level %>
+        <%== cell("decidim/enhanced_textwork/paragraph_m", @paragraph, full_badge: true).badge %>
+        <%= render_paragraph_body(@paragraph) %>
+      <% end %>
+      <% if component_settings.geocoding_enabled? %>
+        <%= render partial: "decidim/shared/static_map", locals: { icon_name: "paragraphs", geolocalizable: @paragraph } %>
+      <% end %>
+      <% if paragraph_has_costs? && current_settings.answers_with_costs? %>
+        <%= cell("decidim/enhanced_textwork/cost_report", @paragraph) %>
+      <% end %>
+      <%= cell "decidim/enhanced_textwork/paragraph_tags", @paragraph %>
+    </div>
+
+    <%= cell("decidim/announcement", paragraph_reason_callout_announcement, callout_class: paragraph_reason_callout_class) if @paragraph.answered? && @paragraph.published_state? %>
+
+    <%= linked_resources_for @paragraph, :results, "included_paragraphs" %>
+    <%= linked_resources_for @paragraph, :projects, "included_paragraphs" %>
+    <%= linked_resources_for @paragraph, :meetings, "paragraphs_from_meeting" %>
+    <%= linked_resources_for @paragraph, :paragraphs, "copied_from_component" %>
+
+    <%= cell "decidim/endorsers_list", @paragraph %>
+    <%= amendments_for @paragraph %>
+  </div>
+  <div class="columns section view-side mediumlarge-4 large-3">
+    <% if @paragraph.amendable? && allowed_to?(:edit, :paragraph, paragraph: @paragraph) %>
+      <%= link_to t(".edit_paragraph"), edit_paragraph_path(@paragraph), class: "button hollow expanded button--sc" %>
+    <% else %>
+      <%= amend_button_for @paragraph %>
+    <% end %>
+
+    <%= emendation_actions_for @paragraph %>
+
+    <% if current_settings.votes_enabled? || show_endorsements_card? || current_user %>
+      <% if @paragraph.withdrawn? %>
+        <div class="card">
+          <div class="card__content">
+            <% if current_settings.votes_enabled? %>
+              <%= render partial: "votes_count", locals: { paragraph: @paragraph, from_paragraphs_list: false } %>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="card">
+          <div class="card__content">
+            <% if current_settings.votes_enabled? %>
+              <%= render partial: "votes_count", locals: { paragraph: @paragraph, from_paragraphs_list: false } %>
+              <%= render partial: "vote_button", locals: { paragraph: @paragraph, from_paragraphs_list: false } %>
+            <% end %>
+            <div class="row collapse buttons__row">
+              <% if endorsements_enabled? %>
+                <div class="column small-9 collapse">
+                  <%= endorsement_buttons_cell(@paragraph) %>
+                </div>
+              <% end %>
+              <div class="column collapse <%= endorsements_enabled? ? "small-3" : "" %>">
+                <%= link_to "#comments", class: "button small compact hollow secondary button--nomargin expanded" do %>
+                    <span class="show-for-sr"><%= present(@paragraph).title(html_escape: true) %></span>
+                    <%= icon "comment-square", class: "icon--small", aria_label: t(".comments"), role: "img" %> <%= @paragraph.comments_count %>
+                <% end %>
+              </div>
+            </div>
+            <br>
+            <%= follow_button_for(@paragraph) %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= amenders_list_for(@paragraph) %>
+
+    <%= resource_reference(@paragraph) %>
+    <%= resource_version(paragraph_presenter, versions_path: paragraph_versions_path(@paragraph)) %>
+    <%= cell("decidim/fingerprint", @paragraph) %>
+    <%= render partial: "decidim/shared/share_modal", locals: { resource: @paragraph } %>
+    <%= embed_modal_for paragraph_widget_url(@paragraph, format: :js) %>
+    <%= cell "decidim/enhanced_textwork/paragraph_link_to_collaborative_draft", @paragraph %>
+    <%= cell "decidim/enhanced_textwork/paragraph_link_to_rejected_emendation", @paragraph %>
+  </div>
+</div>
+<%= attachments_for @paragraph %>
+
+<%= comments_for @paragraph %>
+
+<%= cell("decidim/flag_modal", @paragraph) %>

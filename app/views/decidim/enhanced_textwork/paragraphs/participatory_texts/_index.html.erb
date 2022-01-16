@@ -1,0 +1,20 @@
+<div class="p-s">
+  <h4><%= t(".document_index") %></h4>
+  <div class="text-muted">
+    <% @paragraphs.each do |paragraph| %>
+      <% next unless present(paragraph).title_if_enabled.present? %>
+      <div class="mb-s">
+        <p>
+          <%= link_to overview_paragraph_path(paragraph, anchor: dom_id(paragraph)) do %>
+            <% if paragraph.participatory_text_level == "article" %>
+              <u><%= decidim_html_escape(present(paragraph).title).html_safe %></u>
+            <% else %>
+              <u><%= decidim_html_escape(present(paragraph).title).html_safe %></u>
+            <% end %>
+            <br>
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

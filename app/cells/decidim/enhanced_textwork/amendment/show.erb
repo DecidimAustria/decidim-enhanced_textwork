@@ -1,0 +1,14 @@
+<div class="card emendation">
+  <div class="amendment__header">
+    <div class="amendment__author">
+      <%= cell('decidim/author', emendation_author, has_tooltip: true).(:profile_inline) %>
+    </div>
+    <div class="amendment__date">
+      <%= created_at %>
+    </div>
+  </div>
+
+  <div class="amendment__actions">
+    <%= link_to t('decidim.enhanced_textwork.actions.show_amendment'), compare_emendation_path, class: 'link' %>
+  </div>
+</div>

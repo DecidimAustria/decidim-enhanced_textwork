@@ -1,0 +1,26 @@
+<% if flash.now[:error].present? %>
+  $("#js-form-recategorize-paragraphs #category_id").addClass("is-invalid-input")
+  $("<%= escape_javascript(render partial: %q{js-callout}, locals: { css: %q{alert}, text: flash.now[:error] }) %>").appendTo(".callout-wrapper");
+<% end %>
+
+<% if flash.now[:alert].present? %>
+  $("#js-form-recategorize-paragraphs #category_id").removeClass("is-invalid-input")
+  $("<%= escape_javascript(render partial: %q{js-callout}, locals: { css: %q{warning}, text: flash.now[:alert] }) %>").appendTo(".callout-wrapper");
+<% end %>
+
+<% if flash.now[:notice].present? %>
+  $("<%= escape_javascript(render partial: %q{js-callout}, locals: { css: %q{success}, text: flash.now[:notice] }) %>").appendTo(".callout-wrapper");
+
+  <% paragraph_ids.each do |id| %>
+    $(".table-list [data-id='<%= id %>']")
+      .replaceWith("<%= escape_javascript(render partial: %q{paragraph-tr}, locals: { paragraph: paragraph_find(id) }) %>");
+  <% end %>
+
+  $("#js-form-recategorize-paragraphs #category_id").removeClass("is-invalid-input")
+  $(".js-check-all").prop('checked', false);
+  $(".js-check-all-paragraph").prop('checked', false);
+  window.hideBulkActionsButton();
+  window.hideBulkActionForms();
+  window.showOtherActionsButtons();
+  window.selectedParagraphsCountUpdate();
+<% end %>

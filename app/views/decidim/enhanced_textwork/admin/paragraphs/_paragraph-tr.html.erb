@@ -1,0 +1,76 @@
+<tr data-id="<%= paragraph.id %>" <%= "data-published-state=false" if paragraph.answered? && !paragraph.published_state? %>>
+  <td>
+    <%= check_box_tag "paragraph_ids_s[]", paragraph.id, false, class: "js-check-all-paragraph js-paragraph-list-check  js-paragraph-id-#{paragraph.id}" %><br>
+  </td>
+  <td>
+    <%= paragraph.id %><br>
+  </td>
+  <td>
+    <%= link_to(
+     decidim_html_escape(present(paragraph).title).html_safe,
+     paragraph_path(paragraph)
+    ) %><br>
+  </td>
+  <td>
+    <% if paragraph.category %>
+      <%= translated_attribute paragraph.category.name %>
+    <% end %>
+  </td>
+
+  <%= td_resource_scope_for(paragraph.scope) %>
+
+  <td>
+    <strong class="<%= paragraph_state_css_class paragraph %>">
+      <%= t("decidim/amendment", scope: "activerecord.models", count: 1) if paragraph.emendation? %>
+      <%= paragraph_complete_state paragraph %>
+    </strong>
+  </td>
+
+  <% unless current_settings.publish_answers_immediately? %>
+    <td>
+      <% if paragraph.answered? && !paragraph.emendation? %>
+        <%= humanize_boolean paragraph.published_state? %>
+      <% else %>
+        -
+      <% end %>
+    </td>
+  <% end %>
+
+  <% if current_settings.votes_enabled? %>
+    <td>
+      <%= paragraph.paragraph_votes_count %>
+    </td>
+  <% end %>
+
+  <% if current_component.settings.comments_enabled? and !current_settings.comments_blocked? %>
+    <td>
+      <%= paragraph.comments_count %>
+    </td>
+  <% end %>
+
+  <td>
+    <%= paragraph.paragraph_notes_count %>
+  </td>
+
+  <td class="valuators-count">
+    <%= paragraph.valuation_assignments.count %>
+  </td>
+
+  <td>
+    <%= l paragraph.created_at, format: :decidim_short %>
+  </td>
+
+  <td class="table-list__actions">
+    <% if allowed_to? :edit, :paragraph, paragraph: paragraph %>
+      <%= icon_link_to "pencil", edit_paragraph_path(paragraph), t("actions.edit_paragraph", scope: "decidim.enhanced_textwork"), class: "action-icon--edit-paragraph" %>
+    <% else %>
+      <span class="action-space icon"></span>
+    <% end %>
+
+    <%= icon_with_link_to_paragraph(paragraph) %>
+
+    <%= resource_permissions_link(paragraph) %>
+
+   <%= icon_link_to "eye", resource_locator(paragraph).path, t("actions.preview", scope: "decidim.enhanced_textwork.admin"), class: "action-icon--preview", target: :blank %>
+  </td>
+</tr>

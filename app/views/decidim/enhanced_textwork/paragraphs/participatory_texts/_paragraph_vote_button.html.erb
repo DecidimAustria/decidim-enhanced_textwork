@@ -1,0 +1,53 @@
+<% if paragraph.rejected? || paragraph.withdrawn? %>
+  <div></div>
+<% else %>
+  <div id="paragraph-<%= paragraph.id %>-vote-button">
+    <% if !current_user %>
+      <% if current_settings.votes_blocked? %>
+        <%= action_authorized_button_to :vote, t("decidim.enhanced_textwork.paragraphs.vote_button.votes_blocked"), paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list), resource: paragraph, class: "column button light button--sc disabled", disabled: true %>
+      <% else %>
+        <%= action_authorized_button_to :vote, paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list), resource: paragraph, class: "column button light button--sc", data: { disable: true, "redirect-url": paragraph_path(paragraph) } do %>
+          <%= t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+          <span class="show-for-sr"><%= decidim_html_escape(present(paragraph).title) %></span>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if @voted_paragraphs ? @voted_paragraphs.include?(paragraph.id) : paragraph.voted_by?(current_user) %>
+        <%= action_authorized_button_to(
+          :vote,
+          paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list),
+          resource: paragraph,
+          method: :delete,
+          remote: true,
+          data: {
+            disable: true,
+            original: t("decidim.enhanced_textwork.paragraphs.vote_button.already_voted"),
+            replace: t("decidim.enhanced_textwork.paragraphs.vote_button.already_voted_hover"),
+            "redirect-url": paragraph_path(paragraph)
+          },
+          class: "column button light button--sc success",
+          id: "vote_button-#{paragraph.id}"
+        ) do %>
+          <%= icon("check", class: "icon--small", role: "img", "aria-hidden": true) %>
+          <%= t("decidim.enhanced_textwork.paragraphs.vote_button.already_voted") %>
+          <span class="show-for-sr"><%= decidim_html_escape(present(paragraph).title) %></span>
+        <% end %>
+      <% else %>
+        <% if paragraph.maximum_votes_reached? && !paragraph.can_accumulate_supports_beyond_threshold && current_component.participatory_space.can_participate?(current_user) %>
+          <%= content_tag :span, t("decidim.enhanced_textwork.paragraphs.vote_button.maximum_votes_reached"), class: "column button light button--sc disabled", disabled: true %>
+        <% else %>
+          <% if vote_limit_enabled? && remaining_votes_count_for(current_user) == 0 %>
+            <%= content_tag :span, t("decidim.enhanced_textwork.paragraphs.vote_button.no_votes_remaining"), class: "column button light button--sc", disabled: true %>
+          <% elsif current_settings.votes_blocked? || !current_component.participatory_space.can_participate?(current_user) %>
+            <%= content_tag :span, t("decidim.enhanced_textwork.paragraphs.vote_button.votes_blocked"), class: "column button light button--sc disabled", disabled: true %>
+          <% else %>
+            <%= action_authorized_button_to :vote, paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list), resource: paragraph, remote: true, data: { disable: true, "redirect-url": paragraph_path(paragraph) }, class: "column button light button--sc" do %>
+              <%= t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+              <span class="show-for-sr"><%= decidim_html_escape(present(paragraph).title) %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

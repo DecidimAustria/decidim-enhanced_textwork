@@ -1,0 +1,40 @@
+lb:
+  activerecord:
+    models:
+      decidim/enhanced_textwork/paragraph:
+        one: Virschlag
+        other: Virschléi
+  decidim:
+    admin:
+      filters:
+        paragraphs:
+          is_emendation_true:
+            values:
+              'false': Virschléi
+    components:
+      paragraphs:
+        name: Virschléi
+    gamification:
+      badges:
+        paragraphs:
+          name: Virschléi
+    metrics:
+      paragraphs:
+        title: Virschléi
+    paragraphs:
+      admin:
+        exports:
+          paragraphs: Virschléi
+        paragraphs:
+          index:
+            title: Virschléi
+          show:
+            paragraphs: Virschléi
+      application_helper:
+        filter_type_values:
+          paragraphs: Virschléi
+      content_blocks:
+        highlighted_paragraphs:
+          paragraphs: Virschléi
+    statistics:
+      paragraphs_count: Virschléi

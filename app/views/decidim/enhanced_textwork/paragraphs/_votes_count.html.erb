@@ -1,0 +1,18 @@
+<% if !current_settings.votes_hidden? && current_component.participatory_space.can_participate?(current_user) %>
+  <% if component_settings.participatory_texts_enabled? && from_paragraphs_list %>
+    <%= render partial: "decidim/enhanced_textwork/paragraphs/participatory_texts/paragraph_votes_count", locals: { paragraph: paragraph, from_paragraphs_list: true } %>
+  <% else %>
+    <% progress ||= paragraph.paragraph_votes_count || 0 %>
+    <% total ||= paragraph.maximum_votes || 0 %>
+    <% subtitle_text = progress >= total ? t("decidim.enhanced_textwork.paragraphs.votes_count.most_popular_paragraph") : t("decidim.enhanced_textwork.paragraphs.votes_count.need_more_votes") %>
+    <%= cell(
+      "decidim/progress_bar",
+      progress,
+      total: total,
+      units_name: "decidim.enhanced_textwork.paragraphs.votes_count.count",
+      element_id: "paragraph-#{paragraph.id}-votes-count",
+      subtitle_text: subtitle_text,
+      small: from_paragraphs_list
+    ) %>
+  <% end %>
+<% end %>

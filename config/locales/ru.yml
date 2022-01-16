@@ -1,0 +1,379 @@
+ru:
+  activemodel:
+    attributes:
+      paragraph:
+        answer: Ответить
+        answered_at: 'Получен ответ:'
+        body: Основной текст
+        category_id: Категория
+        has_address: Имеет адрес
+        state: Cостояние
+        title: Заголовок
+        user_group_id: Создать предложение в качестве
+      paragraph_answer:
+        answer: Ответить
+      paragraphs_copy:
+        copy_paragraphs: Я понимаю, что при этом все предложения из выбранной составляющей будут позаимствованы в текущую, и что это действие нельзя будет отменить.
+        origin_component_id: Составляющая, откуда нужно скопировать предложения
+    errors:
+      models:
+        paragraph:
+          attributes:
+            add_documents:
+              needs_to_be_reattached: Необходимо заново прикрепить
+            add_photos:
+              needs_to_be_reattached: Необходимо заново прикрепить
+    models:
+      decidim/enhanced_textwork/accepted_paragraph_event: Предложение принято
+      decidim/enhanced_textwork/admin/update_paragraph_category_event: Категория предложения изменена
+      decidim/enhanced_textwork/creation_enabled_event: Включена возможность создания предложений
+      decidim/enhanced_textwork/endorsing_enabled_event: Включена возможность поддерживать предложения
+      decidim/enhanced_textwork/evaluating_paragraph_event: Предложение сейчас рассматривается
+      decidim/enhanced_textwork/paragraph_mentioned_event: Предложение упомянуто
+      decidim/enhanced_textwork/publish_paragraph_event: Предложение обнародовано
+      decidim/enhanced_textwork/rejected_paragraph_event: Предложение отклонено
+      decidim/enhanced_textwork/voting_enabled_event: Включена возможность голосовать по поводу предложений
+  activerecord:
+    models:
+      decidim/enhanced_textwork/paragraph:
+        one: Предложение
+        few: Предложения
+        many: Предложений
+        other: Предложений
+      decidim/enhanced_textwork/paragraph_note:
+        one: Примечание
+        few: Примечания
+        many: Примечаний
+        other: Примечаний
+      decidim/enhanced_textwork/paragraph_vote:
+        one: Голос
+        few: Голоса
+        many: Голосов
+        other: Голосов
+  decidim:
+    components:
+      paragraphs:
+        actions:
+          create: Внести
+          endorse: Поддержать
+          vote: Голосовать
+          withdraw: Отозвать
+        name: Предложения
+        settings:
+          global:
+            announcement: Объявление
+            attachments_allowed: Разрешить прикрпеленные файлы
+            can_accumulate_supports_beyond_threshold: Может накапливать выражения поддержки свыше порогового значения
+            comments_enabled: Комментарии включены
+            geocoding_enabled: Геокодирование включено
+            new_paragraph_help_text: Подсказки по созданию нового предложения
+            official_paragraphs_enabled: Включена возможность выдвигать служебные предложения
+            paragraph_answering_enabled: Включена возможность отвечать на предложения
+            paragraph_edit_before_minutes: Предложения могут быть отредактированы авторами до того, как пройдет столько минут
+            paragraph_length: Предельная длина основного текста предложения
+            paragraph_limit: Предельное количество предложений от одного участника
+            paragraph_wizard_step_1_help_text: Справка мастера предложений о шаге "Создать"
+            paragraph_wizard_step_2_help_text: Справка мастера предложений о шаге "Сравнить"
+            paragraph_wizard_step_3_help_text: Справка мастера предложений о шаге "Завершить"
+            paragraph_wizard_step_4_help_text: Справка мастера предложений о шаге "Обнародовать"
+            resources_permissions_enabled: Для каждого предложения можно задать те или иные разрешения на действия
+            threshold_per_paragraph: Порог для каждого предложения
+            vote_limit: Предельное количество голосов для одного участника
+          step:
+            announcement: Объявление
+            comments_blocked: Комментарии отключены
+            creation_enabled: Включена возможность создания предложений
+            endorsements_blocked: Возможность выразить поддержку отключена
+            endorsements_enabled: Возможность выразить поддержку включена
+            paragraph_answering_enabled: Включена возможность отвечать на предложения
+            votes_blocked: Голосование отключено
+            votes_enabled: Голосование включено
+            votes_hidden: Голоса скрыты (если голосование включено, то при поставленной здесь птичке будет скрыто количество голосов)
+    events:
+      paragraphs:
+        creation_enabled:
+          email_intro: 'Теперь вы можете создавать новые предложения в %{participatory_space_title}! Начните со страницы:'
+          email_outro: Вы получили это уведомление, потому что вы следите за «%{participatory_space_title}». Вы можете отписаться от уведомлений, перейдя по приведенной выше ссылке.
+          email_subject: Теперь в %{participatory_space_title} можно вносить предложения
+          notification_title: Теперь в <a href="%{participatory_space_url}">%{participatory_space_title}</a> появилась возможность вносить <a href="%{resource_path}">новые предложения</a>
+        endorsing_enabled:
+          email_intro: 'Теперь вы можете поддерживать предложения в %{participatory_space_title}! Начните со страницы:'
+          email_outro: Вы получили это уведомление, потому что вы следите за «%{participatory_space_title}». Вы можете отписаться от уведомлений, перейдя по приведенной выше ссылке.
+          email_subject: В %{participatory_space_title} началось предоставление поддержки предложениям
+          notification_title: Теперь в <a href="%{participatory_space_url}">%{participatory_space_title}</a> появилась возможность <a href="%{resource_path}">поддерживать предложения</a>
+        paragraph_accepted:
+          follower:
+            email_intro: 'Предложение "%{resource_title}" было принято. Вы можете прочитать ответ на странице:'
+            email_outro: Вы получили это уведомление, потому что вы следите за «%{resource_title}». Вы можете перестать за ним следить, перейдя по приведенной выше ссылке.
+            email_subject: Предложение, за которым вы следите, было принято
+            notification_title: Предложение <a href="%{resource_path}">%{resource_title}</a> было принято.
+        paragraph_evaluating:
+          follower:
+            email_intro: 'Предложение "%{resource_title}" сейчас рассматривается. Вы можете проверить наличие ответа на странице:'
+            email_outro: Вы получили это уведомление, потому что вы следите за «%{resource_title}». Вы можете перестать за ним следить, перейдя по приведенной выше ссылке.
+            email_subject: Предложение, за которым вы следите, сейчас рассматривается
+            notification_title: Предложение <a href="%{resource_path}">%{resource_title}</a> на рассмотрении.
+        paragraph_mentioned:
+          email_subject: Ваше предложение "%{mentioned_paragraph_title}"было упомянуто
+          notification_title: Ваше предложение «%{mentioned_paragraph_title}» было упомянуто в комментариях <a href="%{resource_path}">в этом пространстве</a>.
+        paragraph_published:
+          email_outro: Вы получили это уведомление, потому что вы следите за «%{author_nickname}». Вы можете отписаться от уведомлений, перейдя по приведенной выше ссылке.
+          notification_title: <a href="%{author_path}">%{author_name} %{author_nickname}</a> обнародовал предложение <a href="%{resource_path}">%{resource_title}</a>.
+        paragraph_published_for_space:
+          email_intro: В "%{participatory_space_title}", за которым вы следите, добавлено предложение "%{resource_title}".
+          email_outro: Вы получили это уведомление, потому что вы следите за «%{participatory_space_title}». Вы можете перестать за ним следить, перейдя по приведенной выше ссылке.
+          notification_title: В %{participatory_space_title} было добавлено предложение <a href="%{resource_path}">%{resource_title}</a>
+        paragraph_rejected:
+          follower:
+            email_intro: 'Предложение "%{resource_title}" было отклонено. Вы можете прочитать ответ на странице:'
+            email_outro: Вы получили это уведомление, потому что вы следите за «%{resource_title}». Вы можете перестать за ним следить, перейдя по приведенной выше ссылке.
+            email_subject: Предложение, за которым вы следите, было отклонено
+            notification_title: Предложение <a href="%{resource_path}">%{resource_title}</a> было отклонено.
+        paragraph_update_category:
+          email_intro: 'Администратор обновил категорию вашего предложения «%{resource_title}», проверьте её:'
+          email_outro: Вы получили это уведомление, потому что вы являетесь автором предложения.
+          email_subject: Обновлена категория предложений %{resource_title}
+          notification_title: Категория предложений <a href="%{resource_path}">%{resource_title}</a> была обновлена ​​администратором.
+        paragraph_update_scope:
+          email_outro: Вы получили это уведомление, потому что вы являетесь автором предложения.
+        voting_enabled:
+          email_intro: 'Теперь вы можете голосовать по предложениям в %{participatory_space_title}! Начните со страницы:'
+          email_outro: Вы получили это уведомление, потому что вы следите за «%{participatory_space_title}». Вы можете отписаться от уведомлений, перейдя по приведенной выше ссылке.
+          email_subject: В %{participatory_space_title} началось голосование по предложениям
+          notification_title: Теперь в <a href="%{participatory_space_url}">%{participatory_space_title}</a> появилась возможность <a href="%{resource_path}">голосовать по предложениям</a>
+    paragraphs:
+      actions:
+        import: Позаимствовать из другой составляющей
+        new: Внести новое предложение
+        title: Действия
+      admin:
+        actions:
+          preview: Предпросмотр
+        exports:
+          paragraphs: Предложения
+        models:
+          paragraph:
+            name: Предложение
+        paragraph_answers:
+          form:
+            accepted: Принято
+            answer_paragraph: Ответить
+            evaluating: Рассматривается
+            rejected: Отклонено
+            title: Ответ на предложение %{title}
+        paragraph_notes:
+          create:
+            error: При попытке добавить к предложению это примечание произошла ошибка
+            success: Примечание к предложению успешно добавлено
+          form:
+            note: Примечание
+            submit: Отправить
+          leave_your_note: Оставьте свое примечание
+          title: Частные примечания
+        paragraphs:
+          answer:
+            invalid: При попытке ответить на это предложение произошла ошибка
+            success: Успешно дан ответ на предложение
+          create:
+            invalid: При попытке создать предложение произошла ошибка
+            success: Предложение успешно создано
+          form:
+            attachment_legend: "(Необязательно) Прикрепить файл"
+            select_a_category: Выберите категорию
+          index:
+            actions: Действия
+            cancel: Отменить
+            change_category: Изменить категорию
+            selected: выбранные
+            title: Предложения
+            update: Обновить
+          new:
+            create: Внести
+            title: Создать предложение
+          publish_answers:
+            select_a_paragraph: Пожалуйста, выберите предложение
+          show:
+            created_at: Дата создания
+            paragraphs: Предложения
+            votes_count: Количество голосов
+          update_category:
+            select_a_category: Пожалуйста, выберите категорию
+            select_a_paragraph: Пожалуйста, выберите предложение
+          update_scope:
+            select_a_paragraph: Пожалуйста, выберите предложение
+        paragraphs_imports:
+          create:
+            invalid: При попытке позаимствовать эти предложения произошла ошибка
+            success: "%{number} предложений успешно позаимствованы"
+          new:
+            create: Позаимствовать предложения
+            no_components: В этом пространстве соучастия нет других составляющих предложений, из которых можно было бы позаимствовать предложения.
+            select_component: Пожалуйста, выберите составляющую
+            select_states: Проверьте состояние предложений, которые вы хотите позаимствовать
+      admin_log:
+        paragraph:
+          answer: "%{user_name} ответил на предложение %{resource_name} в пространстве %{space_name}"
+          create: "%{user_name} создал в пространстве %{space_name} предложение %{resource_name} в качестве служебного предложения"
+        paragraph_note:
+          create: "%{user_name} оставил частное примечание по предложению %{resource_name} в пространстве %{space_name}"
+      answers:
+        accepted: Принято
+        evaluating: Рассматривается
+        not_answered: Без ответов
+        rejected: Отклонено
+        withdrawn: Отозван
+      application_helper:
+        filter_origin_values:
+          citizens: Граждане
+          official: Служебные
+        filter_state_values:
+          not_answered: Без ответов
+      create:
+        error: При попытке сохранить это предложение произошли ошибки.
+        success: Предложение успешно создано. Сохранено как черновик.
+      destroy_draft:
+        error: При попытке удалить этот черновик предложения произошли ошибки.
+        success: Черновик предложения был успешно удален.
+      models:
+        paragraph:
+          fields:
+            category: Категория
+            comments: Комментарии
+            id: Псевдоним
+            notes: Примечания
+            official_paragraph: Служебное предложение
+            published_at: 'Обнародовано:'
+            scope: Охват
+            state: Cостояние
+            title: Заголовок
+            votes: Голоса
+      new:
+        limit_reached: Вы не можете создавать новые предложения, так как вы превысили лимит.
+      paragraph_votes:
+        create:
+          error: При голосовании по этому предложению произошли ошибки.
+      paragraphs:
+        compare:
+          no_similars_found: Хорошая работа! Подобных предложений не найдено
+          title: Похожие предложения
+        complete:
+          send: Отправить
+          title: Завершите свое предложение
+        edit:
+          attachment_legend: "(Необязательно) Добавить вложение"
+          back: Вернуться
+          select_a_category: Пожалуйста, выберите категорию
+          send: Отправить
+          title: Редактировать предложение
+        edit_draft:
+          discard: Отбросить этот черновик
+          discard_confirmation: Вы действительно хотите отбросить этот черновик предложения?
+          send: Предпросмотр
+          title: Редактировать черновик предложения
+        filters:
+          category: Категория
+          origin: Источник
+          related_to: Связано с
+          search: Поиск
+          state: Cостояние
+          voted: Проголосованные
+        filters_small_view:
+          close_modal: Закрыть окошко
+          filter: Отобрать
+          filter_by: 'Отобрать по признаку:'
+          unfold: Развернуть
+        index:
+          new_paragraph: Внести предложение
+          see_all_withdrawn: Просмотреть все отозванные предложения
+          view_paragraph: Просмотреть предложение
+        linked_paragraphs:
+          paragraph_votes:
+            one: голосовать
+            few: голоса
+            many: голоса
+            other: голоса
+        new:
+          send: Продолжить
+          title: Создайте свое предложение
+        orders:
+          label: 'Упорядочить предложения по:'
+          most_voted: С наибольшим количеством голосов
+          random: Произвольно
+          recent: Недавние
+        preview:
+          modify: Изменить предложение
+          paragraph_edit_before_minutes:
+            one: Вы сможете отредактировать это предложение в течение первой минуты после того, как предложение было обнародовано. После того, как пройдет этот промежуток времени, вы не сможете редактировать предложение.
+            few: Вы сможете отредактировать это предложение в течение первых %{count} минут после обнародования предложения. После того, как пройдет этот промежуток времени, вы не сможете редактировать предложение.
+            many: Вы сможете отредактировать это предложение в течение первых %{count} минут после обнародования предложения. После того, как пройдет этот промежуток времени, вы не сможете редактировать предложение.
+            other: Вы сможете отредактировать это предложение в течение первых %{count} минут после обнародования предложения. После того, как пройдет этот промежуток времени, вы не сможете редактировать предложение.
+          publish: Обнародовать
+          title: Обнародуйте свое предложение
+        paragraph:
+          creation_date: 'Создано: %{date}'
+          view_paragraph: Просмотреть предложение
+        show:
+          answer: Ответить
+          comments: Комментарии
+          edit_paragraph: Редактировать предложение
+          endorsements_list: Список тех, кто поддержал
+          paragraph_accepted_reason: 'Это предложение было принято, поскольку:'
+          paragraph_in_evaluation_reason: Это предложение сейчас рассматривается
+          paragraph_rejected_reason: 'Это предложение было отклонено, поскольку:'
+          report: Пожаловаться
+          withdraw_btn_hint: Вы можете снять свое предложение, если передумаете, пока вы не получили никакой поддержки. Предложение не будет удалено, оно будет указано в списке снятых предложений.
+          withdraw_paragraph: Снять предложение
+        vote_button:
+          already_voted: Уже проголосовали
+          already_voted_hover: Отменить голос
+          maximum_votes_reached: Достигнуто предельное количество голосов
+          no_votes_remaining: Больше не осталось голосов
+          vote: Голосовать
+          votes_blocked: Голосование отключено
+        votes_count:
+          count:
+            one: ГОЛОС
+            few: ГОЛОСА
+            many: ГОЛОСОВ
+            other: ГОЛОСА
+          most_popular_paragraph: Самое популярное предложение
+          need_more_votes: Нужно больше голосов
+        voting_rules:
+          can_accumulate_supports_beyond_threshold:
+            description: Каждое предложение может накапливать более %{limit} выражений поддержки
+          paragraph_limit:
+            description: Вы можете создать до %{limit} предложений.
+          threshold_per_paragraph:
+            description: Для того чтобы пройти проверку, предложения должны получить %{limit} выражений поддержки
+          title: 'Голосование регулируется следующими правилами:'
+          vote_limit:
+            description: Вы можете проголосовать до %{limit} предложений.
+            left: Осталось
+            votes: Голоса
+        wizard_aside:
+          back: Вернуться
+          info: Вы создаете <strong>предложение</strong>.
+        wizard_steps:
+          see_steps: просмотреть шаги
+          step_1: Создайте свое предложение
+          step_2: Сравните
+          step_3: Завершите
+          step_4: Обнародуйте свое предложение
+          step_of: Шаг %{current_step_num} из %{total_steps}
+      publish:
+        error: При попытке обнародовать это предложение произошли ошибки.
+        success: Предложение успешно обнародовано.
+      update:
+        error: При попытке сохранить это предложение произошли ошибки.
+        success: Предложение успешно обновлено.
+      update_draft:
+        error: При попытке сохранить этот черновик предложения произошли ошибки.
+        success: Черновик предложения успешно обновлен.
+    resource_links:
+      copied_from_component:
+        paragraph_paragraph: Подобные предложения
+      included_projects:
+        project_result: 'Итоги, представленные в этом проекте:'
+      included_paragraphs:
+        paragraph_project: 'Предложение представлено в проектах:'
+        paragraph_result: 'Предложения, представленные в этих итогах:'

@@ -1,0 +1,12 @@
+<ul id="paragraphs_list">
+  <% decorated_paragraphs do |paragraph| %>
+    <li>
+      <label><input type="checkbox" data-picker-text="<%= paragraph.id_and_title(html_escape: true) %>" data-picker-url="<%= picker_path %>" value="<%= paragraph.id %>" data-picker-choose> <%= paragraph.id_and_title(html_escape: true) %> (<%= paragraph.reference %>)</label>
+    </li>
+  <% end %>
+  <% if more_paragraphs? %>
+    <li><div class="callout warning"><%= t("paragraphs_picker.more_paragraphs", scope: "decidim.enhanced_textwork", number: more_paragraphs_count) %></div>
+    </li>
+  <% end %>
+</ul>
+<div id="no_paragraphs" class="callout warning"><%= t("paragraphs_picker.no_paragraphs", scope: "decidim.enhanced_textwork") %></div>

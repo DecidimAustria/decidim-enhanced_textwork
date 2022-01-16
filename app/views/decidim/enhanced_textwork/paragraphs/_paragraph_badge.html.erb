@@ -1,0 +1,3 @@
+<% if paragraph.published_state? || paragraph.withdrawn? %>
+  <span class="<%= paragraph_state_badge_css_class(paragraph.state) %> label paragraph-status"><%= humanize_paragraph_state paragraph.state %></span>
+<% end %>

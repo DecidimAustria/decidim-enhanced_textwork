@@ -1,0 +1,34 @@
+<div class="card card--action card--list">
+  <% resources.each do |paragraph| %>
+    <div class="card--list__item">
+      <div class="card--list__text">
+        <%= link_to resource_locator(paragraph).path do %>
+          <%= icon "paragraphs", class: "card--list__icon", remove_icon_class: true %>
+        <% end %>
+        <div>
+          <%= link_to resource_locator(paragraph).path, class: "card__link" do %>
+            <h5 class="card--list__heading"><%== decidim_html_escape(present(paragraph).title) %></h5>
+          <% end %>
+          <% present(paragraph) do |paragraph| %>
+            <div class="author">
+              <span class="author__avatar">
+                <%= image_tag paragraph.author.avatar_url %>
+              </span>
+              <span class="author__name">
+                <strong><%= paragraph.author.name %></strong>
+                <%= paragraph.author.nickname %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <% if !current_settings.try(:votes_hidden?) && !paragraph.component.current_settings.votes_hidden? %>
+        <div class="card--list__data">
+          <span class="card--list__data__number">
+            <%= paragraph.votes.size %>
+          </span> <%= t(".paragraph_votes", count: paragraph.votes.size) %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

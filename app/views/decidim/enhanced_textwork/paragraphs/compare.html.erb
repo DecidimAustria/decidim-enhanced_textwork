@@ -1,0 +1,23 @@
+<% add_decidim_page_title(paragraph_wizard_step_title(action_name)) %>
+
+<div class="row">
+  <%= render partial: "wizard_aside" %>
+
+  <div class="columns large-6">
+    <%= render partial: "wizard_header", locals: { callout_step_help_text_class: "warning" } %>
+
+    <% if @similar_paragraphs.presence %>
+      <div class="row small-up-1 card-grid">
+        <% @similar_paragraphs.each do |paragraph| %>
+          <%= render partial: "paragraph_similar", locals: { paragraph: paragraph } %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="row column text-center">
+      <%= link_to t(".continue"), complete_paragraph_path(@paragraph), class: "button small" %>
+    </div>
+  </div>
+
+  <div class="columns large-3"></div>
+</div>

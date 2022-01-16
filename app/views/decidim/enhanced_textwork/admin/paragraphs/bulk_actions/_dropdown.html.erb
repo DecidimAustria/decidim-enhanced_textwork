@@ -1,0 +1,56 @@
+<div id="js-bulk-actions-wrapper">
+  <button
+    id="js-bulk-actions-button"
+    class="button button--nomargin tiny success light dropdown hide"
+    type="button"
+    data-toggle="js-bulk-actions-dropdown">
+    <%= t("decidim.enhanced_textwork.admin.paragraphs.index.actions") %>
+  </button>
+
+  <div
+    id="js-bulk-actions-dropdown"
+    class="dropdown-pane"
+    data-position="bottom"
+    data-alignment="right"
+    data-dropdown="dropdown"
+    data-auto-focus="false"
+    data-events="resize">
+    <ul class="list-reset">
+      <li>
+        <button type="button" data-action="recategorize-paragraphs">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.change_category") %>
+        </button>
+      </li>
+      <li>
+        <button type="button" data-action="scope-change-paragraphs">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.change_scope") %>
+        </button>
+      </li>
+      <li>
+        <button type="button" data-action="merge-paragraphs">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.merge") %>
+        </button>
+      </li>
+      <li>
+        <button type="button" data-action="split-paragraphs">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.split") %>
+        </button>
+      </li>
+      <li>
+        <button type="button" data-action="assign-paragraphs-to-valuator">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.assign_to_valuator") %>
+        </button>
+      </li>
+      <li>
+        <button type="button" data-action="unassign-paragraphs-from-valuator">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.unassign_from_valuator") %>
+        </button>
+      </li>
+      <li>
+        <button type="button" data-action="publish-answers">
+          <%= t("decidim.enhanced_textwork.admin.paragraphs.index.publish_answers") %>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div id="js-unassign-paragraphs-from-valuator-actions" class="hide js-bulk-action-form">
+  <%= form_tag(valuation_assignment_path, method: :delete, id: "js-form-unassign-paragraphs-from-valuator", class: "flex--cc flex-gap--1") do %>
+    <div class="checkboxes hide">
+      <% paragraphs.each do |paragraph| %>
+        <%= check_box_tag "paragraph_ids[]", paragraph.id, false, class: "js-check-all-paragraph js-paragraph-id-#{paragraph.id}" %>
+      <% end %>
+    </div>
+
+    <%= bulk_valuators_select(current_participatory_space, t("decidim.enhanced_textwork.admin.paragraphs.index.unassign_from_valuator")) %>
+
+    <%= submit_tag(t("decidim.enhanced_textwork.admin.paragraphs.index.unassign_from_valuator_button"), id: "js-submit-unassign-paragraphs-from-valuator", class: "button small button--simple float-left") %>
+
+    <button id="js-cancel-unassign-paragraphs-from-valuator" class="button tiny clear compact js-cancel-bulk-action" type="button"><%= t("decidim.enhanced_textwork.admin.paragraphs.index.cancel") %></button>
+  <% end %>
+</div>

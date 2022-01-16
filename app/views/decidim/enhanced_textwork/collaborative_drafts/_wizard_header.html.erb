@@ -1,0 +1,14 @@
+<% if translated_attribute(component_settings.new_paragraph_help_text).present? %>
+  <%= cell("decidim/announcement", component_settings.new_paragraph_help_text) %>
+<% end %>
+
+<% if paragraph_wizard_step_help_text?(@step) %>
+  <div class="paragraph_wizard_help_text">
+    <% callout_step_help_text_class ||= nil %>
+    <%= cell("decidim/announcement", component_settings.try("paragraph_wizard_#{@step}_help_text"), callout_class: callout_step_help_text_class) %>
+  </div>
+<% end %>
+
+<h2 class="section-heading">
+  <%= t(".title") %>
+</h2>

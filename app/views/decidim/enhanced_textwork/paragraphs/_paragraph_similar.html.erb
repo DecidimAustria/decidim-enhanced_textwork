@@ -1,0 +1,22 @@
+<div class="column">
+  <div class="card card--paragraph">
+    <div class="card__content">
+      <div class="card__header">
+        <%= link_to paragraph, target: "_blank" do %>
+          <h5 class="card__title"><%= decidim_html_escape(present(paragraph).title).html_safe %></h5>
+        <% end %>
+        <%= cell("decidim/coauthorships", paragraph, has_actions: false, context: { current_user: current_user }) %>
+
+        <div class="tech-info tech-info--text-left">
+          <%= t("decidim.enhanced_textwork.paragraphs.paragraph.creation_date", date: l(paragraph.created_at, format: :decidim_short)) %>
+        </div>
+        <%= resource_reference(paragraph, class: "tech-info--text-left") %>
+      </div>
+
+      <%== cell("decidim/enhanced_textwork/paragraph_m", paragraph).badge %>
+
+      <p><%= truncate(present(paragraph).body(strip_tags: true), length: 100) %></p>
+      <%= cell "decidim/tags", paragraph, context: { extra_classes: ["tags--paragraph"] } %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,704 @@
+id:
+  activemodel:
+    attributes:
+      collaborative_draft:
+        address: Alamat
+        body: Tubuh
+        category_id: Kategori
+        decidim_scope_id: Cakupan
+        has_address: Memiliki alamat
+        state: Negara
+        title: Judul
+        user_group_id: Buat draf kolaboratif sebagai
+      paragraph:
+        address: Alamat
+        answer: Menjawab
+        answered_at: Dijawab di
+        automatic_hashtags: Hashtag secara otomatis ditambahkan
+        body: Tubuh
+        category_id: Kategori
+        has_address: Memiliki alamat
+        state: Negara
+        suggested_hashtags: Tagar yang disarankan
+        title: Judul
+        user_group_id: Buat paragraph sebagai
+      paragraph_answer:
+        answer: Menjawab
+      paragraphs_copy:
+        copy_paragraphs: Saya memahami bahwa ini akan mengimpor semua paragraph dari komponen yang dipilih ke komponen saat ini dan bahwa tindakan ini tidak dapat dibatalkan.
+        origin_component_id: Komponen untuk menyalin paragraph dari
+      paragraphs_import:
+        import_paragraphs: Impor paragraph
+        keep_authors: Simpan penulis asli
+    errors:
+      models:
+        participatory_text:
+          attributes:
+            document:
+              invalid_document_type: 'Jenis dokumen tidak valid. Format yang diterima adalah: %{valid_mime_types}'
+        paragraph:
+          attributes:
+            add_documents:
+              needs_to_be_reattached: Perlu disambungkan kembali
+            add_photos:
+              needs_to_be_reattached: Perlu disambungkan kembali
+            body:
+              identical: DAN judul tidak bisa sama
+            title:
+              identical: DAN tubuh tidak bisa identik
+    models:
+      decidim/enhanced_textwork/accepted_paragraph_event: Paragraph diterima
+      decidim/enhanced_textwork/admin/update_paragraph_category_event: Kategori paragraph berubah
+      decidim/enhanced_textwork/creation_enabled_event: Pembuatan paragraph diaktifkan
+      decidim/enhanced_textwork/endorsing_enabled_event: Paragraph dukungan diaktifkan
+      decidim/enhanced_textwork/evaluating_paragraph_event: Paragraph sedang dievaluasi
+      decidim/enhanced_textwork/paragraph_mentioned_event: Paragraph disebutkan
+      decidim/enhanced_textwork/publish_paragraph_event: Paragraph dipublikasikan
+      decidim/enhanced_textwork/rejected_paragraph_event: Paragraph ditolak
+      decidim/enhanced_textwork/voting_enabled_event: Pemungutan suara paragraph diaktifkan
+  activerecord:
+    models:
+      decidim/enhanced_textwork/collaborative_draft:
+        other: Draf kolaboratif
+      decidim/enhanced_textwork/paragraph:
+        other: Paragraph
+      decidim/enhanced_textwork/paragraph_note:
+        other: Catatan
+      decidim/enhanced_textwork/paragraph_vote:
+        other: Suara
+  decidim:
+    components:
+      paragraphs:
+        actions:
+          create: Membuat
+          endorse: Mengesahkan
+          vote: Memilih
+          withdraw: Menarik
+        name: Paragraph
+        settings:
+          global:
+            amendments_enabled: Amandemen diaktifkan
+            announcement: Pengumuman
+            attachments_allowed: Izinkan lampiran
+            can_accumulate_supports_beyond_threshold: Dapat mengumpulkan dukungan di luar ambang batas
+            collaborative_drafts_enabled: Draf kolaboratif diaktifkan
+            comments_enabled: Komentar diaktifkan
+            geocoding_enabled: Geocoding diaktifkan
+            minimum_votes_per_user: Suara minimum per pengguna
+            new_paragraph_help_text: Teks bantuan paragraph baru
+            official_paragraphs_enabled: Paragraph resmi diaktifkan
+            participatory_texts_enabled: Teks partisipatif diaktifkan
+            paragraph_answering_enabled: Pengangkatan paragraph diaktifkan
+            paragraph_edit_before_minutes: Paragraph dapat diedit oleh penulis sebelum ini banyak menit berlalu
+            paragraph_length: Panjang badan paragraph maksimum
+            paragraph_limit: Batas paragraph per pengguna
+            paragraph_wizard_step_1_help_text: Panduan paragraph "Buat" teks bantuan langkah
+            paragraph_wizard_step_2_help_text: Paragraph wizard "Bandingkan" langkah bantuan teks
+            paragraph_wizard_step_3_help_text: Panduan paragraph, selesaikan langkah bantuan teks
+            paragraph_wizard_step_4_help_text: Panduan paragraph "Publikasikan" langkah bantuan teks
+            resources_permissions_enabled: Izin tindakan dapat diatur untuk setiap paragraph
+            threshold_per_paragraph: Ambang batas per paragraph
+            vote_limit: Batas suara per pengguna
+          step:
+            announcement: Pengumuman
+            automatic_hashtags: Hashtag ditambahkan ke semua paragraph
+            comments_blocked: Komentar diblokir
+            creation_enabled: Pembuatan paragraph diaktifkan
+            endorsements_blocked: Pengesahan dicekal
+            endorsements_enabled: Pengesahan diaktifkan
+            paragraph_answering_enabled: Pengangkatan paragraph diaktifkan
+            suggested_hashtags: Hashtag disarankan kepada pengguna untuk paragraph baru
+            votes_blocked: Voting diblokir
+            votes_enabled: Voting diaktifkan
+            votes_hidden: Memberi suara tersembunyi (jika suara diaktifkan, memeriksa ini akan menyembunyikan jumlah suara)
+    events:
+      paragraphs:
+        collaborative_draft_access_accepted:
+          email_intro: '%{requester_name} telah diterima untuk diakses sebagai kontributor dari draft kolaboratif <a href="%{resource_path}">%{resource_title}</a>.'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah kolaborator dari <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{requester_name} telah diterima untuk diakses sebagai kontributor dari %{resource_title}."
+          notification_title: <a href="%{requester_path}">%{requester_name} %{requester_nickname}</a> telah <strong>diterima untuk mengakses sebagai kontributor</strong> dari <a href="%{resource_path}">%{resource_title}</a> draf kolaboratif.
+        collaborative_draft_access_rejected:
+          email_intro: '%{requester_name} telah ditolak untuk diakses sebagai kontributor dari draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah kolaborator dari <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{requester_name} telah ditolak untuk diakses sebagai kontributor dari %{resource_title} draf kolaboratif."
+          notification_title: <a href="%{requester_path}">%{requester_name} %{requester_nickname}</a> telah ditolak <strong>sebagai kontributor</strong> dari <a href="%{resource_path}">%{resource_title}</a> draf kolaboratif.
+        collaborative_draft_access_requested:
+          email_intro: '%{requester_name} akses yang diminta sebagai kontributor. Anda dapat <strong>menerima atau menolak permintaan</strong> dari halaman draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah kolaborator dari <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{requester_name} akses yang diminta untuk berkontribusi ke %{resource_title}."
+          notification_title: <a href="%{requester_path}">%{requester_name} %{requester_nickname}</a> meminta akses untuk berkontribusi</a> draf kolaboratif <a href="%{resource_path}">%{resource_title}</a> . Harap <strong>menerima atau menolak permintaan</strong>.
+        collaborative_draft_access_requester_accepted:
+          email_intro: Anda telah diterima untuk mengakses sebagai kontributor dari draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda diminta untuk menjadi kolaborator <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: Anda telah diterima sebagai kontributor %{resource_title}.
+          notification_title: Anda telah <strong>diterima untuk mengakses sebagai kontributor</strong> dari draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.
+        collaborative_draft_access_requester_rejected:
+          email_intro: Anda telah ditolak untuk mengakses sebagai kontributor dari draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda diminta untuk menjadi kolaborator <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: Anda telah ditolak sebagai kontributor %{resource_title}.
+          notification_title: Anda telah ditolak <strong>untuk mengakses sebagai kontributor</strong> dari draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.
+        collaborative_draft_withdrawn:
+          email_intro: <a href="%{author_path}">%{author_name} %{author_nickname}</a> menarik draf kolaboratif <a href="%{resource_path}">%{resource_title}</a>.
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah kolaborator dari <a href="%{resource_path}">%{resource_title}</a>.
+          email_subject: "%{author_name} %{author_nickname} menarik %{resource_title} draf kolaboratif."
+          notification_title: <a href="%{author_path}">%{author_name} %{author_nickname}</a> <strong>menarik</strong> dari <a href="%{resource_path}">%{resource_title}</a> draft kolaboratif.
+        creation_enabled:
+          email_intro: 'Anda sekarang dapat membuat paragraph baru di %{participatory_space_title}! Mulai berpartisipasi di halaman ini:'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti %{participatory_space_title}. Anda dapat berhenti menerima notifikasi mengikuti tautan sebelumnya.
+          email_subject: Paragraph kini tersedia dalam %{participatory_space_title}
+          notification_title: Anda sekarang dapat mengajukan <a href="%{resource_path}">paragraph baru</a> dalam <a href="%{participatory_space_url}">%{participatory_space_title}</a>
+        endorsing_enabled:
+          email_intro: 'Anda dapat mendukung paragraph dalam %{participatory_space_title}! Mulai berpartisipasi di halaman ini:'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti %{participatory_space_title}. Anda dapat berhenti menerima notifikasi mengikuti tautan sebelumnya.
+          email_subject: Paragraph yang mendukung telah dimulai untuk %{participatory_space_title}
+          notification_title: Anda sekarang dapat mulai <a href="%{resource_path}">mengesahkan paragraph</a> dalam <a href="%{participatory_space_url}">%{participatory_space_title}</a>
+        paragraph_accepted:
+          affected_user:
+            email_intro: 'Paragraph Anda "%{resource_title}" telah diterima. Anda dapat membaca jawabannya di halaman ini:'
+            email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah pengarang "%{resource_title}".
+            email_subject: Paragraph Anda telah diterima
+            notification_title: Paragraph Anda <a href="%{resource_path}">%{resource_title}</a> telah diterima.
+          follower:
+            email_intro: 'Paragraph "%{resource_title}" telah diterima. Anda dapat membaca jawabannya di halaman ini:'
+            email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti "%{resource_title}". Anda dapat berhenti mengikutinya dari tautan sebelumnya.
+            email_subject: Paragraph yang Anda ikuti telah diterima
+            notification_title: Paragraph <a href="%{resource_path}">%{resource_title}</a> telah diterima.
+        paragraph_evaluating:
+          affected_user:
+            email_intro: 'Paragraph Anda "%{resource_title}" saat ini sedang dievaluasi. Anda dapat memeriksa jawaban di halaman ini:'
+            email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah pengarang "%{resource_title}".
+            email_subject: Paragraph Anda sedang dievaluasi
+            notification_title: Paragraph Anda <a href="%{resource_path}">%{resource_title}</a> sedang dievaluasi.
+          follower:
+            email_intro: 'Paragraph "%{resource_title}" saat ini sedang dievaluasi. Anda dapat memeriksa jawaban di halaman ini:'
+            email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti "%{resource_title}". Anda dapat berhenti mengikutinya dari tautan sebelumnya.
+            email_subject: Paragraph yang Anda ikuti sedang dievaluasi
+            notification_title: Paragraph <a href="%{resource_path}">%{resource_title}</a> sedang dievaluasi.
+        paragraph_mentioned:
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah pengarang "%{resource_title}".
+          email_subject: Paragraph Anda "%{mentioned_paragraph_title}" telah disebutkan
+          notification_title: Paragraph Anda "%{mentioned_paragraph_title}" telah disebutkan <a href="%{resource_path}">dalam ruang</a> di komentar.
+        paragraph_published:
+          email_intro: '%{author_name} %{author_nickname}, siapa yang Anda ikuti, telah menerbitkan paragraph baru yang disebut "%{resource_title}". Lihat dan sumbangkan:'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti %{author_nickname}. Anda dapat berhenti menerima notifikasi mengikuti tautan sebelumnya.
+          email_subject: Paragraph baru "%{resource_title}" oleh %{author_nickname}
+          notification_title: Paragraph <a href="%{resource_path}">%{resource_title}</a> diterbitkan oleh <a href="%{author_path}">%{author_name} %{author_nickname}</a>.
+        paragraph_published_for_space:
+          email_intro: Paragraph "%{resource_title}" telah ditambahkan ke "%{participatory_space_title}" yang Anda ikuti.
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti "%{participatory_space_title}". Anda dapat berhenti mengikutinya dari tautan sebelumnya.
+          email_subject: Paragraph baru "%{resource_title}" ditambahkan ke %{participatory_space_title}
+          notification_title: Paragraph <a href="%{resource_path}">%{resource_title}</a> telah ditambahkan ke %{participatory_space_title}
+        paragraph_rejected:
+          affected_user:
+            email_intro: 'Paragraph Anda "%{resource_title}" telah ditolak. Anda dapat membaca jawabannya di halaman ini:'
+            email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah pengarang "%{resource_title}".
+            email_subject: Paragraph Anda ditolak
+            notification_title: Paragraph Anda <a href="%{resource_path}">%{resource_title}</a> telah ditolak.
+          follower:
+            email_intro: 'Paragraph "%{resource_title}" telah ditolak. Anda dapat membaca jawabannya di halaman ini:'
+            email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti "%{resource_title}". Anda dapat berhenti mengikutinya dari tautan sebelumnya.
+            email_subject: Paragraph yang Anda ikuti telah ditolak
+            notification_title: Paragraph <a href="%{resource_path}">%{resource_title}</a> telah ditolak.
+        paragraph_update_category:
+          email_intro: 'Admin telah memperbarui kategori paragraph Anda "%{resource_title}", periksa ini:'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah penulis paragraph.
+          email_subject: Kategori paragraph %{resource_title} telah diperbarui
+          notification_title: Kategori paragraph <a href="%{resource_path}">%{resource_title}</a> telah diperbarui oleh admin.
+        paragraph_update_scope:
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda adalah penulis paragraph.
+        voting_enabled:
+          email_intro: 'Anda dapat memilih paragraph dalam %{participatory_space_title}! Mulai berpartisipasi di halaman ini:'
+          email_outro: Anda telah menerima pemberitahuan ini karena Anda mengikuti %{participatory_space_title}. Anda dapat berhenti menerima notifikasi mengikuti tautan sebelumnya.
+          email_subject: Paragraph voting telah dimulai untuk %{participatory_space_title}
+          notification_title: Anda sekarang dapat memulai <a href="%{resource_path}">paragraph voting</a> dalam <a href="%{participatory_space_url}">%{participatory_space_title}</a>
+    gamification:
+      badges:
+        accepted_paragraphs:
+          conditions:
+            - Pilih ruang partisipasi yang Anda minati dengan penyerahan agar paragraph diaktifkan
+            - Cobalah membuat paragraph yang bisa dilakukan. Dengan cara ini mereka lebih mungkin diterima.
+          description: Lencana ini diberikan ketika Anda secara aktif berpartisipasi dengan paragraph baru dan ini diterima.
+          description_another: Pengguna ini telah menerima %{score} paragraph.
+          description_own: Anda mendapat %{score} paragraph diterima.
+          name: Paragraph yang diterima
+          next_level_in: Dapatkan %{score} paragraph lagi diterima untuk mencapai level berikutnya!
+          unearned_another: Pengguna ini belum menerima paragraph apa pun.
+          unearned_own: Anda belum menerima paragraph.
+        paragraph_votes:
+          conditions:
+            - Jelajahi dan habiskan waktu untuk membaca paragraph orang lain
+            - Berikan dukungan pada paragraph yang Anda sukai atau temukan menarik
+          description: Lencana ini diberikan saat Anda mendukung paragraph orang lain.
+          description_another: Pengguna ini telah memberikan dukungan untuk %{score} paragraph.
+          description_own: Anda telah memberikan dukungan untuk %{score} paragraph.
+          name: Dukungan paragraph
+          next_level_in: Berikan dukungan untuk %{score} lebih banyak paragraph untuk mencapai level berikutnya!
+          unearned_another: Pengguna ini belum memberikan dukungan untuk paragraph apa pun.
+          unearned_own: Anda telah memberi dukungan untuk belum ada paragraph.
+        paragraphs:
+          conditions:
+            - Pilih ruang partisipasi yang Anda minati dengan penyerahan agar paragraph diaktifkan
+            - Buat paragraph baru
+          description: Lencana ini diberikan ketika Anda secara aktif berpartisipasi dengan paragraph baru.
+          description_another: Pengguna ini telah membuat %{score} paragraph.
+          description_own: Anda telah membuat %{score} paragraph.
+          name: Paragraph
+          next_level_in: Buat %{score} paragraph lagi untuk mencapai level berikutnya!
+          unearned_another: Pengguna ini belum membuat paragraph apa pun.
+          unearned_own: Anda belum membuat paragraph.
+    metrics:
+      accepted_paragraphs:
+        description: Jumlah paragraph yang diterima oleh pengguna
+        object: paragraph
+        title: Paragraph yang Diterima
+      endorsements:
+        description: Jumlah dukungan yang dihasilkan dalam paragraph
+        object: dukungan
+        title: Endorsemen
+      paragraphs:
+        description: Jumlah paragraph yang dihasilkan
+        object: paragraph
+        title: Paragraph
+      votes:
+        description: Jumlah suara yang dihasilkan dalam paragraph oleh pengguna
+        object: suara
+        title: Suara
+    participatory_spaces:
+      highlighted_paragraphs:
+        see_all: Lihat semua (%{count})
+    paragraphs:
+      actions:
+        edit_paragraph: Edit paragraph
+        import: Impor dari komponen lain
+        new: Paragraph baru
+        participatory_texts: Teks partisipatif
+        title: Tindakan
+      admin:
+        actions:
+          preview: Preview
+        exports:
+          paragraphs: Paragraph
+        models:
+          paragraph:
+            name: Usul
+        participatory_texts:
+          bulk-actions:
+            are_you_sure: Apakah Anda yakin akan membuang seluruh konsep teks partisipatif?
+            discard_all: Buang semua
+            import_doc: Impor dokumen
+          discard:
+            success: Semua konsep teks Partisipatif telah dibuang.
+          import:
+            invalid: Formulirnya tidak valid!
+            success: Selamat, bagian berikut telah diuraikan dari dokumen yang diimpor, mereka telah dikonversi menjadi paragraph. Sekarang Anda dapat meninjau dan menyesuaikan apa pun yang Anda perlukan sebelum memublikasikan.
+          index:
+            info_1: Bagian berikut telah diurai dari dokumen yang diimpor, mereka telah dikonversi menjadi paragraph. Sekarang Anda dapat meninjau dan menyesuaikan apa pun yang Anda perlukan sebelum memublikasikan.
+            publish_document: Publikasikan dokumen
+            save_draft: Menyimpan konsep
+            title: TEKNIK PREVIEW TEKNIKAL
+          new_import:
+            accepted_mime_types:
+              md: Penurunan harga
+            bottom_hint: "(Anda akan dapat melihat dan menyortir bagian dokumen)"
+            title: TAMBAHKAN DOKUMEN
+            upload_document: Unggah dokumen
+          publish:
+            invalid: Tidak dapat memublikasikan paragraph
+            success: Semua paragraph telah dipublikasikan
+          sections:
+            article: "<em>Pasal</em>"
+            section: "<em>Bagian:</em> <strong>%{title}</strong>"
+            sub-section: "<em>Sub-bagian:</em> %{title}"
+          update:
+            success: Teks partisipatif berhasil diperbarui.
+        paragraph_answers:
+          form:
+            accepted: Diterima
+            answer_paragraph: Menjawab
+            evaluating: Mengevaluasi
+            rejected: Ditolak
+            title: Jawaban untuk paragraph %{title}
+        paragraph_notes:
+          create:
+            error: Ada masalah saat membuat catatan paragraph ini
+            success: Catatan paragraph berhasil dibuat
+          form:
+            note: Catatan
+            submit: Menyerahkan
+          leave_your_note: Tinggalkan catatanmu
+          title: Catatan pribadi
+        paragraphs:
+          answer:
+            invalid: Ada masalah saat menjawab paragraph ini
+            success: Paragraph berhasil dijawab
+          create:
+            invalid: Ada masalah saat membuat paragraph ini
+            success: Paragraph berhasil dibuat
+          edit:
+            title: Perbarui paragraph
+            update: Memperbarui
+          form:
+            attachment_legend: "(Opsional) Tambahkan lampiran"
+            created_in_meeting: Paragraph ini berasal dari rapat
+            select_a_category: Pilih Kategori
+            select_a_meeting: Pilih rapat
+          index:
+            actions: Tindakan
+            cancel: Membatalkan
+            change_category: Ubah kategori
+            merge: Bergabunglah dengan yang baru
+            merge_button: Menggabungkan
+            publish: Menerbitkan
+            select_component: Pilih komponen
+            selected: terpilih
+            split: Bagi paragraph
+            split_button: Membagi
+            title: Paragraph
+            update: Memperbarui
+          new:
+            create: Membuat
+            title: Buat paragraph
+          publish_answers:
+            select_a_paragraph: Silakan pilih paragraph
+          show:
+            authors: Penulis
+            body: Tubuh
+            created_at: Tanggal pembuatan
+            paragraphs: Paragraph
+            votes_count: Suara menghitung
+          update_category:
+            select_a_category: Silakan pilih kategori
+            select_a_paragraph: Silakan pilih paragraph
+          update_scope:
+            select_a_paragraph: Silakan pilih paragraph
+        paragraphs_imports:
+          create:
+            invalid: Ada masalah saat mengimpor paragraph
+            success: "%{number} paragraph berhasil diimpor"
+          new:
+            create: Mengimpor paragraph
+            no_components: Tidak ada komponen paragraph lain dalam ruang partisipatif ini untuk mengimpor paragraph dari.
+            select_component: Silakan pilih komponen
+            select_states: Periksa status paragraph untuk diimpor
+        paragraphs_merges:
+          create:
+            success: Berhasil menggabungkan paragraph menjadi paragraph baru.
+        paragraphs_splits:
+          create:
+            success: Berhasil membagi paragraph menjadi paragraph baru.
+      admin_log:
+        paragraph:
+          answer: "%{user_name} menjawab %{resource_name} paragraph pada %{space_name} ruang"
+          create: "%{user_name} membuat %{resource_name} paragraph pada %{space_name} ruang sebagai paragraph resmi"
+          update: "%{user_name} memperbarui %{resource_name} paragraph resmi pada %{space_name} ruang"
+        paragraph_note:
+          create: "%{user_name} meninggalkan catatan pribadi pada %{resource_name} paragraph pada %{space_name} ruang"
+      answers:
+        accepted: Diterima
+        evaluating: Mengevaluasi
+        not_answered: Tidak dijawab
+        rejected: Ditolak
+        withdrawn: Ditarik
+      application_helper:
+        filter_category_values:
+          all: Semua
+        filter_origin_values:
+          all: Semua
+          citizens: Warga
+          meetings: Rapat
+          official: Resmi
+          user_groups: Grup Pengguna
+        filter_scope_values:
+          all: Semua
+        filter_state_values:
+          accepted: Diterima
+          all: Semua
+          evaluating: Mengevaluasi
+          not_answered: Tidak dijawab
+          rejected: Ditolak
+        filter_type_values:
+          all: Semua
+          amendments: Amandemen
+          paragraphs: Paragraph
+      collaborative_drafts:
+        collaborative_draft:
+          publish:
+            error: Ada kesalahan saat memublikasikan draf kolaboratif.
+            irreversible_action_modal:
+              body: Setelah menerbitkan draf sebagai paragraph, draf tidak akan dapat diedit lagi. Paragraph tidak akan menerima penulis atau kontribusi baru.
+              cancel: Membatalkan
+              ok: Publikasikan sebagai Paragraph
+              title: Tindakan berikut tidak dapat diubah
+            success: Draf kolaboratif berhasil diterbitkan sebagai paragraph.
+          view_collaborative_draft: Lihat Draf Kolaborasi
+          withdraw:
+            error: Terjadi kesalahan saat menutup draf kolaboratif.
+            irreversible_action_modal:
+              body: Setelah menutup draf, draf tidak akan dapat diedit lagi. Draf tidak akan menerima penulis atau kontribusi baru.
+              cancel: Membatalkan
+              ok: Tarik draf kolaboratif
+              title: Tindakan berikut tidak dapat diubah
+            success: Draf kolaboratif berhasil ditarik.
+        count:
+          drafts_count:
+            other: "%{count} draf kolaboratif"
+        create:
+          error: Ada masalah saat membuat draf kolaboratif ini
+          success: Draf kolaboratif berhasil dibuat.
+        edit:
+          attachment_legend: "(Opsional) Tambahkan lampiran"
+          back: Kembali
+          select_a_category: Silakan pilih kategori
+          send: Kirim
+          title: Edit draf kolaboratif
+        filters:
+          all: Semua
+          amendment: Amandemen
+          category: Kategori
+          open: Buka
+          published: Diterbitkan
+          related_to: Berhubungan dengan
+          scope: Cakupan
+          search: Pencarian
+          state: Negara
+          withdrawn: Ditarik
+        filters_small_view:
+          close_modal: Tutup modal
+          filter: Filter
+          filter_by: Filter berdasarkan
+          unfold: Membuka
+        new:
+          send: Terus
+        new_collaborative_draft_button:
+          new_collaborative_draft: Draf kolaboratif baru
+        orders:
+          label: 'Urutan draf oleh:'
+          most_contributed: Sebagian besar berkontribusi
+          random: Acak
+          recent: Baru
+        requests:
+          accepted_request:
+            error: Tidak dapat diterima sebagai kolaborator, coba lagi nanti.
+            success: "@%{user} telah diterima sebagai kolaborator dengan sukses"
+          access_requested:
+            error: Permintaan Anda tidak dapat diselesaikan, coba lagi nanti.
+            success: Permintaan Anda untuk berkolaborasi telah berhasil dikirim
+          collaboration_requests:
+            accept_request: Menerima
+            reject_request: Menolak
+            title: Permintaan kolaborasi
+          rejected_request:
+            error: Tidak dapat ditolak sebagai kolaborator, coba lagi nanti.
+            success: "@%{user} telah ditolak sebagai kolaborator dengan sukses"
+        show:
+          back: Kembali
+          edit: Edit draf kolaboratif
+          final_paragraph: paragraph terakhir
+          final_paragraph_help_text: Rancangan ini selesai. Anda dapat melihat paragraph selesai akhir
+          hidden_authors_count:
+            other: dan %{count} lebih banyak orang
+          info-message: Ini adalah <strong>draf kolaboratif</strong> untuk paragraph. Ini berarti Anda dapat membantu penulisnya untuk membentuk paragraph menggunakan bagian komentar di bawah ini atau meningkatkannya secara langsung dengan meminta akses untuk mengeditnya. Setelah penulis memberi Anda akses, Anda akan dapat membuat perubahan pada draf ini.
+          publish: Menerbitkan
+          publish_info: Publikasikan versi draf ini atau
+          published_paragraph: paragraph yang dipublikasikan
+          request_access: Minta akses
+          requested_access: Akses diminta
+          version_history: lihat riwayat versi untuk paragraph ini
+          withdraw: tarik draft
+        states:
+          open: Buka
+          published: Diterbitkan
+          withdrawn: Ditarik
+        update:
+          error: Sudah ada kesalahan saat menyimpan draf kolaboratif.
+          success: Draf kolaboratif berhasil diperbarui.
+        wizard_aside:
+          info: Anda membuat <strong>draf kolaboratif</strong>.
+        wizard_header:
+          title: Buat draf kolaboratif Anda
+      create:
+        error: Sudah ada kesalahan saat menyimpan paragraph.
+        success: Paragraph berhasil dibuat. Disimpan sebagai Draf.
+      destroy_draft:
+        error: Terjadi kesalahan saat menghapus draf paragraph.
+        success: Paragraph paragraph berhasil dihapus.
+      last_activity:
+        new_paragraph_at_html: "<span>Paragraph baru pada %{link}</span>"
+      models:
+        collaborative_draft:
+          fields:
+            authors: Penulis
+            comments: Komentar
+            contributions: Kontribusi
+        paragraph:
+          fields:
+            category: Kategori
+            comments: Komentar
+            id: ID
+            notes: Catatan
+            official_paragraph: Paragraph resmi
+            published_at: Diterbitkan di
+            scope: Cakupan
+            state: Negara
+            title: Judul
+            votes: Suara
+      new:
+        limit_reached: Anda tidak dapat membuat paragraph baru karena Anda telah melampaui batas.
+      participatory_text_paragraph:
+        alternative_title: Tidak ada teks partisipatif saat ini
+        buttons:
+          amend: Merubah
+          comment: Komentar
+          comments: Komentar
+      paragraph_votes:
+        create:
+          error: Ada kesalahan saat memilih paragraph.
+      paragraphs:
+        compare:
+          continue: Terus
+          no_similars_found: Sudah selesai dilakukan dengan baik! Tidak ada paragraph serupa yang ditemukan
+          title: Paragraph serupa
+        complete:
+          send: Kirim
+          title: Selesaikan paragraph Anda
+        count:
+          paragraphs_count:
+            other: "%{count} paragraph"
+        edit:
+          attachment_legend: "(Opsional) Tambahkan lampiran"
+          back: Kembali
+          select_a_category: Silakan pilih kategori
+          send: Kirim
+          title: Edit paragraph
+        edit_draft:
+          discard: Buang draf ini
+          discard_confirmation: Anda yakin ingin membuang draf paragraph ini?
+          send: Preview
+          title: Edit Draf Paragraph
+        filters:
+          amendment_type: Mengetik
+          category: Kategori
+          origin: Asal
+          related_to: Berhubungan dengan
+          scope: Cakupan
+          search: Pencarian
+          state: Negara
+          type: Mengetik
+          voted: Dipilih
+        filters_small_view:
+          close_modal: Tutup modal
+          filter: Filter
+          filter_by: Filter berdasarkan
+          unfold: Membuka
+        index:
+          collaborative_drafts_list: Akses draf kolaboratif
+          new_paragraph: Paragraph baru
+          see_all_withdrawn: Lihat semua paragraph yang ditarik
+          view_paragraph: Lihat paragraph
+        linked_paragraphs:
+          paragraph_votes:
+            other: suara
+        new:
+          send: Terus
+          title: Buat Paragraph Anda
+        orders:
+          label: 'Memesan paragraph dengan:'
+          most_voted: Sebagian besar memilih
+          random: Acak
+          recent: Baru
+        participatory_texts:
+          index:
+            document_index: Indeks dokumen
+          view_index:
+            see_index: Lihat indeks
+        preview:
+          modify: Ubah paragraph
+          paragraph_edit_before_minutes:
+            other: Anda akan dapat mengedit paragraph ini selama %{count} menit pertama setelah paragraph diterbitkan. Setelah jendela waktu ini berlalu, Anda tidak akan dapat mengedit paragraph.
+          publish: Menerbitkan
+          title: Publikasikan paragraph Anda
+        paragraph:
+          creation_date: 'Penciptaan: %{date}'
+          view_paragraph: Lihat paragraph
+        show:
+          answer: Menjawab
+          back_to: Kembali ke
+          comments: Komentar
+          edit_paragraph: Edit paragraph
+          endorsements_list: Daftar Endorsemen
+          hidden_endorsers_count:
+            other: dan %{count} lebih banyak orang
+          link_to_collaborative_draft_help_text: Paragraph ini adalah hasil dari draf kolaboratif. Tinjau sejarahnya
+          link_to_collaborative_draft_text: Lihat draf kolaboratif
+          paragraph_accepted_reason: 'Paragraph ini telah diterima karena:'
+          paragraph_in_evaluation_reason: Paragraph ini sedang dievaluasi
+          paragraph_rejected_reason: 'Paragraph ini telah ditolak karena:'
+          report: Melaporkan
+          withdraw_btn_hint: Anda dapat menarik paragraph Anda jika Anda berubah pikiran, selama Anda belum menerima dukungan apa pun. Paragraph tidak dihapus, itu akan muncul dalam daftar paragraph yang ditarik.
+          withdraw_paragraph: Tarik paragraph
+        vote_button:
+          already_voted: Sudah memilih
+          already_voted_hover: Batalkan suara
+          maximum_votes_reached: Batas suara tercapai
+          no_votes_remaining: Tidak ada suara yang tersisa
+          vote: Memilih
+          votes_blocked: Voting dinonaktifkan
+        votes_count:
+          count:
+            other: SUARA
+          most_popular_paragraph: Paragraph paling populer
+          need_more_votes: Butuh lebih banyak suara
+        voting_rules:
+          can_accumulate_supports_beyond_threshold:
+            description: Setiap paragraph dapat mengumpulkan lebih dari %{limit} dukungan
+          minimum_votes_per_user:
+            description: Anda harus mendistribusikan minimal %{votes} suara di antara paragraph yang berbeda.
+            given_enough_votes: Anda telah memberikan dukungan yang cukup.
+            supports_remaining: Anda harus memilih %{remaining_votes} paragraph lagi agar suara Anda dipertimbangkan.
+          paragraph_limit:
+            description: Anda dapat membuat hingga %{limit} paragraph.
+          threshold_per_paragraph:
+            description: Agar paragraph yang divalidasi harus mencapai %{limit} dukungan
+          title: 'Voting tunduk pada aturan berikut:'
+          vote_limit:
+            description: Anda dapat memilih hingga %{limit} paragraph.
+            left: Sisa
+            votes: Suara
+        wizard_aside:
+          back: Kembali
+          info: Anda membuat <strong>paragraph</strong>.
+        wizard_steps:
+          see_steps: lihat langkah-langkahnya
+          step_1: Buat paragraph Anda
+          step_2: Membandingkan
+          step_3: Lengkap
+          step_4: Publikasikan paragraph Anda
+          step_of: Langkah %{current_step_num} dari %{total_steps}
+      publish:
+        error: Sudah ada kesalahan saat memublikasikan paragraph.
+        success: Paragraph berhasil diterbitkan.
+      update:
+        error: Sudah ada kesalahan saat menyimpan paragraph.
+        success: Paragraph berhasil diperbarui.
+      update_draft:
+        error: Ada kesalahan saat menyimpan draf paragraph.
+        success: Paragraph paragraph berhasil diperbarui.
+      versions:
+        collaborative_drafts:
+          back_to_resource: Kembali ke draf kolaboratif
+        index:
+          title: Versi
+        paragraphs:
+          back_to_resource: Kembali ke paragraph
+      withdraw:
+        errors:
+          has_supports: Paragraph ini tidak dapat ditarik karena sudah memiliki dukungan.
+    resource_links:
+      copied_from_component:
+        paragraph_paragraph: Paragraph terkait
+      included_projects:
+        project_result: 'Hasil yang muncul dalam proyek ini:'
+      included_paragraphs:
+        paragraph_project: 'Paragraph yang muncul dalam proyek-proyek ini:'
+        paragraph_result: 'Paragraph yang muncul dalam hasil ini:'

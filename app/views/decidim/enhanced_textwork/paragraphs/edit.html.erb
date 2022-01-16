@@ -1,0 +1,31 @@
+<% add_decidim_page_title(paragraph_wizard_step_title(action_name)) %>
+
+<div class="row columns">
+  <div class="m-bottom">
+    <%= link_to :back, class: "muted-link" do %>
+      <%= icon "chevron-left", class: "icon--small", role: "img", "aria-hidden": true %>
+      <%= t(".back") %>
+    <% end %>
+  </div>
+  <h2 class="section-heading"><%= t(".title") %></h2>
+</div>
+
+<div class="row">
+  <div class="columns large-6 medium-centered">
+    <div class="card">
+      <%= cell("decidim/announcement", translated_attribute(component_settings.new_paragraph_help_text)) %>
+
+      <div class="card__content">
+        <%= decidim_form_for(@form) do |form| %>
+          <%= render partial: "edit_form_fields", locals: { form: form } %>
+
+          <div class="actions">
+            <%= form.submit t(".send"), class: "button expanded", data: { disable: true } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_pack_tag "decidim_enhanced_textwork" %>

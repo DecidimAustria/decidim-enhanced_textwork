@@ -1,0 +1,19 @@
+<section class="section row collapse highlighted_paragraphs">
+  <h3 class="section-heading">
+    <%= translated_attribute(model.name) %>  <a href="<%= main_component_path(model) %>" class="text-small"><%= t("decidim.participatory_spaces.highlighted_paragraphs.see_all", count: paragraphs_count) %></a>
+  </h3>
+
+  <%= cell(
+    "decidim/collapsible_list",
+    paragraphs_to_render,
+    cell_options: {},
+    list_class: "row small-up-1 medium-up-2 card-grid",
+    size: paragraphs_count
+    ) %>
+
+  <%= link_to(
+    t("decidim.participatory_spaces.highlighted_paragraphs.see_all", count: paragraphs_count),
+    main_component_path(model),
+    class: "button button--sc hollow button--right"
+  ) %>
+</section>
