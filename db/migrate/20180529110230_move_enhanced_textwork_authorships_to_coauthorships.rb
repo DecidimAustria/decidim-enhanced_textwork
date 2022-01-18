@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MoveAuthorshipsToCoauthorships < ActiveRecord::Migration[5.1]
+class MoveEnhancedTextworkAuthorshipsToCoauthorships < ActiveRecord::Migration[5.1]
   class Paragraph < ApplicationRecord
     self.table_name = :decidim_enhanced_textwork_paragraphs
   end

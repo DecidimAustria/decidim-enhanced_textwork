@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UseMd5Indexes < ActiveRecord::Migration[5.2]
+class UseEnhancedTextworkMd5Indexes < ActiveRecord::Migration[5.2]
   def up
     remove_index :decidim_enhanced_textwork_paragraphs, name: "decidim_enhanced_textwork_paragraph_title_search"
     remove_index :decidim_enhanced_textwork_paragraphs, name: "decidim_enhanced_textwork_paragraph_body_search"

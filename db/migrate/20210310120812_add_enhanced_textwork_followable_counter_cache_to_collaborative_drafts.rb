@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddFollowableCounterCacheToCollaborativeDrafts < ActiveRecord::Migration[5.2]
+class AddEnhancedTextworkFollowableCounterCacheToCollaborativeDrafts < ActiveRecord::Migration[5.2]
   def change
     add_column :decidim_enhanced_textwork_collaborative_drafts, :follows_count, :integer, null: false, default: 0, index: true
 

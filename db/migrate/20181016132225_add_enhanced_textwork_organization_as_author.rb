@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddOrganizationAsAuthor < ActiveRecord::Migration[5.2]
+class AddEnhancedTextworkOrganizationAsAuthor < ActiveRecord::Migration[5.2]
   def change
     official_paragraphs = Decidim::EnhancedTextwork::Paragraph.find_each.select do |paragraph|
       paragraph.coauthorships.count.zero?
