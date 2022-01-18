@@ -3,7 +3,7 @@
 module Decidim
   module EnhancedTextwork
     # Simple helpers to handle markup variations for paragraphs
-    module EnhancedTextworkHelper
+    module ParagraphsHelper
       def paragraph_reason_callout_announcement
         {
           title: paragraph_reason_callout_title,

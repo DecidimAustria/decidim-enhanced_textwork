@@ -2,7 +2,7 @@
 
 require "decidim/components/namer"
 
-Decidim.register_component(:paragraphs) do |component|
+Decidim.register_component(:enhanced_textwork) do |component|
   component.engine = Decidim::EnhancedTextwork::Engine
   component.admin_engine = Decidim::EnhancedTextwork::AdminEngine
   component.stylesheet = "decidim/enhanced_textwork/paragraphs"
@@ -47,7 +47,7 @@ Decidim.register_component(:paragraphs) do |component|
     settings.attribute :participatory_texts_enabled,
                        type: :boolean, default: true,
                        readonly: ->(context) { Decidim::EnhancedTextwork::Paragraph.where(component: context[:component]).any? }
-    settings.attribute :hide_participatory_text_titles_enabled, type: :boolean, default: false
+    settings.attribute :hide_participatory_text_titles_enabled, type: :boolean, default: true
     settings.attribute :amendments_enabled, type: :boolean, default: false
     settings.attribute :amendments_wizard_help_text, type: :text, translated: true, editor: true, required: false
     settings.attribute :announcement, type: :text, translated: true, editor: true

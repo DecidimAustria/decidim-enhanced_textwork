@@ -6,7 +6,7 @@ module Decidim
       # This class contains helpers needed to format Meetings
       # in order to use them in select forms for Paragraphs.
       #
-      module EnhancedTextworkHelper
+      module ParagraphsHelper
         include Decidim::Admin::ResourceScopeHelper
 
         # Public: A formatted collection of Meetings to be used

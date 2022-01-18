@@ -16,7 +16,7 @@ module Decidim
         Decidim::Component
           .where(
             participatory_space: model,
-            manifest_name: :paragraphs
+            manifest_name: :enhanced_textwork
           )
           .published
       end

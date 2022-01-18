@@ -39,7 +39,7 @@ module Decidim
         form: "Decidim::EnhancedTextwork::ParagraphForm"
       )
 
-      component_manifest_name "paragraphs"
+      component_manifest_name "enhanced_textwork"
 
       has_many :votes,
                -> { final },
