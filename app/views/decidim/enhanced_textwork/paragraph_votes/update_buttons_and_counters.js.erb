@@ -7,7 +7,6 @@
     }
 
     var $paragraphVoteButton = $('#paragraph-<%= paragraph.id %>-vote-button');
-    alert("test");
     if($paragraphVoteButton[0]) {
       morphdom($paragraphVoteButton[0], '<%= j(render partial: "decidim/enhanced_textwork/paragraphs/vote_button", locals: { paragraph: paragraph, from_paragraphs_list: @from_paragraphs_list, chevron_button: @chevron_button }).strip.html_safe %>');
     }
