@@ -84,6 +84,9 @@ de:
         other: Unterstützer
   decidim:
     admin:
+      exports:
+        formats:
+          Word: docx
       filters:
         paragraphs:
           category_id_eq:
@@ -113,7 +116,7 @@ de:
         search_placeholder:
           id_string_or_title_cont: In %{collection} nach ID oder Titel suchen.
     components:
-      paragraphs:
+      enhanced_textwork:
         actions:
           amend: Änderungsvorschlag
           comment: Kommentieren
@@ -122,7 +125,7 @@ de:
           vote: Abstimmung
           vote_comment: Kommentar bewerten
           withdraw: Zurückziehen
-        name: Vorschläge
+        name: Erweiterte Textarbeit
         settings:
           global:
             amendments_enabled: Änderungsvorschläge aktiviert
@@ -351,7 +354,7 @@ de:
     participatory_spaces:
       highlighted_paragraphs:
         see_all: Alle anzeigen (%{count})
-    paragraphs:
+    enhanced_textwork:
       actions:
         answer_paragraph: Vorschlag beantworten
         edit_paragraph: Vorschlag bearbeiten
@@ -362,6 +365,7 @@ de:
         show_amendment: Änderungsantrag anzeigen
         show_details: Details anzeigen
         add_comment: Kommentar hinzufügen
+        add_amendment: Änderungsantrag hinzufügen
         title: Aktionen
       admin:
         actions:
@@ -787,7 +791,7 @@ de:
           with_more_authors: Mit mehr Autoren
         participatory_texts:
           index:
-            document_index: Dokumentenindex
+            document_index: Index
           view_index:
             see_index: Index anzeigen
         placeholder:

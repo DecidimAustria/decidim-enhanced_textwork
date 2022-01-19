@@ -3,9 +3,18 @@
       <h2><%= present(@paragraph).title_if_enabled %></h2>
 
       <div class="amendments">
-        <h3 class="section-heading">
-          <%= @paragraph.amendments.size %> <%= Decidim::Amendment.model_name.human(count: @paragraph.amendments.size) %>
-        </h3>
+        <div class="row collapse comments__header">
+          <h3 class="section-heading">
+            <%= @paragraph.amendments.size %> <%= Decidim::Amendment.model_name.human(count: @paragraph.amendments.size) %>
+          </h3>
+
+          <% if current_component.settings.amendments_enabled %>
+            <%= link_to '#add_comment', class: 'link' do %>
+              <%= icon "pencil", class: "icon--small", role: "img", "aria-hidden": true %>
+              <span><%= t('decidim.enhanced_textwork.actions.add_amendment') %></span>
+            <% end %>
+          <% end %>
+        </div>
 
         <% @amendments.each_with_index do |amendment, index| %>
           <div class="<%= "toggle--hidden" if index > 2 %>">

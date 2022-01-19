@@ -1,4 +1,4 @@
-<div class="hover-section" id="<%= dom_id(model) %>">
+<div class="paragraph__hover-section" id="<%= dom_id(model) %>">
   <%= content_tag :div, class: paragraph_class_names do %>
     <%= link_to overview_paragraph_path(model, anchor: dom_id(model)), class: "card__link--block pb-s" do %>
       <%= title %>
@@ -6,21 +6,27 @@
     <% end %>
 
     <div class="paragraph__actions row">
-      <div class="columns mediumlarge-5">
-        <%= render partial: "decidim/enhanced_textwork/paragraphs/participatory_texts/paragraph_vote_button_chevron.html", locals: { paragraph: model, from_paragraphs_list: true } %>
+      <div class="columns mediumlarge-2">
+        
       </div>
 
-      <div class="columns mediumlarge-7 right-column">
-        <%= link_to overview_paragraph_path(model, anchor: dom_id(model)) do %>
-          <%= icon "comment-square", class: "icon--small", role: "img", "aria-hidden": true %>
-          <%= t("decidim.enhanced_textwork.actions.add_comment") %>
-          (<%= present(model).comments_count %>)
+      <div class="columns mediumlarge-10 right-column">
+        <%= render partial: "decidim/enhanced_textwork/paragraphs/participatory_texts/paragraph_vote_button.html", locals: { paragraph: model, from_paragraphs_list: true } %>
+
+        <% if model.component.settings.comments_enabled %>
+          <%= link_to overview_paragraph_path(model, anchor: dom_id(model)) do %>
+            <%= icon "comment-square", class: "icon--small", role: "img", "aria-hidden": true %>
+            <%= t("decidim.enhanced_textwork.actions.add_comment") %>
+            (<%= present(model).comments_count %>)
+          <% end %>
         <% end %>
 
-        <%= link_to amend_resource_path do %>
-          <%= icon "pencil", class: "icon--small", role: "img", "aria-hidden": true %>
-          <%= t("decidim.components.paragraphs.actions.amend") %>
-          (<%= model.amendments.count %>)
+        <% if model.component.settings.amendments_enabled %>
+          <%= link_to amend_resource_path do %>
+            <%= icon "pencil", class: "icon--small", role: "img", "aria-hidden": true %>
+            <%= t("decidim.enhanced_textwork.actions.add_amendment") %>
+            (<%= model.amendments.count %>)
+          <% end %>
         <% end %>
 
         <%= link_to paragraph_path(model) do %>

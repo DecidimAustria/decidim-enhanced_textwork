@@ -95,6 +95,9 @@ en:
         other: Supports
   decidim:
     admin:
+      exports:
+        formats:
+          Word: docx
       filters:
         paragraphs:
           category_id_eq:
@@ -124,7 +127,7 @@ en:
         search_placeholder:
           id_string_or_title_cont: Search %{collection} by ID or title.
     components:
-      paragraphs:
+      enhanced_textwork:
         actions:
           amend: Amend
           comment: Comment
@@ -133,7 +136,7 @@ en:
           vote: Support
           vote_comment: Vote comment
           withdraw: Withdraw
-        name: Paragraphs
+        name: Enhanced Textwork
         settings:
           global:
             amendments_enabled: Amendments enabled
@@ -384,7 +387,7 @@ en:
     participatory_spaces:
       highlighted_paragraphs:
         see_all: See all paragraphs (%{count})
-    paragraphs:
+    enhanced_textwork:
       actions:
         answer_paragraph: Answer paragraph
         edit_paragraph: Edit paragraph
@@ -395,6 +398,7 @@ en:
         show_amendment: Show amendment
         show_details: Show details
         add_comment: Add comment
+        add_amendment: Add amendment
         title: Actions
       admin:
         actions:
@@ -827,7 +831,7 @@ en:
           with_more_authors: With more authors
         participatory_texts:
           index:
-            document_index: Document index
+            document_index: Index
           view_index:
             see_index: See index
         placeholder:

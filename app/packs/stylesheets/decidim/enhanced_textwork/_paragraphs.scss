@@ -56,6 +56,15 @@
         text-decoration: underline;
       }
     }
+    button {
+      color: $secondary;
+      font-weight: 600;
+      font-size: .9rem;
+      line-height: 1.5;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   &__overview {
@@ -130,7 +139,7 @@
 }
 
 
-.hover-section{
+.paragraph__hover-section{
   .paragraph-actions {
     color: #9b9b9b;
   }
