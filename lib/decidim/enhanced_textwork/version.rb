@@ -4,7 +4,7 @@ module Decidim
   # This holds decidim-paragraphs version.
   module EnhancedTextwork
     def self.version
-      "1.0.0"
+      "1.0.1"
     end
 
     def self.compat_decidim_version 
