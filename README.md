@@ -11,7 +11,7 @@ EnhancedTextwork is available as a Component for a Participatory Process.
 
 We also extended some javascript code using webpacker.
 
-That means it needs at least **Decidim v0.25.0** to work.
+This module needs at least **Decidim v0.26.0** to work.
 
 ## Installation
 
@@ -25,6 +25,8 @@ And then execute:
 
 ```bash
 bundle
+bin/rails decidim_enhanced_textwork:install:migrations
+bin/rails db:migrate
 ```
 
 ## Improvements
