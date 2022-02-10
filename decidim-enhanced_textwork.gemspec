@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency "redcarpet", "~> 3.5", ">= 3.5.1"
 
   s.add_dependency "docx", "~> 0.6.2"
+  s.add_dependency "kramdown", "~> 2.3"
 
   s.add_development_dependency "decidim-admin", Decidim::EnhancedTextwork.compat_decidim_version
   s.add_development_dependency "decidim-assemblies", Decidim::EnhancedTextwork.compat_decidim_version
