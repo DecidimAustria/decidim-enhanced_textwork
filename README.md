@@ -1,8 +1,9 @@
 # Decidim::EnhancedTextwork
 
-The EnhancedTextwork module allows users to contribute to a participatory process with text work by creating paragraphs.
+The EnhancedTextwork module allows users to contribute to participatory textwork. They can support text-paragraphs, amend them, comment on them and discuss among each other.
 
-This module is based on decidim-proposals and was developed to improve the existing participatory_texts functionality to better suite specific needs we found in Austria.
+
+This module is based on decidim-proposals and was developed to improve the existing participatory_texts functionality to better suit specific needs for participatory textwork, that we found in Austria.
 
 ## Usage
 
@@ -10,7 +11,7 @@ EnhancedTextwork is available as a Component for a Participatory Process.
 
 We also extended some javascript code using webpacker.
 
-That means it needs at least **Decidim v0.25.0** to work.
+This module needs at least **Decidim v0.26.0** to work.
 
 ## Installation
 
@@ -24,12 +25,14 @@ And then execute:
 
 ```bash
 bundle
+bin/rails decidim_enhanced_textwork:install:migrations
+bin/rails db:migrate
 ```
 
 ## Improvements
 
-Within the scope of our project we improved a few parts of the feature called “participatory_text”, wich is part of the core module “decidim-proposals”.
-Unfortunately after finishing our work the decidim core team in Barcelona did not have available resources to integrate our results in the decidim core. For this reason we created a new module based on “decidim-proposals” including our participatory_text enhancements.
+Within the scope of our project we improved some parts of the feature called “participatory_text”, which is part of the core module “decidim-proposals”.
+Unfortunately after finishing our work the decidim core team in Barcelona did not have resources available to integrate our results into the decidim core. For this reason we created a new module based on “decidim-proposals” including our participatory_text enhancements.
 
 We named the base model for participatory texts `Paragraph` (instead of Proposal).
 
@@ -72,7 +75,7 @@ settings.attribute :hide_participatory_text_titles_enabled, type: :boolean, defa
 
 ## Participatory Text Result Export
 
-Because `enhanced_textwork` is based on `proposals`, the `Paragraph` model is based on the `Proposal` model. For this reason all the features existing for proposals can also be used on enhanced_textwork. One of those features is the export of results. Until now exporting results was optimized for proposals and didn’t make a lot of sense for exporting the results of collaborative work on a big text document consisting of many sections.
+Because `enhanced_textwork` is based on `proposals`, the `Paragraph` model is based on the `Proposal` model. For this reason all the features existing for proposals can also be used on enhanced_textwork. One of those features is the export of results. Until now exporting results was optimized for proposals and it didn’t make a lot of sense to export the results of collaborative work on a big text document consisting of many sections. 
 
 Existing export formats for proposals were defined in [decidim-core](https://github.com/decidim/decidim/tree/develop/decidim-core/lib/decidim/exporters):
 
@@ -80,7 +83,7 @@ Existing export formats for proposals were defined in [decidim-core](https://git
 * Excel
 * JSON
 
-We decided to add a new Word/docx export exclusively in the enhanced_textwork module:
+In a text-based participatory process the export of a text-document can help to continue working with the results. Hence we decided to add a new Word/docx export exclusively in the enhanced_textwork module:
 
 [lib/decidim/exporters/word.rb](lib/decidim/exporters/word.rb)
 
@@ -134,7 +137,7 @@ Participatory texts persist each section of the document in a Paragraph.
 
 When importing participatory texts all formats are first transformed into Markdown and is the markdown that is parsed and processed to generate the corresponding Paragraphs.
 
-When processing participatory text documents three kinds of secions are taken into account.
+When processing participatory text documents three kinds of sections are taken into account.
 
 - Section: each "Title 1" in the document becomes a section.
 - Subsection: the rest of the titles become subsections.

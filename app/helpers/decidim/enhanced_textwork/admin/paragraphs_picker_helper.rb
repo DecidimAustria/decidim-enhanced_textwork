@@ -5,7 +5,7 @@ module Decidim
     module Admin
       # This class contains helpers needed to show the Paragraphs picker.
       #
-      module EnhancedTextworkPickerHelper
+      module ParagraphsPickerHelper
         def paragraphs_picker(form, field, url)
           picker_options = {
             id: sanitize_to_id(field),
