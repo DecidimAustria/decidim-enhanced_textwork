@@ -149,4 +149,5 @@ Feel free to use the issues and pull requests to contribute to this module.
 
 ## License
 
-AGPL-3.0
+Software: AGPL-3.0
+README: CC-BY-3.0 AT
