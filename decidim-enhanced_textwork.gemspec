@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "Rakefile", "README.md"]
 
-  s.add_dependency "commonlit-caracal", "~> 1.7.2"
+  s.add_dependency "decidimaustria-caracal", "~> 1.7.2"
   s.add_dependency "decidim-comments", Decidim::EnhancedTextwork.compat_decidim_version
   s.add_dependency "decidim-core", Decidim::EnhancedTextwork.compat_decidim_version
   s.add_dependency "doc2text", "~> 0.4.3"
