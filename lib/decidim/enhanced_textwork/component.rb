@@ -238,16 +238,17 @@ Decidim.register_component(:enhanced_textwork) do |component|
         visibility: "all"
       ) do
         paragraph = Decidim::EnhancedTextwork::Paragraph.new(params)
-        paragraph.add_coauthor(participatory_space.organization)
+        coauthor =  case n
+                    when 0
+                      Decidim::User.where(decidim_organization_id: participatory_space.decidim_organization_id).order(Arel.sql("RANDOM()")).first
+                    when 1
+                      Decidim::UserGroup.where(decidim_organization_id: participatory_space.decidim_organization_id).order(Arel.sql("RANDOM()")).first
+                    else
+                      participatory_space.organization
+                    end
+        paragraph.add_coauthor(coauthor)
         paragraph.save!
         paragraph
-      end
-
-      if n.positive?
-        Decidim::User.where(decidim_organization_id: participatory_space.decidim_organization_id).all.sample(n).each do |author|
-          user_group = [true, false].sample ? Decidim::UserGroups::ManageableUserGroups.for(author).verified.sample : nil
-          paragraph.add_coauthor(author, user_group: user_group)
-        end
       end
 
       if paragraph.state.nil?
