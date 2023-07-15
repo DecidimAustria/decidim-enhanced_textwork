@@ -177,7 +177,7 @@ Decidim.register_component(:enhanced_textwork) do |component|
                     end
 
     params = {
-      name: Decidim::Components::Namer.new(participatory_space.organization.available_locales, :paragraphs).i18n_name,
+      name: Decidim::Components::Namer.new(participatory_space.organization.available_locales, :enhanced_textwork).i18n_name,
       manifest_name: :enhanced_textwork,
       published_at: Time.current,
       participatory_space: participatory_space,
