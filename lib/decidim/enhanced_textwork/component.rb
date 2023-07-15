@@ -257,8 +257,8 @@ Decidim.register_component(:enhanced_textwork) do |component|
 
         author = Decidim::User.find_or_initialize_by(email: email)
         author.update!(
-          password: "password1234",
-          password_confirmation: "password1234",
+          password: "Si0thae4hahf5jai",
+          password_confirmation: "Si0thae4hahf5jai",
           name: name,
           nickname: Faker::Twitter.unique.screen_name,
           organization: component.organization,
@@ -323,8 +323,8 @@ Decidim.register_component(:enhanced_textwork) do |component|
 
         author = Decidim::User.find_or_initialize_by(email: email)
         author.update!(
-          password: "password1234",
-          password_confirmation: "password1234",
+          password: "Si0thae4hahf5jai",
+          password_confirmation: "Si0thae4hahf5jai",
           name: name,
           nickname: Faker::Twitter.unique.screen_name,
           organization: component.organization,
@@ -345,8 +345,8 @@ Decidim.register_component(:enhanced_textwork) do |component|
 
           author = Decidim::User.find_or_initialize_by(email: email)
           author.update!(
-            password: "password1234",
-            password_confirmation: "password1234",
+            password: "Si0thae4hahf5jai",
+            password_confirmation: "Si0thae4hahf5jai",
             name: name,
             nickname: Faker::Twitter.unique.screen_name,
             organization: component.organization,
