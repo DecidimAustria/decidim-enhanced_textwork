@@ -5,7 +5,7 @@
     <div class="paragraph__layout">
       <div class="paragraph__main">
         <div class="m-bottom paragraph__back-button">
-          <%= link_to paragraphs_path(filter_link_params), class: "small hollow" do %>
+          <%= link_to paragraphs_path, class: "small hollow js-back-to-list" do %>
             <%= icon "chevron-left", class: "icon--small", role: "img", "aria-hidden": true %>
             <%= t("decidim.enhanced_textwork.paragraphs.show.back_to_list") %>
           <% end %>
