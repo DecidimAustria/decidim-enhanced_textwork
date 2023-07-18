@@ -1,4 +1,4 @@
-<% if paragraph.rejected? || paragraph.withdrawn? %>
+<% if paragraph.rejected? || paragraph.withdrawn? || !current_settings.votes_enabled? %>
   <div></div>
 <% else %>
   <% if component_settings.participatory_texts_enabled? && from_paragraphs_list %>
