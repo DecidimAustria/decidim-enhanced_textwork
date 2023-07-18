@@ -433,7 +433,7 @@ en:
           new_editor:
             title: Write text
             bottom_hint: "(You will be able to preview and sort document sections)"
-            editor_description: "Write or paste your document. Use Heading 1 to define sections, Heading 2 for subsections and simple paragraphs to split text into articles."
+            editor_description: "Write or paste your document. Use Heading 2 to define sections, Heading 3 for subsections and simple paragraphs to split text into articles."
             import: Import
           new_import:
             accepted_mime_types:

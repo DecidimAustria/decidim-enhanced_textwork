@@ -400,8 +400,7 @@ de:
           new_editor:
             title: Text schreiben
             bottom_hint: "(Sie können Dokumentabschnitte in der Vorschau anzeigen und sortieren.)"
-            editor_description: "Schreiben Sie ein Dokument oder fügen Sie es ein und verwenden Sie Heading 1 um Abschnitte zu definieren, Heading 2 für Unterabschnitte und einfache Absätze für einzelne Artikel."
-            editor_description: "Write or paste your document. Use Heading 1 to define sections, Heading 2 for subsections and simple paragraphs to split text."
+            editor_description: "Schreiben Sie ein Dokument oder fügen Sie es ein und verwenden Sie Heading 2 um Abschnitte zu definieren, Heading 3 für Unterabschnitte und einfache Absätze für einzelne Artikel."
             import: Import
           new_import:
             accepted_mime_types:

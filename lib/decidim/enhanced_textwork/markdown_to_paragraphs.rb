@@ -44,7 +44,7 @@ module Decidim
       # Recarpet callback to process headers.
       # Creates Paricipatory Text Paragraphs at Section and Subsection levels.
       def header(title, level)
-        participatory_text_level = if level > 1
+        participatory_text_level = if level > 2
                                      Decidim::EnhancedTextwork::ParticipatoryTextSection::LEVELS[:sub_section]
                                    else
                                      Decidim::EnhancedTextwork::ParticipatoryTextSection::LEVELS[:section]
