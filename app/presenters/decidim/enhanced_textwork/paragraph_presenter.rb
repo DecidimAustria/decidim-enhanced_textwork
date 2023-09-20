@@ -55,6 +55,13 @@ module Decidim
         translated_attribute(paragraph.title)
       end
 
+      def title_unless_numeric
+        return unless paragraph
+        return "" if translated_title !~ /\D/
+
+        translated_title
+      end
+
       def id_and_title(links: false, extras: true, html_escape: false)
         "##{paragraph.id} - #{title(links: links, extras: extras, html_escape: html_escape)}"
       end
