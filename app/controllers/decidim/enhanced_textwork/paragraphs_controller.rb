@@ -28,11 +28,12 @@ module Decidim
       def index
         if component_settings.participatory_texts_enabled?
           @paragraphs = Decidim::EnhancedTextwork::Paragraph
+                       .includes([:amended, :amendable, :resource_permission, :component])
+                       #.includes(:category, :scope)
                        .where(component: current_component)
                        .published
                        .not_hidden
                        .only_amendables
-                       .includes(:category, :scope)
                        .order(position: :asc)
           render "decidim/enhanced_textwork/paragraphs/participatory_texts/participatory_text"
         else
@@ -63,14 +64,15 @@ module Decidim
 
       def overview
         @paragraphs = Decidim::EnhancedTextwork::Paragraph
+                     .includes([:component, :amended, :amendable, :resource_permission])             
                      .where(component: current_component)
                      .published
                      .not_hidden
                      .only_amendables
-                     .includes(:category, :scope)
+                     #.includes(:category, :scope)
                      .order(position: :asc)
 
-        @amendments = @paragraph.amendments.order(created_at: :desc)
+        @amendments = @paragraph.amendments.includes([:emendation]).order(created_at: :desc)
 
         paragraph = @paragraphs.find(params[:id])
 

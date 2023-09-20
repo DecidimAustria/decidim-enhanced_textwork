@@ -3,7 +3,7 @@
 The EnhancedTextwork module allows users to contribute to participatory textwork. They can support text-paragraphs, amend them, comment on them and discuss among each other.
 
 
-This module is based on decidim-proposals and was developed to improve the existing participatory_texts functionality to better suit specific needs for participatory textwork, that we found in Austria.
+This module is based on decidim-proposals and was developed to improve the existing participatory_texts functionality to better suit specific needs for participatory textwork, that we found in Austria. Demo-version can be found here: https://textwork.decidim-austria.org/
 
 ## Usage
 
