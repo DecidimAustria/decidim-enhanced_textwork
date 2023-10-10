@@ -69,16 +69,16 @@ en:
               not_official: Are not official
               supported: Have received support or endorsements
     models:
-      decidim/paragraphs/accepted_paragraph_event: Paragraph accepted
-      decidim/paragraphs/admin/update_paragraph_category_event: Paragraph category changed
-      decidim/paragraphs/admin/update_paragraph_scope_event: Paragraph scope changed
-      decidim/paragraphs/creation_enabled_event: Paragraph creation enabled
-      decidim/paragraphs/endorsing_enabled_event: Paragraph endorsing enabled
-      decidim/paragraphs/evaluating_paragraph_event: Paragraph is being evaluated
-      decidim/paragraphs/paragraph_mentioned_event: Paragraph mentioned
-      decidim/paragraphs/publish_paragraph_event: Paragraph published
-      decidim/paragraphs/rejected_paragraph_event: Paragraph rejected
-      decidim/paragraphs/voting_enabled_event: Paragraph voting enabled
+      decidim/enhanced_textwork/accepted_paragraph_event: Paragraph accepted
+      decidim/enhanced_textwork/admin/update_paragraph_category_event: Paragraph category changed
+      decidim/enhanced_textwork/admin/update_paragraph_scope_event: Paragraph scope changed
+      decidim/enhanced_textwork/creation_enabled_event: Paragraph creation enabled
+      decidim/enhanced_textwork/endorsing_enabled_event: Paragraph endorsing enabled
+      decidim/enhanced_textwork/evaluating_paragraph_event: Paragraph is being evaluated
+      decidim/enhanced_textwork/paragraph_mentioned_event: Paragraph mentioned
+      decidim/enhanced_textwork/publish_paragraph_event: Paragraph published
+      decidim/enhanced_textwork/rejected_paragraph_event: Paragraph rejected
+      decidim/enhanced_textwork/voting_enabled_event: Paragraph voting enabled
   activerecord:
     models:
       decidim/enhanced_textwork/collaborative_draft:
@@ -387,7 +387,7 @@ en:
     participatory_spaces:
       highlighted_paragraphs:
         see_all: See all paragraphs (%{count})
-    paragraphs:
+    enhanced_textwork:
       actions:
         answer_paragraph: Answer paragraph
         edit_paragraph: Edit paragraph

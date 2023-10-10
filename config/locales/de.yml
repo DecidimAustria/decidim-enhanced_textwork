@@ -58,16 +58,16 @@ de:
             title:
               identical: Der UND-Körper kann nicht identisch sein
     models:
-      decidim/paragraphs/accepted_paragraph_event: Absatz angenommen
-      decidim/paragraphs/admin/update_paragraph_category_event: Absatzkategorie geändert
-      decidim/paragraphs/admin/update_paragraph_scope_event: Absatzumfang geändert
-      decidim/paragraphs/creation_enabled_event: Absatzerstellung aktiviert
-      decidim/paragraphs/endorsing_enabled_event: Unterstützung zur Absatzerstellung aktiviert
-      decidim/paragraphs/evaluating_paragraph_event: Der Absatz wird geprüft
-      decidim/paragraphs/paragraph_mentioned_event: Absatz erwähnt
-      decidim/paragraphs/publish_paragraph_event: Absatz veröffentlicht
-      decidim/paragraphs/rejected_paragraph_event: Absatz abgelehnt
-      decidim/paragraphs/voting_enabled_event: Absatzabstimmung aktiviert
+      decidim/enhanced_textwork/accepted_paragraph_event: Absatz angenommen
+      decidim/enhanced_textwork/admin/update_paragraph_category_event: Absatzkategorie geändert
+      decidim/enhanced_textwork/admin/update_paragraph_scope_event: Absatzumfang geändert
+      decidim/enhanced_textwork/creation_enabled_event: Absatzerstellung aktiviert
+      decidim/enhanced_textwork/endorsing_enabled_event: Unterstützung zur Absatzerstellung aktiviert
+      decidim/enhanced_textwork/evaluating_paragraph_event: Der Absatz wird geprüft
+      decidim/enhanced_textwork/paragraph_mentioned_event: Absatz erwähnt
+      decidim/enhanced_textwork/publish_paragraph_event: Absatz veröffentlicht
+      decidim/enhanced_textwork/rejected_paragraph_event: Absatz abgelehnt
+      decidim/enhanced_textwork/voting_enabled_event: Absatzabstimmung aktiviert
   activerecord:
     models:
       decidim/enhanced_textwork/collaborative_draft:
@@ -354,7 +354,7 @@ de:
     participatory_spaces:
       highlighted_paragraphs:
         see_all: Alle anzeigen (%{count})
-    paragraphs:
+    enhanced_textwork:
       actions:
         answer_paragraph: Absatz beantworten
         edit_paragraph: Absatz bearbeiten
