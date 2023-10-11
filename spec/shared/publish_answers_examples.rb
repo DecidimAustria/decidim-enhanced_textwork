@@ -22,13 +22,13 @@ shared_examples "publish answers" do
       page.find("button#js-submit-publish-answers").click
       20.times do # wait for the ajax call to finish
         sleep(1)
-        expect(page).to have_content(I18n.t("paragraphs.publish_answers.success", scope: "decidim"))
+        expect(page).to have_content(I18n.t("enhanced_textwork.publish_answers.success", scope: "decidim"))
         break
       rescue e
         # ignore and loop again if ajax content is still not there
         nil
       end
-      expect(page).to have_content(I18n.t("paragraphs.publish_answers.success", scope: "decidim"))
+      expect(page).to have_content(I18n.t("enhanced_textwork.publish_answers.success", scope: "decidim"))
 
       visit current_path
 

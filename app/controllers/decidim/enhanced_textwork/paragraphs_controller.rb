@@ -98,13 +98,13 @@ module Decidim
 
         CreateParagraph.call(@form, current_user) do
           on(:ok) do |paragraph|
-            flash[:notice] = I18n.t("paragraphs.create.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.create.success", scope: "decidim")
 
             redirect_to "#{Decidim::ResourceLocatorPresenter.new(paragraph).path}/compare"
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.create.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.create.error", scope: "decidim")
             render :new
           end
         end
@@ -117,7 +117,7 @@ module Decidim
                                .all
 
         if @similar_paragraphs.blank?
-          flash[:notice] = I18n.t("paragraphs.paragraphs.compare.no_similars_found", scope: "decidim")
+          flash[:notice] = I18n.t("enhanced_textwork.paragraphs.compare.no_similars_found", scope: "decidim")
           redirect_to "#{Decidim::ResourceLocatorPresenter.new(@paragraph).path}/complete"
         end
       end
@@ -140,12 +140,12 @@ module Decidim
         @step = :step_4
         PublishParagraph.call(@paragraph, current_user) do
           on(:ok) do
-            flash[:notice] = I18n.t("paragraphs.publish.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.publish.success", scope: "decidim")
             redirect_to paragraph_path(@paragraph)
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.publish.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.publish.error", scope: "decidim")
             render :edit_draft
           end
         end
@@ -163,12 +163,12 @@ module Decidim
         @form = form_paragraph_params
         UpdateParagraph.call(@form, current_user, @paragraph) do
           on(:ok) do |paragraph|
-            flash[:notice] = I18n.t("paragraphs.update_draft.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.update_draft.success", scope: "decidim")
             redirect_to "#{Decidim::ResourceLocatorPresenter.new(paragraph).path}/preview"
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.update_draft.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.update_draft.error", scope: "decidim")
             render :edit_draft
           end
         end
@@ -179,12 +179,12 @@ module Decidim
 
         DestroyParagraph.call(@paragraph, current_user) do
           on(:ok) do
-            flash[:notice] = I18n.t("paragraphs.destroy_draft.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.destroy_draft.success", scope: "decidim")
             redirect_to new_paragraph_path
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.destroy_draft.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.destroy_draft.error", scope: "decidim")
             render :edit_draft
           end
         end
@@ -200,12 +200,12 @@ module Decidim
         @form = form_paragraph_params
         UpdateParagraph.call(@form, current_user, @paragraph) do
           on(:ok) do |paragraph|
-            flash[:notice] = I18n.t("paragraphs.update.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.update.success", scope: "decidim")
             redirect_to Decidim::ResourceLocatorPresenter.new(paragraph).path
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.update.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.update.error", scope: "decidim")
             render :edit
           end
         end
@@ -216,11 +216,11 @@ module Decidim
 
         WithdrawParagraph.call(@paragraph, current_user) do
           on(:ok) do
-            flash[:notice] = I18n.t("paragraphs.update.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.update.success", scope: "decidim")
             redirect_to Decidim::ResourceLocatorPresenter.new(@paragraph).path
           end
           on(:has_supports) do
-            flash[:alert] = I18n.t("paragraphs.withdraw.errors.has_supports", scope: "decidim")
+            flash[:alert] = I18n.t("enhanced_textwork.withdraw.errors.has_supports", scope: "decidim")
             redirect_to Decidim::ResourceLocatorPresenter.new(@paragraph).path
           end
         end

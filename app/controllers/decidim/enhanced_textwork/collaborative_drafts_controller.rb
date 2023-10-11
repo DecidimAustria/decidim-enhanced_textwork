@@ -56,13 +56,13 @@ module Decidim
 
         CreateCollaborativeDraft.call(@form, current_user) do
           on(:ok) do |collaborative_draft|
-            flash[:notice] = I18n.t("paragraphs.collaborative_drafts.create.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.collaborative_drafts.create.success", scope: "decidim")
 
             redirect_to Decidim::ResourceLocatorPresenter.new(collaborative_draft).path
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.collaborative_drafts.create.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.collaborative_drafts.create.error", scope: "decidim")
             render :complete
           end
         end
@@ -81,12 +81,12 @@ module Decidim
         @form = form(CollaborativeDraftForm).from_params(params)
         UpdateCollaborativeDraft.call(@form, current_user, @collaborative_draft) do
           on(:ok) do |collaborative_draft|
-            flash[:notice] = I18n.t("paragraphs.collaborative_drafts.update.success", scope: "decidim")
+            flash[:notice] = I18n.t("enhanced_textwork.collaborative_drafts.update.success", scope: "decidim")
             redirect_to Decidim::ResourceLocatorPresenter.new(collaborative_draft).path
           end
 
           on(:invalid) do
-            flash.now[:alert] = I18n.t("paragraphs.collaborative_drafts.update.error", scope: "decidim")
+            flash.now[:alert] = I18n.t("enhanced_textwork.collaborative_drafts.update.error", scope: "decidim")
             render :edit
           end
         end

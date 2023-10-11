@@ -83,7 +83,7 @@ module Decidim
             end
 
             on(:ok) do
-              flash.now[:notice] = I18n.t("paragraphs.publish_answers.success", scope: "decidim")
+              flash.now[:notice] = I18n.t("enhanced_textwork.publish_answers.success", scope: "decidim")
             end
           end
 
@@ -133,12 +133,12 @@ module Decidim
 
           Admin::UpdateParagraph.call(@form, @paragraph) do
             on(:ok) do |_paragraph|
-              flash[:notice] = t("paragraphs.update.success", scope: "decidim")
+              flash[:notice] = t("enhanced_textwork.update.success", scope: "decidim")
               redirect_to paragraphs_path
             end
 
             on(:invalid) do
-              flash.now[:alert] = t("paragraphs.update.error", scope: "decidim")
+              flash.now[:alert] = t("enhanced_textwork.update.error", scope: "decidim")
               render :edit
             end
           end
@@ -149,12 +149,12 @@ module Decidim
 
           Admin::DestroyParagraph.call(draft) do
             on(:ok) do
-              flash[:notice] = I18n.t("paragraphs.destroy_draft.success", scope: "decidim")
+              flash[:notice] = I18n.t("enhanced_textwork.destroy_draft.success", scope: "decidim")
               redirect_to participatory_texts_path
             end
 
             on(:invalid) do
-              flash.now[:alert] = I18n.t("paragraphs.destroy_draft.error", scope: "decidim")
+              flash.now[:alert] = I18n.t("enhanced_textwork.destroy_draft.error", scope: "decidim")
               redirect_to participatory_texts_path
             end
           end
