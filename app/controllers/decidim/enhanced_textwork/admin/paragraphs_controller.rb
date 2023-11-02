@@ -133,12 +133,12 @@ module Decidim
 
           Admin::UpdateParagraph.call(@form, @paragraph) do
             on(:ok) do |_paragraph|
-              flash[:notice] = t("enhanced_textwork.update.success", scope: "decidim")
+              flash[:notice] = I18n.t("decidim.enhanced_textwork.update.success", scope: "decidim")
               redirect_to paragraphs_path
             end
 
             on(:invalid) do
-              flash.now[:alert] = t("enhanced_textwork.update.error", scope: "decidim")
+              flash.now[:alert] = I18n.t("decidim.enhanced_textwork.update.error", scope: "decidim")
               render :edit
             end
           end
