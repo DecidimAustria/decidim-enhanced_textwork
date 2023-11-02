@@ -2,7 +2,7 @@
   <h4><%= t(".document_index") %></h4>
   <div class="text-muted">
     <% @paragraphs.each do |paragraph| %>
-      <% next unless @titles_enabled && present(paragraph).title_unless_numeric.present? %>
+      <% next unless present(paragraph).title_if_enabled.present? %>
       <div class="mb-s">
         <p>
           <%= link_to overview_paragraph_path(paragraph, anchor: dom_id(paragraph)) do %>

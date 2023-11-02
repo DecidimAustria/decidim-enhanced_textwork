@@ -1,8 +1,6 @@
 <div class="paragraph__overview" id="paragraph__overview">
 
-      <% if @titles_enabled %>
-        <h2><%= present(@paragraph).title_unless_numeric %></h2>
-      <% end %>
+      <h2><%= present(@paragraph).title_if_enabled %></h2>
 
       <div class="amendments">
         <div class="row collapse comments__header">
