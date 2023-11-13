@@ -7,8 +7,11 @@
         <%= action_authorized_button_to :vote, t("decidim.enhanced_textwork.paragraphs.vote_button.votes_blocked"), paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list), resource: paragraph, class: "column light disabled", disabled: true %>
       <% else %>
         <%= action_authorized_button_to :vote, paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list), resource: paragraph, class: "column ", data: { disable: true, "redirect-url": paragraph_path(paragraph) } do %>
-          <%= t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
-          <span class="show-for-sr"><%= decidim_html_escape(present(paragraph).title) %></span>
+          <%= icon "thumb-up", class: "icon mobile", role: "img", "aria-label": t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+          <span class="view_desktop">
+            <%= t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+          </span>
+          <span class="show-for-sr super"><%= decidim_html_escape(present(paragraph).title) %></span>
         <% end %>
       <% end %>
     <% else %>
@@ -28,9 +31,12 @@
           class: "column light success",
           id: "vote_button-#{paragraph.id}"
         ) do %>
-          <%= icon("check", class: "icon--small", role: "img", "aria-hidden": true) %>
-          <%= t("decidim.enhanced_textwork.paragraphs.vote_button.already_voted") %>
-          <span class="show-for-sr"><%= decidim_html_escape(present(paragraph).title) %></span>
+          <%= icon("thumb-up", class: "icon mobile success", role: "img", "aria-label": t("decidim.enhanced_textwork.paragraphs.vote_button.already_voted")) %>
+          <span class="view_desktop">
+            <%= icon("check", class: "icon--small", role: "img", "aria-hidden": true) %>
+            <%= t("decidim.enhanced_textwork.paragraphs.vote_button.already_voted") %>
+          </span>
+          <span class="show-for-sr dupa"><%= decidim_html_escape(present(paragraph).title) %></span>
         <% end %>
       <% else %>
         <% if paragraph.maximum_votes_reached? && !paragraph.can_accumulate_supports_beyond_threshold && current_component.participatory_space.can_participate?(current_user) %>
@@ -42,7 +48,10 @@
             <%= content_tag :span, t("decidim.enhanced_textwork.paragraphs.vote_button.votes_blocked"), class: "column light disabled", disabled: true %>
           <% else %>
             <%= action_authorized_button_to :vote, paragraph_paragraph_vote_path(paragraph_id: paragraph, from_paragraphs_list: from_paragraphs_list), resource: paragraph, remote: true, data: { disable: true, "redirect-url": paragraph_path(paragraph) }, class: "column light" do %>
-              <%= t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+              <%= icon "thumb-up", class: "icon mobile", role: "img", "aria-label": t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+              <span class="view_desktop">
+                <%= t("decidim.enhanced_textwork.paragraphs.vote_button.vote") %>
+              </span>
               <span class="show-for-sr"><%= decidim_html_escape(present(paragraph).title) %></span>
             <% end %>
           <% end %>

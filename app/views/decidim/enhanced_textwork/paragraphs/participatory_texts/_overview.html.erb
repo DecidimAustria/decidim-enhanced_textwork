@@ -10,8 +10,15 @@
 
           <% if current_component.settings.amendments_enabled %>
             <%= link_to '#add_comment', class: 'link' do %>
+            <%= icon "pencil", class: "mobile", role: "img", "aria-label": t('decidim.enhanced_textwork.actions.add_amendment') %>
+            <%
+=begin%>
+ <span class="view_desktop">
               <%= icon "pencil", class: "icon--small", role: "img", "aria-hidden": true %>
               <span><%= t('decidim.enhanced_textwork.actions.add_amendment') %></span>
+            </span> 
+<%
+=end%>
             <% end %>
           <% end %>
         </div>

@@ -9,6 +9,9 @@
   </div>
 
   <div class="amendment__actions">
-    <%= link_to t('decidim.enhanced_textwork.actions.show_amendment'), compare_emendation_path, class: 'link' %>
+    <%= link_to compare_emendation_path, class: 'link' do %>
+    <%= icon "magnifying-glass", class: "mobile", role: "img", "aria-label": t('decidim.enhanced_textwork.actions.show_details') %>
+    <span class="sr-only"><%= t('decidim.enhanced_textwork.actions.show_amendment') %></span>
+    <% end %>
   </div>
 </div>
