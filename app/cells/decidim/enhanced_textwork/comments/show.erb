@@ -5,7 +5,7 @@
         <h3 class="order-by__text section-heading">
           <%= comments_count %> <%= Decidim::Comments::Comment.model_name.human(count: comments_count) %>
         </h3>
-        <% if comments_count > 2 && current_component.settings.comments_enabled %>
+        <% if comments_count > 20 && current_component.settings.comments_enabled %>
           <%= link_to '#add_comment', class: 'link' do %>
             <%= icon "comment-square", class: "mobile", role: "img", "aria-label": t('decidim.enhanced_textwork.actions.add_comment') %>
           <% end %>
