@@ -23,9 +23,9 @@ module Decidim
 
         case model.participatory_text_level
         when "section"
-          "<h5><strong>#{section_title}</strong></h5>"
+          "<h4>#{section_title}</h4>"
         else
-          "<h6><strong>#{section_title}</strong></h6>"
+          "<h5>#{section_title}</h5>"
         end
       end
 
