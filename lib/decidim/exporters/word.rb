@@ -286,7 +286,7 @@ module Decidim
         end
 
         # find comments to this comment and print them recursively
-        Decidim::Comments::Comment.where(decidim_commentable_id: comment.id).each do |sub_comment|
+        Decidim::Comments::Comment.where(decidim_commentable_type: 'Decidim::Comments::Comment', decidim_commentable_id: comment.id).each do |sub_comment|
           print_comment(sub_comment)
         end
       end
