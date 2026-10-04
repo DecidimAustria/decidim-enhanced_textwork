@@ -1,0 +1,31 @@
+<% admin_routes = Decidim::EngineRouter.admin_proxy(current_component) %>
+<div class="item_show__header">
+  <h1 class="item_show__header-title"><%= t("decidim.enhanced_textwork.admin.title") %></h1>
+  <%= link_to t("decidim.enhanced_textwork.admin.export"), admin_routes.export_textwork_path, class: "button button__sm button__secondary" %>
+  <%= link_to t("decidim.enhanced_textwork.admin.preview"), admin_routes.participatory_texts_path, class: "button button__sm button__secondary" %>
+</div>
+<div class="item__edit item__edit-1col">
+  <div class="item__edit-form">
+    <%= decidim_form_for(@form, url: admin_routes.import_textwork_path, html: { class: "form-defaults" }) do |form| %>
+      <div class="form__wrapper">
+        <p><%= t("decidim.enhanced_textwork.admin.import_help") %></p>
+        <%= form.translated :text_field, :title %>
+        <%= form.translated :text_area, :description %>
+        <%= form.editor :content %>
+      </div>
+      <%= form.submit t("decidim.enhanced_textwork.admin.import"), class: "button button__sm button__secondary" %>
+    <% end %>
+    <% if @drafts.any? %>
+      <h2 class="h4"><%= t("decidim.enhanced_textwork.admin.drafts") %></h2>
+      <ul>
+        <% @drafts.each do |paragraph| %>
+          <li>
+            <%= translated_attribute(paragraph.title) %>
+            <%= decidim_sanitize_editor(translated_attribute(paragraph.body)) %>
+            <%= link_to t("decidim.enhanced_textwork.admin.delete_draft"), admin_routes.textwork_draft_path(paragraph), method: :delete, class: "button button__sm button__transparent-secondary", data: { confirm: t("decidim.enhanced_textwork.admin.confirm_delete") } %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</div>

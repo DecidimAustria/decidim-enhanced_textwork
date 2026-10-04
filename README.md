@@ -1,153 +1,72 @@
-# Decidim::EnhancedTextwork
+# Decidim Enhanced Textwork
 
-The EnhancedTextwork module allows users to contribute to participatory textwork. They can support text-paragraphs, amend them, comment on them and discuss among each other.
+Paragraph discussions and document tools for Decidim's participatory texts.
 
+Version **2.0.0.alpha1** extends `decidim-proposals` on **Decidim 0.32.1**. It uses core proposals, comments, amendments, supports and administration instead of maintaining a separate copy of Proposals.
 
-This module is based on decidim-proposals and was developed to improve the existing participatory_texts functionality to better suit specific needs for participatory textwork, that we found in Austria. Demo-version can be found here: https://textwork.decidim-austria.org/
+**This branch is for development and testing with new components. It is not yet an upgrade for installations with Enhanced Textwork 1.x data.** The old `enhanced_textwork` component and `Paragraph` model are no longer registered. Installing this alpha over 1.x would make those components unavailable. No legacy data migration or automatic deletion is included. See [the migration plan](docs/MIGRATION.md).
 
-## Usage
+## Features
 
-EnhancedTextwork is available as a Component for a Participatory Process.
+- Read a document with an adjacent discussion panel for the selected paragraph; on small screens the panel follows the document.
+- Use Decidim's comments, amendment cards, support controls, follows and proposal detail pages. Permissions and component/step settings remain managed by Decidim.
+- Optionally hide automatically numbered paragraph titles.
+- Paste text into the current Decidim editor. Headings and paragraphs become unpublished core proposals; review, reorder and publish them through Decidim's participatory-text preview.
+- Delete individual unpublished paragraphs from the Textwork tools page.
+- Download a Word report with published paragraphs, support counts, visible amendments and comment threads. Moderated and deleted content is excluded.
+- Use the interface in English or German.
 
-We also extended some javascript code using webpacker.
+The Word report contains text and basic headings, rather than a reproduction of editor formatting. Images, tables, attachments and Word tracked changes are not exported. Amendment visibility follows the current user's core visibility rules. Export is restricted to authorized administrators.
 
-This module needs at least **Decidim v0.26.0** to work.
+## Installation for testing
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'decidim-enhanced_textwork'
-```
-
-And then execute:
-
-```bash
-bundle
-bin/rails decidim_enhanced_textwork:install:migrations
-bin/rails db:migrate
-```
-
-## Improvements
-
-Within the scope of our project we improved some parts of the feature called “participatory_text”, which is part of the core module “decidim-proposals”.
-Unfortunately after finishing our work the decidim core team in Barcelona did not have resources available to integrate our results into the decidim core. For this reason we created a new module based on “decidim-proposals” including our participatory_text enhancements.
-
-We named the base model for participatory texts `Paragraph` (instead of Proposal).
-
-Our improvements span 3 areas described in the following sections:
-
-* [Participatory Text Frontend](#participatory-text-frontend)
-* [Participatory Text Result Export](#participatory-text-result-export)
-* [Participatory Text Import](#participatory-text-import)
-
-### Participatory Text Frontend
-
-To make working with a participatory text easier and more user friendly we rebuilt the design for the overview page and created a sidebar.
-
-#### Sidebar
-
-We called the page including the sidebar “overview” and added it to the routes of the proposals module:
-
-[lib/decidim/enhanced_textwork/engine.rb](lib/decidim/enhanced_textwork/engine.rb#L21)
-
-#### Comments
-
-To change the style of the comments to better fit the sidebar and to improve user experience we created a new class `Decidim::EnhancedTextwork::CommentsCell` that derives from the global `Decidim::Comments::CommentsCell`.
-That allowed us to overwrite the global comments cell view while still using most of the other views of the global `CommentsCell`.
-
-* [comments_cell.rb](app/cells/decidim/enhanced_textwork/comments_cell.rb)
-* [show.erb](app/cells/decidim/enhanced_textwork/comments/show.erb)
-
-
-#### Adding component settings
-
-We added a setting to allow hiding proposal titles, because numbered titles did not make sense for long texts. In our new module we enable this setting by default.
-
-In Decidim every component (module) allows you to define settings that get then displayed automatically in the components edit view using the localized texts configured for example under `en.decidim.components.enhanced_textwork.settings.global.hide_participatory_text_titles_enabled`
-
-```rb
-settings.attribute :hide_participatory_text_titles_enabled, type: :boolean, default: true
-```
-
-[see component.rb](lib/decidim/enhanced_textwork/component.rb#L50)
-
-## Participatory Text Result Export
-
-Because `enhanced_textwork` is based on `proposals`, the `Paragraph` model is based on the `Proposal` model. For this reason all the features existing for proposals can also be used on enhanced_textwork. One of those features is the export of results. Until now exporting results was optimized for proposals and it didn’t make a lot of sense to export the results of collaborative work on a big text document consisting of many sections. 
-
-Existing export formats for proposals were defined in [decidim-core](https://github.com/decidim/decidim/tree/develop/decidim-core/lib/decidim/exporters):
-
-* CSV
-* Excel
-* JSON
-
-In a text-based participatory process the export of a text-document can help to continue working with the results. Hence we decided to add a new Word/docx export exclusively in the enhanced_textwork module:
-
-[lib/decidim/exporters/word.rb](lib/decidim/exporters/word.rb)
-
-To enable it, the export formats need to be defined in the component configuration:
-
-[lib/decidim/proposals/component.rb](lib/decidim/enhanced_textwork/component.rb#L144)
-
-To export in docx format we decided to use a more recent fork of the [caracal](https://github.com/commonlit/caracal) gem by commonlit.
-
-## Participatory Text Import
-
-To add a new page for importing text directly from a rich text editor we had to add some routes in the [admin_engine](lib/decidim/enhanced_textwork/admin_engine.rb#L33)
-
-Decidim already uses the [quill](https://github.com/quilljs/quill) richt text editor in many places, so we decided to also use it.
-
-We created a new [HtmlToMarkdown](lib/decidim/enhanced_textwork/html_to_markdown.rb) class that uses the [kramdown](https://github.com/gettalong/kramdown) gem to convert the html output of the quill editor to markdown, which is already the supported format for importing documents.
-
-The new class had to be autoloaded from the [proposals component](lib/decidim/enhanced_textwork.rb#L21)
-
-### Allow to delete single drafts
-
-After importing text it was not possible to delete single proposals/paragraphs of the draft. You could only delete all proposals together.
-Therefore we added a delete button to each draft and added a new [command](app/commands/decidim/enhanced_textwork/destroy_paragraph.rb) and a [destroy_draft controller action](app/controllers/decidim/enhanced_textwork/admin/paragraphs_controller.rb#L147) that we also added to the [routes in the admin_engine](lib/decidim/enhanced_textwork/admin_engine.rb#L25 ):
-
-### Configuring Similarity
-
-`pg_trgm` is a PostgreSQL extension providing simple fuzzy string matching used in the Paragraph wizard to find similar published paragraphs (title and the body).
-
-Create config variables in your app's `/config/initializers/decidim-enhanced_textwork.rb`:
+Use a Decidim 0.32.1 application with Ruby 3.4 and its normal Node/Shakapacker toolchain. From a local checkout, add:
 
 ```ruby
-Decidim::EnhancedTextwork.configure do |config|
-  config.similarity_threshold = 0.25 # default value
-  config.similarity_limit = 10 # default value
-end
+gem "decidim-enhanced_textwork", path: "../decidim-enhanced_textwork"
 ```
 
-`similarity_threshold`(real): Sets the current similarity threshold that is used by the % operator. The threshold must be between 0 and 1 (default is 0.3).
+Then run `bundle install`, rebuild application assets and restart the application. This version introduces no database tables or migrations. The application still needs the normal Decidim migrations.
 
-`similarity_limit`: number of maximum results.
+1. Create a **Proposals** component.
+2. Enable **Participatory texts** and **Enhanced Textwork view for participatory texts** in its settings.
+3. Configure comments, amendments and supports using the usual component and phase settings.
+4. Open the component's participatory-text preview, then **Textwork tools**.
+5. Enter a title and paste a document into the editor. Import into an empty component, review the resulting paragraphs and publish them.
 
-## Global Search
+The core Markdown/ODT import remains available. The editor import deliberately refuses components that already contain proposals, including drafts and amendments. Use the normal preview to edit existing drafts. Textwork tools can remove individual drafts.
 
-This module includes the following models to Decidim's Global Search:
+Turning off the Textwork setting restores the standard Proposals view; the data remains ordinary core proposals. No separate Textwork component is created in version 2.
 
-- `Paragraphs`
+## Development
 
-## Participatory Texts
+Use the versions in `.ruby-version` and `.node-version`, PostgreSQL, ImageMagick and Chrome/Chromium for browser tests. Run these commands from this repository, against a local test database server:
 
-Participatory texts persist each section of the document in a Paragraph.
+```sh
+bundle install
+export DATABASE_HOST=127.0.0.1
+export DATABASE_PORT=5432
+# Set DATABASE_USERNAME and DATABASE_PASSWORD if required by your local server.
+bin/test-setup
+bundle exec rspec spec
+```
 
-When importing participatory texts all formats are first transformed into Markdown and is the markdown that is parsed and processed to generate the corresponding Paragraphs.
+`bin/test-setup` generates an ignored application in `spec/decidim_dummy_app`, migrates its test database and builds assets. It reuses an existing generated application and does not drop databases. The test database is named `enhanced_textwork_test_test`. Never point these commands at an installation database or set `DATABASE_URL` to one.
 
-When processing participatory text documents three kinds of sections are taken into account.
+To resolve gems from the neighbouring framework checkout, set `DECIDIM_PATH=../decidim` before `bundle install` and keep it set for subsequent commands. Without it, development uses the released 0.32 gems.
 
-- Section: each "Title 1" in the document becomes a section.
-- Subsection: the rest of the titles become subsections.
-- Article: paragraphs become articles.
+Browser tests cover the discussion panel, mobile layout, posting comments, support/unvote, and editor import/publication. Request and service tests cover component boundaries, permissions, drafts, moderation, amendments, export and legacy inventory. Screenshots are saved under the ignored `tmp/` directory.
 
-## Contributing
+## Implementation and remaining work
 
-Feel free to use the issues and pull requests to contribute to this module.
+The integration adds two global settings and a small set of routes to Proposals. It redirects the enabled component's public index to the document view and adds one tools link to the core admin preview. These integration points need checking for each Decidim minor release.
 
-## License
+There are no custom proposal, comment, vote or amendment models. The editor import delegates parsing to `Decidim::Proposals::MarkdownToProposals`. The DOCX writer creates a small OOXML text report without fetching external resources or depending on the old Caracal fork.
 
-Software: AGPL-3.0
-README: CC-BY-3.0 AT
+See [architecture and validation](docs/IMPLEMENTATION.md), [the 1.x migration plan](docs/MIGRATION.md) and [the changelog](CHANGELOG.md). Legacy migration, redirects from old paragraph URLs and a real-data upgrade rehearsal remain release requirements. This alpha has not been deployed to a customer installation.
+
+## History and license
+
+Version 1 was based on a copy of Decidim Proposals, with `Paragraph` replacing `Proposal`, additional document tools and a custom discussion view. Its README required Decidim 0.26; the previous checkout declared compatibility from 0.26 release candidates to below 0.29. The v1 code remains in Git history and on `update-to-decidim-0.28`.
+
+Software: AGPL-3.0. README: CC-BY-3.0 AT.

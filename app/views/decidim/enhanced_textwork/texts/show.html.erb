@@ -1,0 +1,70 @@
+<% append_stylesheet_pack_tag "decidim_enhanced_textwork" %>
+<% append_javascript_pack_tag "decidim_proposals" %>
+
+<%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
+  <%= render "decidim/shared/component_announcement" %>
+  <h1 class="title-decorator"><%= translated_attribute(@document&.title || current_component.name) %></h1>
+  <% if @document&.description.present? %>
+    <div class="editor-content"><%= decidim_sanitize_editor(translated_attribute(@document.description)) %></div>
+  <% end %>
+  <% if @paragraphs.any? { |paragraph| textwork_title(paragraph).present? } %>
+    <details class="textwork__contents">
+      <summary><%= t("decidim.enhanced_textwork.texts.contents") %></summary>
+      <nav aria-label="<%= t("decidim.enhanced_textwork.texts.contents") %>">
+        <% @paragraphs.each do |paragraph| %>
+          <% next unless textwork_title(paragraph).present? %>
+          <%= link_to textwork_title(paragraph), "#textwork-paragraph-#{paragraph.id}" %>
+        <% end %>
+      </nav>
+    </details>
+  <% end %>
+  <div class="textwork">
+    <div class="textwork__document">
+      <% @paragraphs.each do |paragraph| %>
+        <section id="textwork-paragraph-<%= paragraph.id %>" class="textwork__paragraph <%= "textwork__paragraph--active" if paragraph == @active_paragraph %>">
+          <% if textwork_title(paragraph).present? %>
+            <h3 class="h4"><%= textwork_title(paragraph) %></h3>
+          <% end %>
+          <% if paragraph.participatory_text_level == "article" %>
+            <div class="editor-content"><%= decidim_sanitize_editor(present(paragraph).body) %></div>
+          <% end %>
+          <div class="textwork__actions">
+            <%= link_to t("decidim.enhanced_textwork.texts.discuss", count: paragraph.comments_count), textwork_paragraph_path(paragraph), class: "button button__sm button__transparent-secondary", aria: { label: "#{textwork_paragraph_label(paragraph)}: #{t("decidim.enhanced_textwork.texts.open_discussion")}" } %>
+            <% if component_settings.amendments_enabled? && current_settings.amendment_creation_enabled? %>
+              <%= action_authorized_link_to :amend, textwork_amendment_path(paragraph), resource: paragraph, class: "button button__sm button__transparent-secondary" do %>
+                <%= t("decidim.enhanced_textwork.texts.amend") %>
+              <% end %>
+            <% end %>
+            <%= link_to t("decidim.enhanced_textwork.texts.details"), resource_locator(paragraph).path, class: "button button__sm button__transparent-secondary" %>
+            <% if current_settings.votes_enabled? %>
+              <%= render "decidim/proposals/proposals/vote_button", proposal: paragraph, from_proposals_list: false %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+    <aside id="textwork-discussion" class="textwork__discussion" aria-label="<%= t("decidim.enhanced_textwork.texts.discussion") %>" tabindex="-1">
+      <% if @active_paragraph %>
+        <h2 class="h4"><%= textwork_paragraph_label(@active_paragraph) %></h2>
+        <%= link_to t("decidim.enhanced_textwork.texts.back_to_paragraph"), "#textwork-paragraph-#{@active_paragraph.id}" %>
+        <%= follow_button_for(@active_paragraph) %>
+        <% if component_settings.amendments_enabled? %>
+          <% amendments = @active_paragraph.visible_emendations_for(current_user).not_hidden %>
+          <% if amendments.any? %>
+            <section id="amendments">
+              <h2 class="h4"><%= t("decidim.amendments.amendments.title", count: amendments.count) %></h2>
+              <% amendments.each do |amendment| %>
+                <%= card_for amendment, context: { current_user: current_user } %>
+              <% end %>
+            </section>
+          <% end %>
+        <% end %>
+        <% if component_settings.comments_enabled? %>
+          <%= comments_for @active_paragraph %>
+        <% end %>
+      <% else %>
+        <p><%= t("decidim.enhanced_textwork.texts.choose_paragraph") %></p>
+      <% end %>
+    </aside>
+  </div>
+<% end %>

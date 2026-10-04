@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 module Decidim
-  # This holds decidim-paragraphs version.
   module EnhancedTextwork
     def self.version
-      "1.0.5"
+      "2.0.0.alpha1"
     end
 
-    def self.compat_decidim_version 
-      [">= 0.26.0.rc2", "< 0.29"].freeze
+    def self.compat_decidim_version
+      "~> 0.32.1"
     end
   end
 end

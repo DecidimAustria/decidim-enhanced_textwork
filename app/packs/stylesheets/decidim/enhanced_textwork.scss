@@ -1,0 +1,58 @@
+.textwork {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2rem;
+
+  &__document,
+  &__discussion {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  &__contents {
+    margin-top: 1.5rem;
+  }
+
+  &__contents nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  &__paragraph {
+    padding: 1.25rem;
+    border-bottom: 1px solid #ddd;
+    scroll-margin-top: 6rem;
+
+    &--active {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  &__discussion {
+    padding: 1.25rem;
+    background: #f6f8fa;
+    align-self: start;
+    scroll-margin-top: 6rem;
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: minmax(0, 3fr) minmax(20rem, 2fr);
+
+    &__discussion {
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+    }
+  }
+}

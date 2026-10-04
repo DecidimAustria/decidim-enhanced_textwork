@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+export RAILS_ENV=test
+if [[ -n "${DATABASE_URL:-}" ]]; then
+  echo "Unset DATABASE_URL and use local DATABASE_HOST/PORT/USERNAME/PASSWORD for the test application." >&2
+  exit 1
+fi
+
+if [[ ! -f spec/decidim_dummy_app/config/application.rb ]]; then
+  bundle exec decidim spec/decidim_dummy_app \
+    --app_name enhanced_textwork_test --path ../.. \
+    --skip_gemfile --skip_bundle --skip_git --skip_spring \
+    --force_ssl false --locales en,de
+fi
+
+cd spec/decidim_dummy_app
+if [[ ! -f bin/shakapacker ]]; then
+  bundle exec rails shakapacker:binstubs
+fi
+if [[ ! -f config/webpack/webpack.config.js ]]; then
+  bundle exec rails decidim:shakapacker:install
+fi
+if [[ ! -d node_modules ]]; then
+  npm ci
+fi
+bundle exec rails decidim:choose_target_plugins railties:install:migrations \
+  db:create db:migrate assets:precompile

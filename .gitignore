@@ -1,1 +1,8 @@
 Gemfile.lock
+.bundle/
+vendor/
+spec/decidim_dummy_app/
+development_app/
+tmp/
+coverage/
+*.gem

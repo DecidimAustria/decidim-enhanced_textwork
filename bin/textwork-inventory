@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Run with the OLD application's bundle, without installing the new gem there:
+# bundle exec ruby /path/to/v2/bin/textwork-inventory /path/to/app/config/environment.rb
+require "json"
+
+environment = ARGV.fetch(0) { abort "Usage: bundle exec ruby #{__FILE__} /path/to/app/config/environment.rb" }
+require File.expand_path(environment)
+require_relative "../lib/decidim/enhanced_textwork/legacy_inventory"
+
+puts JSON.pretty_generate(Decidim::EnhancedTextwork::LegacyInventory.new(ActiveRecord::Base.connection).report)
