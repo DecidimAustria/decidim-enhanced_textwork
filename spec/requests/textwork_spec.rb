@@ -35,6 +35,25 @@ RSpec.describe "Textwork", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "includes numbered paragraphs in the contents and identifies the selected one" do
+    get routes.textwork_path(locale: :en, paragraph_id: paragraph.id)
+    html = Nokogiri::HTML(response.body)
+    current_link = html.at_css('.textwork__contents [aria-current="location"]')
+    expect(current_link.text).to include("Paragraph 1", "Visible textwork paragraph")
+    expect(current_link["href"]).to eq(routes.textwork_path(locale: :en, paragraph_id: paragraph.id, anchor: "textwork-paragraph-#{paragraph.id}"))
+    expect(html.at_css(".textwork__excerpt").text).to eq("Visible textwork paragraph")
+    expect(html.css(".textwork__paragraph--active").map { |section| section["id"] }).to eq(["textwork-paragraph-#{paragraph.id}"])
+  end
+
+  it "shows text excerpts safely without copying editor markup into the contents" do
+    paragraph.update!(body: { en: '<p>More <strong>trees</strong> &amp; benches.</p>' })
+    get routes.textwork_path(locale: :en, paragraph_id: paragraph.id)
+    html = Nokogiri::HTML(response.body)
+    expect(html.at_css(".textwork__contents-excerpt").text).to eq("More trees & benches.")
+    expect(html.at_css(".textwork__contents-excerpt strong")).to be_nil
+    expect(html.at_css(".textwork__excerpt").text).to eq("More trees & benches.")
+  end
+
   it "requires participatory texts to be enabled too" do
     component.update!(settings: component.settings.to_h.merge(participatory_texts_enabled: false))
     get routes.textwork_path(locale: :en)

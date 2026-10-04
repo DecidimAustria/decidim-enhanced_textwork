@@ -1,70 +1,118 @@
 <% append_stylesheet_pack_tag "decidim_enhanced_textwork" %>
 <% append_javascript_pack_tag "decidim_proposals" %>
 
-<%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
+<main class="textwork-page">
   <%= render "decidim/shared/component_announcement" %>
-  <h1 class="title-decorator"><%= translated_attribute(@document&.title || current_component.name) %></h1>
-  <% if @document&.description.present? %>
-    <div class="editor-content"><%= decidim_sanitize_editor(translated_attribute(@document.description)) %></div>
-  <% end %>
-  <% if @paragraphs.any? { |paragraph| textwork_title(paragraph).present? } %>
-    <details class="textwork__contents">
-      <summary><%= t("decidim.enhanced_textwork.texts.contents") %></summary>
+  <header class="textwork__intro">
+    <h1 class="title-decorator"><%= translated_attribute(@document&.title || current_component.name) %></h1>
+    <% if @document&.description.present? %>
+      <div class="editor-content"><%= decidim_sanitize_editor(translated_attribute(@document.description)) %></div>
+    <% end %>
+  </header>
+
+  <% if @paragraphs.any? %>
+    <details class="textwork__contents" open>
+      <summary>
+        <span class="textwork__contents-title"><%= icon "menu-line", role: "presentation" %><%= t("decidim.enhanced_textwork.texts.contents") %></span>
+        <span class="textwork__contents-count"><%= t("decidim.enhanced_textwork.texts.sections", count: @paragraphs.size) %></span>
+        <%= icon "arrow-down-s-line", class: "textwork__contents-chevron", role: "presentation" %>
+      </summary>
       <nav aria-label="<%= t("decidim.enhanced_textwork.texts.contents") %>">
-        <% @paragraphs.each do |paragraph| %>
-          <% next unless textwork_title(paragraph).present? %>
-          <%= link_to textwork_title(paragraph), "#textwork-paragraph-#{paragraph.id}" %>
-        <% end %>
+        <ol>
+          <% @paragraphs.each do |paragraph| %>
+            <li class="textwork__contents-item textwork__contents-item--<%= paragraph.participatory_text_level %>">
+              <%= link_to textwork_paragraph_path(paragraph, anchor: "textwork-paragraph-#{paragraph.id}"), class: "textwork__contents-link", aria: { current: ("location" if paragraph == @active_paragraph) } do %>
+                <% if paragraph.participatory_text_level == "article" %>
+                  <span class="textwork__contents-label"><%= textwork_paragraph_label(paragraph) %></span>
+                  <span class="textwork__contents-excerpt"><%= textwork_excerpt(paragraph, length: 100) %></span>
+                <% else %>
+                  <span><%= textwork_paragraph_label(paragraph) %></span>
+                <% end %>
+                <%= icon "arrow-right-line", class: "textwork__contents-arrow", role: "presentation" %>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
       </nav>
     </details>
   <% end %>
+
   <div class="textwork">
     <div class="textwork__document">
       <% @paragraphs.each do |paragraph| %>
         <section id="textwork-paragraph-<%= paragraph.id %>" class="textwork__paragraph <%= "textwork__paragraph--active" if paragraph == @active_paragraph %>">
-          <% if textwork_title(paragraph).present? %>
-            <h3 class="h4"><%= textwork_title(paragraph) %></h3>
-          <% end %>
+          <div class="textwork__paragraph-heading">
+            <% if paragraph.participatory_text_level == "article" %>
+              <span class="textwork__paragraph-label"><%= textwork_paragraph_label(paragraph) %></span>
+            <% else %>
+              <%= content_tag(paragraph.participatory_text_level == "section" ? :h2 : :h3, textwork_title(paragraph), class: "textwork__section-title") %>
+            <% end %>
+            <% if paragraph == @active_paragraph %>
+              <span class="textwork__selected"><%= icon "chat-1-line", role: "presentation" %><%= t("decidim.enhanced_textwork.texts.selected") %></span>
+            <% end %>
+          </div>
           <% if paragraph.participatory_text_level == "article" %>
             <div class="editor-content"><%= decidim_sanitize_editor(present(paragraph).body) %></div>
           <% end %>
           <div class="textwork__actions">
-            <%= link_to t("decidim.enhanced_textwork.texts.discuss", count: paragraph.comments_count), textwork_paragraph_path(paragraph), class: "button button__sm button__transparent-secondary", aria: { label: "#{textwork_paragraph_label(paragraph)}: #{t("decidim.enhanced_textwork.texts.open_discussion")}" } %>
+            <%= link_to textwork_paragraph_path(paragraph), class: "textwork__discuss", aria: { label: "#{textwork_paragraph_label(paragraph)}: #{t("decidim.enhanced_textwork.texts.open_discussion")}" } do %>
+              <%= icon "chat-1-line", role: "presentation" %>
+              <%= t("decidim.enhanced_textwork.texts.discuss", count: paragraph.comments_count) %>
+            <% end %>
             <% if component_settings.amendments_enabled? && current_settings.amendment_creation_enabled? %>
-              <%= action_authorized_link_to :amend, textwork_amendment_path(paragraph), resource: paragraph, class: "button button__sm button__transparent-secondary" do %>
+              <%= action_authorized_link_to :amend, textwork_amendment_path(paragraph), resource: paragraph, class: "textwork__action-link" do %>
                 <%= t("decidim.enhanced_textwork.texts.amend") %>
               <% end %>
             <% end %>
-            <%= link_to t("decidim.enhanced_textwork.texts.details"), resource_locator(paragraph).path, class: "button button__sm button__transparent-secondary" %>
+            <%= link_to t("decidim.enhanced_textwork.texts.details"), resource_locator(paragraph).path, class: "textwork__action-link" %>
             <% if current_settings.votes_enabled? %>
-              <%= render "decidim/proposals/proposals/vote_button", proposal: paragraph, from_proposals_list: false %>
+              <div class="textwork__vote"><%= render "decidim/proposals/proposals/vote_button", proposal: paragraph, from_proposals_list: false %></div>
             <% end %>
           </div>
         </section>
       <% end %>
     </div>
+
     <aside id="textwork-discussion" class="textwork__discussion" aria-label="<%= t("decidim.enhanced_textwork.texts.discussion") %>" tabindex="-1">
       <% if @active_paragraph %>
-        <h2 class="h4"><%= textwork_paragraph_label(@active_paragraph) %></h2>
-        <%= link_to t("decidim.enhanced_textwork.texts.back_to_paragraph"), "#textwork-paragraph-#{@active_paragraph.id}" %>
-        <%= follow_button_for(@active_paragraph) %>
-        <% if component_settings.amendments_enabled? %>
-          <% amendments = @active_paragraph.visible_emendations_for(current_user).not_hidden %>
-          <% if amendments.any? %>
-            <section id="amendments">
-              <h2 class="h4"><%= t("decidim.amendments.amendments.title", count: amendments.count) %></h2>
-              <% amendments.each do |amendment| %>
-                <%= card_for amendment, context: { current_user: current_user } %>
-              <% end %>
-            </section>
+        <header class="textwork__discussion-header">
+          <p class="textwork__eyebrow"><%= t("decidim.enhanced_textwork.texts.discussion") %></p>
+          <h2><%= textwork_paragraph_label(@active_paragraph) %></h2>
+          <% if @active_paragraph.participatory_text_level == "article" %>
+            <blockquote class="textwork__excerpt"><%= textwork_excerpt(@active_paragraph, length: 240) %></blockquote>
           <% end %>
-        <% end %>
-        <% if component_settings.comments_enabled? %>
-          <%= comments_for @active_paragraph %>
-        <% end %>
+          <div class="textwork__discussion-tools">
+            <%= link_to "#textwork-paragraph-#{@active_paragraph.id}", class: "textwork__back" do %>
+              <%= icon "arrow-left-line", role: "presentation" %><%= t("decidim.enhanced_textwork.texts.back_to_paragraph") %>
+            <% end %>
+            <%= follow_button_for(@active_paragraph) %>
+          </div>
+        </header>
+        <div class="textwork__discussion-body">
+          <% if component_settings.amendments_enabled? %>
+            <% amendments = @active_paragraph.visible_emendations_for(current_user).not_hidden %>
+            <% if amendments.any? %>
+              <section id="amendments" class="textwork__amendments">
+                <h3><%= t("decidim.enhanced_textwork.texts.amendments") %><span class="textwork__count"><%= amendments.size %></span></h3>
+                <div class="textwork__amendment-list">
+                  <% amendments.each do |amendment| %>
+                    <%= card_for amendment, context: { current_user: current_user } %>
+                  <% end %>
+                </div>
+              </section>
+            <% end %>
+          <% end %>
+          <% if component_settings.comments_enabled? %>
+            <%= comments_for @active_paragraph %>
+          <% end %>
+        </div>
       <% else %>
-        <p><%= t("decidim.enhanced_textwork.texts.choose_paragraph") %></p>
+        <div class="textwork__empty">
+          <%= icon "chat-1-line", role: "presentation" %>
+          <h2><%= t("decidim.enhanced_textwork.texts.discussion") %></h2>
+          <p><%= t("decidim.enhanced_textwork.texts.choose_paragraph") %></p>
+        </div>
       <% end %>
     </aside>
   </div>
-<% end %>
+</main>

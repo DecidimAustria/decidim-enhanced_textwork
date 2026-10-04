@@ -15,6 +15,11 @@ en:
     enhanced_textwork:
       texts:
         contents: Table of contents
+        sections:
+          one: 1 text section
+          other: "%{count} text sections"
+        selected: Selected
+        amendments: Suggested changes
         paragraph: "Paragraph %{number}"
         discuss:
           one: "Discuss (1 comment)"

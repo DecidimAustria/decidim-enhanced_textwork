@@ -25,7 +25,7 @@ All added admin actions require the core `manage participatory_texts` permission
 
 ## Boundaries
 
-- Selecting another paragraph currently navigates to a new page with a discussion anchor. It does not reproduce the old custom AJAX navigation.
+- Selecting another paragraph navigates to a new page. Contents links select and scroll to the paragraph; Discuss links scroll to its discussion panel. Both links resolve the selection through the same component-scoped query. The contents includes heading hierarchy, plain-text paragraph excerpts and an accessible current-location marker.
 - The discussion panel contains one paragraph's discussion at a time and moves below the text on small screens.
 - Core import parsing determines the handling of headings, lists and paragraphs. Arbitrary office-document layouts are not preserved.
 - The Word report is synchronous and intended for normal-sized documents. Large-document performance and background exports remain to be assessed.
@@ -38,6 +38,8 @@ The suite runs against an isolated generated test application and PostgreSQL. It
 
 Chrome system tests exercise desktop/mobile discussion, comment submission, support/unvote and the editor-to-core-publication flow. The plugin assets are built through the application's normal Shakapacker pipeline. No customer database, deployment or framework source is modified.
 
-Local validation on 2026-10-04: Ruby 3.4.7, Decidim 0.32.1, Rails 8.1.4, PostgreSQL 14 and Node 22.14.0. The suite contains 30 examples, including four Chrome system tests. Asset compilation, Rails eager loading (`zeitwerk:check`), repeatable setup on the generated application, Ruby syntax and gem packaging were checked. GitHub Actions is configured but has not run remotely.
+Initial local validation on 2026-10-04: Ruby 3.4.7, Decidim 0.32.1, Rails 8.1.4, PostgreSQL 14 and Node 22.14.0. The initial suite contained 30 examples, including four Chrome system tests. Asset compilation, Rails eager loading (`zeitwerk:check`), repeatable setup on the generated application, Ruby syntax and gem packaging were checked. The layout update adds two request examples for contents selection and safe text excerpts. GitHub Actions is configured but has not run remotely.
+
+The layout update passed all 32 examples on 2026-10-04. Assets were rebuilt in both the test application and `decidim-localtest`. The German example document, contents navigation, selected paragraph and discussion panel were inspected at desktop width and at 390px; neither mobile view overflowed horizontally.
 
 Before a stable release, add legacy conversion with representative fixtures, rehearse it on a restored installation, check large documents and verify exported reports in the Word/LibreOffice versions used by administrators. XML/ZIP tests establish the report structure; they do not substitute for office-application acceptance.

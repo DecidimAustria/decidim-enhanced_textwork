@@ -15,6 +15,11 @@ de:
     enhanced_textwork:
       texts:
         contents: Inhaltsverzeichnis
+        sections:
+          one: 1 Textabschnitt
+          other: "%{count} Textabschnitte"
+        selected: Ausgewählt
+        amendments: Änderungsvorschläge
         paragraph: "Absatz %{number}"
         discuss:
           one: "Diskutieren (1 Kommentar)"
