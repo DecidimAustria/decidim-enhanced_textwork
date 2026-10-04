@@ -43,6 +43,8 @@ jobs:
       - name: Check Rails autoloading
         working-directory: spec/decidim_dummy_app
         run: bundle exec rails zeitwerk:check
+      - name: Verify component independence
+        run: bin/check-independence
       - name: Test
         run: bundle exec rspec spec
       - name: Upload failure screenshots

@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Decidim::EnhancedTextwork::Admin::ImportText do
-  let(:component) { create(:proposal_component, settings: { participatory_texts_enabled: true, enhanced_textwork_enabled: true }) }
+  let(:component) { create(:textwork_component) }
   let(:user) { create(:user, :admin, organization: component.organization) }
   let(:content) { "<h1>A document</h1><p>First <strong>paragraph</strong>.</p><p>Second paragraph.</p>" }
   let(:form) do
@@ -12,18 +12,18 @@ RSpec.describe Decidim::EnhancedTextwork::Admin::ImportText do
     )
   end
 
-  it "creates ordered, unpublished core paragraphs and document metadata" do
+  it "creates ordered, unpublished independent paragraphs and document metadata" do
     described_class.call(form)
-    paragraphs = Decidim::Proposals::Proposal.where(component:).order(:position)
-    expect(paragraphs.map(&:participatory_text_level)).to eq(%w(section article article))
-    expect(paragraphs.map(&:published_at)).to all(be_nil)
+    paragraphs = Decidim::EnhancedTextwork::Section.where(component:).order(:position)
+    expect(paragraphs.map(&:level)).to eq(%w(section article article))
+    expect(paragraphs.map(&:published?)).to all(be false)
     expect(paragraphs.second.body["en"]).to include("<strong>paragraph</strong>")
-    expect(Decidim::Proposals::ParticipatoryText.find_by(component:).title["en"]).to eq("Document")
+    expect(Decidim::EnhancedTextwork::Document.find_by(component:).title["en"]).to eq("Document")
   end
 
   it "refuses a second import rather than merging or replacing an existing document" do
     described_class.call(form)
-    expect { described_class.call(form) }.not_to change(Decidim::Proposals::Proposal, :count)
+    expect { described_class.call(form) }.not_to change(Decidim::EnhancedTextwork::Section, :count)
     expect(form.errors[:content]).not_to be_empty
   end
 
@@ -33,8 +33,8 @@ RSpec.describe Decidim::EnhancedTextwork::Admin::ImportText do
     it "does not leave metadata or paragraphs behind" do
       described_class.call(form)
       expect(form.errors[:content]).not_to be_empty
-      expect(Decidim::Proposals::ParticipatoryText.where(component:)).to be_empty
-      expect(Decidim::Proposals::Proposal.where(component:)).to be_empty
+      expect(Decidim::EnhancedTextwork::Document.where(component:)).to be_empty
+      expect(Decidim::EnhancedTextwork::Section.where(component:)).to be_empty
     end
   end
 end

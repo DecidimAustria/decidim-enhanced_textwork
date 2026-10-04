@@ -10,7 +10,7 @@ RSpec.describe Decidim::EnhancedTextwork::LegacyInventory do
     connection.create_table(:textwork_inventory_references) { |table| table.string :resource_type }
     connection.execute("INSERT INTO decidim_enhanced_textwork_paragraphs (body) VALUES ('Private document text')")
     connection.execute("INSERT INTO textwork_inventory_references (resource_type) VALUES ('Decidim::EnhancedTextwork::Paragraph')")
-    component = create(:proposal_component)
+    component = create(:textwork_component)
     component.update_columns(manifest_name: "enhanced_textwork")
     report = described_class.new(connection).report
     expect(report[:components]).to include(hash_including("id" => component.id, "participatory_space_id" => component.participatory_space_id))

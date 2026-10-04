@@ -14,7 +14,7 @@ module Decidim
 
       def export
         I18n.with_locale(@locale) do
-          text = Decidim::Proposals::ParticipatoryText.find_by(component: @component)
+          text = Document.find_by(component: @component)
           @document.paragraph(translate(text&.title || @component.name), heading: true)
           @document.html(translate(text.description)) if text
           paragraphs.each { |paragraph| write_paragraph(paragraph) }
@@ -25,7 +25,7 @@ module Decidim
       private
 
       def paragraphs
-        Decidim::Proposals::Proposal.where(component: @component).published.not_hidden.only_amendables.order(:position, :id)
+        Section.joins(:document).where(component: @component).where.not(decidim_textwork_documents: { published_at: nil }).not_hidden.order(:position, :id)
       end
 
       def write_paragraph(paragraph)
@@ -33,18 +33,18 @@ module Decidim
         title = t("paragraph", number: title) if title.match?(/\A\d+\z/)
         @document.paragraph(title, heading: true)
         @document.html(translate(paragraph.body)) if paragraph.article?
-        @document.paragraph("#{t("state")}: #{paragraph.state}")
-        @document.paragraph("#{t("supports")}: #{paragraph.votes.count}")
+        @document.paragraph("#{t("state")}: v#{paragraph.current_revision.number}")
+        @document.paragraph("#{t("supports")}: #{paragraph.current_revision.supports.count}")
         write_comments(paragraph)
         return unless @component.settings.amendments_enabled?
 
-        amendments = paragraph.visible_emendations_for(@user).published.not_hidden.order(:created_at, :id)
+        amendments = paragraph.amendments.not_hidden.order(:created_at, :id)
         @document.paragraph(t("amendments"), heading: true) if amendments.any?
         amendments.each do |amendment|
           @document.paragraph("#{amendment.id}: #{translate(amendment.title)}", heading: true)
           @document.html(translate(amendment.body))
-          @document.paragraph("#{t("state")}: #{amendment.amended.state}")
-          @document.paragraph("#{t("supports")}: #{amendment.votes.count}")
+          @document.paragraph("#{t("state")}: #{amendment.state}")
+          @document.paragraph("#{t("supports")}: #{amendment.supports.count}")
           write_comments(amendment)
         end
       end
@@ -69,7 +69,9 @@ module Decidim
       def translate(value)
         return value.to_s unless value.is_a?(Hash)
 
-        value[@locale].presence || value[@component.organization.default_locale].presence || value.values.find { |item| item.is_a?(String) && item.present? }.to_s
+        value[@locale].presence || value[@component.organization.default_locale].presence || value.values.find { |item|
+          item.is_a?(String) && item.present?
+        }.to_s
       end
 
       def t(key, **options)

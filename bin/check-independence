@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+require "bundler/setup"
+require "rails/all"
+require "decidim/core"
+require "decidim/comments"
+require "decidim/enhanced_textwork"
+abort "Proposals was loaded" if defined?(Decidim::Proposals)
+abort "Collaborative Texts was loaded" if defined?(Decidim::CollaborativeTexts)
+abort "Textwork component missing" unless Decidim.find_component_manifest(:textwork)
+puts "Textwork loads independently of Proposals and Collaborative Texts."

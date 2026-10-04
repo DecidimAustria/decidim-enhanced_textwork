@@ -3,16 +3,6 @@
 module Decidim
   module EnhancedTextwork
     module TextsHelper
-      # Core vote partials use these unqualified helpers. Keep the complete
-      # participatory-space/component mount path when rendering from our engine.
-      def proposal_path(...)
-        Decidim::EngineRouter.main_proxy(current_component).proposal_path(...)
-      end
-
-      def proposal_proposal_vote_path(...)
-        Decidim::EngineRouter.main_proxy(current_component).proposal_proposal_vote_path(...)
-      end
-
       def textwork_title(paragraph)
         title = translated_attribute(paragraph.title).to_s
         return title unless component_settings.textwork_hide_numbered_titles? && title.match?(/\A\s*\d+\s*\z/)
@@ -34,7 +24,7 @@ module Decidim
       end
 
       def textwork_amendment_path(paragraph)
-        decidim.new_amend_path(amendable_gid: paragraph.to_sgid.to_s)
+        Decidim::EngineRouter.main_proxy(current_component).new_section_amendment_path(paragraph)
       end
     end
   end

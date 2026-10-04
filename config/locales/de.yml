@@ -6,12 +6,6 @@ de:
         description: Beschreibung
         content: Dokumenttext
   decidim:
-    components:
-      proposals:
-        settings:
-          global:
-            enhanced_textwork_enabled: Erweiterte Textwork-Ansicht für partizipative Texte
-            textwork_hide_numbered_titles: Automatisch nummerierte Absatztitel ausblenden
     enhanced_textwork:
       texts:
         contents: Inhaltsverzeichnis

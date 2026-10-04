@@ -1,6 +1,0 @@
-<%# Upstream 0.32 bulk actions, with a component-scoped Textwork tools link. %>
-<%= link_to t(".discard_all"), discard_participatory_texts_path, method: "POST", id: "discard-all", class: "button button__sm button__secondary alert", data: { confirm: t(".are_you_sure") } %>
-<%= link_to t(".import_doc"), new_import_participatory_texts_path, id: "import-doc", class: "button button__sm button__secondary" %>
-<% if Decidim::EnhancedTextwork.enabled?(current_component) %>
-  <%= link_to t("decidim.enhanced_textwork.admin.title"), Decidim::EngineRouter.admin_proxy(current_component).textwork_path, class: "button button__sm button__secondary" %>
-<% end %>

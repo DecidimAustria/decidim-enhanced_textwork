@@ -8,7 +8,7 @@ require_relative "decidim_dummy_app/config/environment"
 require "rspec/rails"
 require "factory_bot_rails"
 require "decidim/core/test/factories"
-require "decidim/proposals/test/factories"
+require_relative "support/factories"
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = true

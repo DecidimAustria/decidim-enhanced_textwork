@@ -1,0 +1,14 @@
+de:
+  decidim:
+    events:
+      enhanced_textwork:
+        amendment_decided:
+          email_subject: Über Ihren Änderungsvorschlag wurde entschieden
+          email_intro: 'Zu "%{resource_title}" wurde eine Entscheidung getroffen. Öffnen Sie den Änderungsvorschlag, um die Entscheidung und ihre Begründung zu lesen.'
+          email_outro: Sie erhalten diese Nachricht, weil Sie den Änderungsvorschlag eingereicht haben.
+          notification_title: 'Zu <a href="%{resource_path}">%{resource_title}</a> wurde eine Entscheidung getroffen.'
+    enhanced_textwork:
+      admin_log:
+        amendment:
+          accepted: "%{user_name} hat den Änderungsvorschlag %{resource_name} in %{space_name} angenommen"
+          rejected: "%{user_name} hat den Änderungsvorschlag %{resource_name} in %{space_name} abgelehnt"

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0.alpha2
+
+- Replace the Proposals extension with an independent Textwork component and additive tables.
+- Add immutable paragraph revisions, revision-bound supports and document snapshots.
+- Add own amendments with administrator decisions, stale-change protection, comments and decision notifications.
+- Retain editor/Markdown/ODT import, review/publication, responsive discussion and Word reports without Proposals integration.
+- Preserve the previous prototype in Git and revise the legacy migration plan for the independent target. No legacy conversion is included.
+
 ## 2.0.0.alpha1 — unreleased
 
 - Replace the copied 0.26-era Proposals implementation with an opt-in extension for Decidim 0.32.1.

@@ -25,5 +25,6 @@ fi
 if [[ ! -d node_modules ]]; then
   npm ci
 fi
+bundle exec rails railties:install:migrations FROM=decidim_enhanced_textwork
 bundle exec rails decidim:choose_target_plugins railties:install:migrations \
   db:create db:migrate assets:precompile

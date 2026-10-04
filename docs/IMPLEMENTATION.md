@@ -1,45 +1,50 @@
-# Version 2 implementation
+# Independent Textwork implementation
 
-## Scope
+## Architecture
 
-Initial development branch: `feature/proposals-textwork-2.0`, based on legacy commit `7715beb8310b`. Framework reference: local `release/0.32-stable`, commit `d514de311b`, version 0.32.1. The executable tests use the released Decidim 0.32.1 gems.
+Target: official Decidim 0.32.1, Ruby 3.4.7. Plugin: 2.0.0.alpha2. Branch: `feature/standalone-textwork`.
 
-The old copied module is replaced by an opt-in Proposals extension in the same gem. New documents use core tables exclusively. There is no automatic legacy conversion in this alpha.
+The component manifest `textwork` mounts independent public and administrative Rails engines. It does not add routes, settings, controller prepends or view overrides to Proposals or Collaborative Texts. Gem dependencies are Core, Comments, Kramdown and Rubyzip. The old component manifest is deliberately not reused.
 
-## Integration points
-
-| Area | Implementation |
+| Model | Purpose |
 | --- | --- |
-| Component settings | Add `enhanced_textwork_enabled` (default false) and `textwork_hide_numbered_titles` (default true) to Proposals. Both participatory texts and Textwork must be enabled. |
-| Public routing | Prepend a small `index` override to the core controller. Enabled components redirect to the added `/textwork` route; otherwise call `super`. |
-| Document view | Query published, unmoderated, non-amendment proposals belonging to the current component in position/ID order. Resolve the selected paragraph through the same scope. |
-| Discussion | Render core comments, follow controls, amendment cards and vote controls. Filter moderated amendments before rendering the cards. Use mounted Proposals paths for voting and details. |
-| Admin entry point | One small override of `_bulk-actions.html.erb` adds the tools link alongside the original import/discard actions. |
-| Editor import | Core editor HTML → sanitized HTML → Kramdown → core Markdown parser. Lock the component, require it to be empty, create drafts and metadata in a transaction. |
-| Draft deletion | Component-scoped unpublished core proposal lookup, core permission check and traceability. Published proposals and other components' drafts cannot be deleted through this route. |
-| Word report | Authorized admin download. Published and visible data, ordered comment threads, basic OOXML text/heading output. No HTTP/file fetches from document content. |
-| Assets | Register a Shakapacker entrypoint through `config/assets.rb`; load the plugin stylesheet and core proposal interactions on the document page. |
-| Legacy inspection | SQL-only reporting class, a rake task and an entry script usable with an old application's bundle. |
+| `Document` | One document per component, localized title/description and publication state. |
+| `Section` | Stable identity, heading/paragraph level, ordering, comments, follows, moderation and current revision pointer. |
+| `Revision` | Immutable localized text/title, sequence number, editor and creation date. |
+| `Support` | Unique participant support for a revision or amendment. Repeated requests do not add duplicate supports. |
+| `Amendment` | Exact base revision, author, proposed text and reason, pending/accepted/rejected/withdrawn state, decision actor/date/reason and accepted result revision. |
+| `DocumentVersion` | Immutable ordered references to paragraph revisions, plus document metadata, at publication and subsequent published edits/reordering/acceptance. |
 
-All added admin actions require the core `manage participatory_texts` permission; export also requires `export proposals`. Ordinary Decidim routing controls access to the organization, space and component. The plugin does not add public export access.
+Models live under `Decidim::EnhancedTextwork`; tables use the new `decidim_textwork_*` prefix. In particular, the new section model does not reuse the legacy `Paragraph` type, so old polymorphic references cannot accidentally resolve to unrelated new IDs.
 
-## Boundaries
+## Participation and authorization
 
-- Selecting another paragraph navigates to a new page. Contents links select and scroll to the paragraph; Discuss links scroll to its discussion panel. Both links resolve the selection through the same component-scoped query. The contents includes heading hierarchy, plain-text paragraph excerpts and an accessible current-location marker.
-- The discussion panel contains one paragraph's discussion at a time and moves below the text on small screens.
-- Core import parsing determines the handling of headings, lists and paragraphs. Arbitrary office-document layouts are not preserved.
-- The Word report is synchronous and intended for normal-sized documents. Large-document performance and background exports remain to be assessed.
-- Core details, amendment creation/editing and moderation screens remain core screens. The plugin does not copy them or reimplement their business rules.
-- The old similarity configuration and separate Paragraph GraphQL types are not retained. Integrations must use core Proposals interfaces after migration.
+Public writes require the same organization, a visible resource, participation permission in the space, action authorization and applicable component/phase settings. Reads and writes scope resource IDs through the current component/document. Moderated sections and their amendments are excluded from public views. Core Comments is attached through `CommentableWithComponent`, with an additional visibility/block guard.
 
-## Validation
+An organization administrator or a user with an administrator role in the current participatory space may decide amendments. An author, evaluator or administrator of another space does not gain that right. The component administration also uses Decidim's normal administrative access checks.
 
-The suite runs against an isolated generated test application and PostgreSQL. It covers opt-in routing, normal-view fallback, component isolation, drafts, moderation, admin access, core voting, amendment display, editor import, draft deletion, DOCX structure/content, threaded comments and non-mutating legacy inventory.
+All mutations that affect paragraph versions or supports lock the document. Amendment acceptance checks the base revision against the current revision before replacing it. A stale acceptance returns a conflict, and a second decision cannot create another revision. Pending amendments may still be rejected if stale. Supports submitted from an outdated page are refused for the old revision, while existing supports can be withdrawn from its history page if participation is enabled.
 
-Chrome system tests exercise desktop/mobile discussion, comment submission, support/unvote and the editor-to-core-publication flow. The plugin assets are built through the application's normal Shakapacker pipeline. No customer database, deployment or framework source is modified.
+Revision rows are read-only after creation. Published sections cannot be deleted through the draft-delete endpoint. Administrative text edits create a revision; reordering preserves paragraph IDs. Only unpublished draft sections can be removed. Comments stay in a paragraph-wide discussion, explicitly labelled as spanning revisions. Amendment discussions remain attached to the amendment and its base revision.
 
-Initial local validation on 2026-10-04: Ruby 3.4.7, Decidim 0.32.1, Rails 8.1.4, PostgreSQL 14 and Node 22.14.0. The initial suite contained 30 examples, including four Chrome system tests. Asset compilation, Rails eager loading (`zeitwerk:check`), repeatable setup on the generated application, Ruby syntax and gem packaging were checked. The layout update adds two request examples for contents selection and safe text excerpts. GitHub Actions is configured but has not run remotely.
+Amendment decisions are recorded through Decidim traceability and notify the submitting participant using the normal event infrastructure. The local test application captures outgoing mail locally.
 
-The layout update passed all 32 examples on 2026-10-04. Assets were rebuilt in both the test application and `decidim-localtest`. The German example document, contents navigation, selected paragraph and discussion panel were inspected at desktop width and at 390px; neither mobile view overflowed horizontally.
+## Import and export
 
-Before a stable release, add legacy conversion with representative fixtures, rehearse it on a restored installation, check large documents and verify exported reports in the Word/LibreOffice versions used by administrators. XML/ZIP tests establish the report structure; they do not substitute for office-application acceptance.
+Editor HTML is sanitized by Decidim and parsed into top-level headings and paragraph blocks without the former Proposals parser. Markdown uses Kramdown followed by the same sanitizer. ODT reads heading/paragraph text from a bounded `content.xml`, rejects entity declarations and external document types, and does not fetch resources. Imports require an empty component and are transactional. Original office formatting, tables, images and tracked changes are outside the import contract.
+
+The DOCX writer emits a text report. It excludes moderated/deleted content and replies whose parent is excluded. It is not a database-complete preservation format.
+
+## Validation and local test data
+
+Tests cover import/publication, component boundaries, hidden/draft content, phase blocks, login, revision-bound supports, immutable history, stale/duplicate decisions, process-administrator boundaries and exports. Browser scenarios exercise the editor, core comment submission, supports/unvote, amendment submission/commenting/acceptance and responsive document presentation.
+
+Verified on 2026-10-04: **46 examples, 0 failures**, including the browser scenarios above, against official Decidim 0.32.1. Localtest passed Rails autoloading and the asset build; rerunning seeds preserved existing data.
+
+`bin/check-independence` verifies that loading the component does not load Proposals or Collaborative Texts. Schema changes are additive and the installation task explicitly installs the external gem's migration.
+
+`decidim-localtest` retains its original Proposals components. Independent examples are separate components with a separate seed marker, so rerunning setup preserves manual test changes. The local database was dumped before creating the independent examples; backups and credentials remain ignored. This is not a migration of the prototype data and is not a rehearsal on a legacy customer installation.
+
+## Release boundaries
+
+This remains a development alpha, not an approved production upgrade. Legacy conversion, full historical archival, external integration compatibility and a representative legacy rehearsal are separate work. The document design remains the existing prototype; the requested larger redesign has not been implemented here. A complete WCAG 2.2 AA audit also remains separate from the functional and responsive checks.

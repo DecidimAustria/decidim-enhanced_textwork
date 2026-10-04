@@ -1,0 +1,30 @@
+<% append_stylesheet_pack_tag "decidim_enhanced_textwork" %>
+<div class="textwork-page">
+  <%= link_to t("decidim.enhanced_textwork.texts.back_to_paragraph"), textwork_paragraph_path(@amendment.section) %>
+  <h1 class="title-decorator"><%= t("decidim.enhanced_textwork.texts.amendment") %>: <%= textwork_paragraph_label(@amendment.section) %></h1>
+  <p><%= @amendment.author.name %> · <%= t("decidim.enhanced_textwork.states.#{@amendment.state}") %></p>
+  <h2><%= t("decidim.enhanced_textwork.texts.original") %> · <%= t("decidim.enhanced_textwork.texts.version", number: @amendment.base_revision.number) %></h2>
+  <% if textwork_title(@amendment.base_revision).present? %><h3><%= textwork_title(@amendment.base_revision) %></h3><% end %>
+  <div class="editor-content"><%= decidim_sanitize_editor(translated_attribute(@amendment.base_revision.body)) %></div>
+  <h2><%= t("decidim.enhanced_textwork.texts.proposed_text") %></h2>
+  <% if textwork_title(@amendment).present? %><h3><%= textwork_title(@amendment) %></h3><% end %>
+  <div class="editor-content"><%= decidim_sanitize_editor(translated_attribute(@amendment.body)) %></div>
+  <p><%= @amendment.reason %></p>
+  <% if @amendment.state == "pending" && @amendment.stale? %><p role="status"><%= t("decidim.enhanced_textwork.texts.conflict") %></p><% end %>
+  <%= render "decidim/enhanced_textwork/shared/support", resource: @amendment, target: @amendment %>
+  <% if @amendment.state == "pending" && @amendment.author == current_user %>
+    <%= button_to t("decidim.enhanced_textwork.texts.withdraw"), withdraw_amendment_path(@amendment), method: :patch, class: "button button__sm button__secondary" %>
+  <% end %>
+  <% if @amendment.decided_at %>
+    <p><%= @amendment.decided_by&.name %> · <%= l(@amendment.decided_at, format: :short) %></p><p><%= @amendment.decision_reason %></p>
+  <% end %>
+  <% if @amendment.state == "pending" && Decidim::EnhancedTextwork::Access.admin?(current_user, current_component) %>
+    <%= form_with url: Decidim::EngineRouter.admin_proxy(current_component).decide_amendment_path(@amendment), method: :patch, local: true, class: "form-defaults" do |form| %>
+      <%= label_tag :decision_reason, t("decidim.enhanced_textwork.texts.decision_reason") %>
+      <%= text_area_tag :decision_reason %>
+      <%= button_tag t("decidim.enhanced_textwork.texts.accept"), name: :state, value: :accepted, disabled: @amendment.stale?, class: "button button__sm button__secondary" %>
+      <%= button_tag t("decidim.enhanced_textwork.texts.reject"), name: :state, value: :rejected, class: "button button__sm button__secondary" %>
+    <% end %>
+  <% end %>
+  <%= comments_for @amendment if component_settings.comments_enabled? %>
+</div>

@@ -6,12 +6,6 @@ en:
         description: Description
         content: Document text
   decidim:
-    components:
-      proposals:
-        settings:
-          global:
-            enhanced_textwork_enabled: Enhanced Textwork view for participatory texts
-            textwork_hide_numbered_titles: Hide automatically numbered paragraph titles
     enhanced_textwork:
       texts:
         contents: Table of contents

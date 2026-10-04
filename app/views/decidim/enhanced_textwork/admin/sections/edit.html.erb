@@ -1,0 +1,7 @@
+<h1><%= t("decidim.enhanced_textwork.admin.edit") %></h1>
+<%= decidim_form_for @form, url: section_path(@section), method: :patch, html: { class: "form-defaults" } do |form| %>
+  <%= form.hidden_field :base_revision_id %>
+  <%= form.text_field :title, label: t("activemodel.attributes.import_form.title") %>
+  <%= form.editor :body, label: t("activemodel.attributes.import_form.content") %>
+  <%= form.submit t("decidim.enhanced_textwork.admin.save"), class: "button button__sm button__secondary" %>
+<% end %>

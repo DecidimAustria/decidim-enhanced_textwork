@@ -1,0 +1,14 @@
+<% append_stylesheet_pack_tag "decidim_enhanced_textwork" %>
+<div class="textwork-page">
+  <%= link_to t("decidim.enhanced_textwork.texts.back_to_paragraph"), textwork_paragraph_path(@section) %>
+  <h1 class="title-decorator"><%= textwork_paragraph_label(@revision) %></h1>
+  <p><%= t("decidim.enhanced_textwork.texts.version", number: @revision.number) %> · <%= l(@revision.created_at, format: :short) %></p>
+  <div class="editor-content"><%= decidim_sanitize_editor(translated_attribute(@revision.body)) %></div>
+  <%= render "decidim/enhanced_textwork/shared/support", resource: @section, target: @revision %>
+  <h2><%= t("decidim.enhanced_textwork.texts.history") %></h2>
+  <ul><% @section.revisions.each do |revision| %>
+    <li><%= link_to t("decidim.enhanced_textwork.texts.version", number: revision.number), section_path(@section, revision_id: revision.id) %> · <%= t("decidim.enhanced_textwork.texts.support_count", count: revision.supports.count) %></li>
+  <% end %></ul>
+  <p><%= t("decidim.enhanced_textwork.texts.comments_all_versions") %></p>
+  <%= comments_for @section if component_settings.comments_enabled? %>
+</div>

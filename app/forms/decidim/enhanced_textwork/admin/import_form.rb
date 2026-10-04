@@ -5,19 +5,20 @@ module Decidim
     module Admin
       class ImportForm < Decidim::Form
         include TranslatableAttributes
-
         translatable_attribute :title, String
         translatable_attribute :description, String
         attribute :content, String
-
+        attribute :document, Object
         validates :title, translatable_presence: true
-        validates :content, presence: true, length: { maximum: 1_000_000 }
+        validates :content, presence: true, unless: :document_present?
+        validates :content, length: { maximum: 1_000_000 }
         validate :component_must_be_empty
+        def document_present?
+          document.present?
+        end
 
         def component_must_be_empty
-          return unless Decidim::Proposals::Proposal.where(component: current_component).exists?
-
-          errors.add(:content, I18n.t("decidim.enhanced_textwork.admin.existing_paragraphs"))
+          errors.add(:content, I18n.t("decidim.enhanced_textwork.admin.existing_paragraphs")) if Document.exists?(component: current_component)
         end
       end
     end
