@@ -1,0 +1,6 @@
+<div class="tw-diff <%= local_assigns[:compact] ? 'tw-diff-snippet' : 'tw-diff-full' %>" data-diff-output data-compact="<%= !!local_assigns[:compact] %>">
+  <% if I18n.locale.to_s != @document.locale && params[:original] != '1' %>
+    <%= textwork_reading(suggestion) %>
+    <%= link_to tw("show_original"), document_path(@document, block: @block.id, suggestion: suggestion.id, original: 1) %>
+  <% end %>
+</div>

@@ -180,12 +180,10 @@ export default class extends Controller {
         focus({ preventScroll: true });
       this.mountComments();
       this.panelTarget.querySelectorAll("[data-suggestion]").forEach((card) => {
-        if (card.dataset.translated !== "true") {
-          renderDiff(
-            card.querySelector("[data-diff-output]"),
-            card.dataset.original,
-            card.dataset.replacement
-          );
+        const source = this.previewSource(card.dataset.suggestion);
+        const output = card.querySelector("[data-diff-output]");
+        if (source && output && source.dataset.translated !== "true") {
+          renderDiff(output, source.dataset.original, source.dataset.replacement, output.dataset.compact === "true");
         }
       });
       this.syncCounts();
@@ -197,10 +195,11 @@ export default class extends Controller {
         this.responsive();
         this.changed();
       } else if (mode === "suggestions") {
-        const card = this.panelTarget.querySelector("[data-suggestion]");
-        if (card) {
-          this.showPreview(card);
-        }
+        const selected = this.panelTarget.querySelector("[data-detail-id]").dataset.detailId;
+        const source = selected
+          ? this.previewSource(selected)
+          : this.panelTarget.querySelector('[data-preview-suggestion][data-pending="true"]');
+        this.showPreview(source);
       }
     } catch (error) {
       if (error.name !== "AbortError") {
@@ -279,6 +278,20 @@ export default class extends Controller {
     } else {
       this.panelTarget.removeAttribute("aria-modal");
     }
+    if (!this.editor && this.previewId) {
+      const preview = this.element.querySelector(`#block-${this.block} [data-preview]`);
+      const valid = this.element.querySelector(`#block-${this.block} [data-valid-text]`);
+      if (this.mobile.matches) {
+        if (preview) {
+          preview.hidden = true;
+        }
+        if (valid) {
+          valid.hidden = false;
+        }
+      } else {
+        this.showPreview(this.previewSource(this.previewId));
+      }
+    }
     if (this.editor) {
       const host = this.mobile.matches
         ? this.panelTarget.querySelector("[data-editor-home]")
@@ -298,6 +311,7 @@ export default class extends Controller {
   clearEditor() {
     this.editor?.remove();
     this.editor = null;
+    this.previewId = null;
     this.form = null;
     this.dirty = false;
     this.element.querySelectorAll("[data-preview]").forEach((element) => {
@@ -328,7 +342,7 @@ export default class extends Controller {
       this.editor.dataset.original,
       body
     );
-    this.form.querySelector("[data-submit]").disabled =
+    this.panelTarget.querySelector("[data-submit]").disabled =
       body.trim() === this.editor.dataset.original.trim() || !body.trim();
   }
 
@@ -381,7 +395,7 @@ export default class extends Controller {
   async submit(event) {
     event.preventDefault();
     const form = this.form;
-    const button = form.querySelector("[data-submit]");
+    const button = this.panelTarget.querySelector("[data-submit]");
     button.disabled = true;
     try {
       const response = await fetch(form.action, {
@@ -479,6 +493,9 @@ export default class extends Controller {
       });
     this.commentObserver?.disconnect();
     this.commentObserver = new MutationObserver(() => {
+      if (this.commentFocusPending) {
+        this.focusComment();
+      }
       if (this.mode !== "comments") {
         return;
       }
@@ -492,10 +509,13 @@ export default class extends Controller {
     this.commentObserver.observe(this.panelTarget, {
       childList: true,
       subtree: true,
-      characterData: true
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["disabled"]
     });
   }
   unmountComments() {
+    this.commentFocusPending = false;
     this.commentObserver?.disconnect();
     this.panelTarget.
       querySelectorAll("[data-decidim-comments]").
@@ -521,66 +541,103 @@ export default class extends Controller {
     this.order = event.target.value;
     this.open(this.block, "suggestions");
   }
-  preview(event) {
-    this.showPreview(
-      this.panelTarget.querySelector(
-        `[data-suggestion="${event.currentTarget.dataset.previewId}"]`
-      )
-    );
+  previewSource(id) {
+    return this.panelTarget.querySelector(`[data-preview-suggestion="${id}"]`);
   }
-  showPreview(card) {
-    if (!card || this.mobile.matches) {
+  preview(event) {
+    this.showPreview(this.previewSource(event.currentTarget.dataset.previewId));
+    this.element.querySelector(`#block-${this.block} .tw-preview-label`)?.focus();
+  }
+  showPreview(source) {
+    if (!source) {
       return;
     }
-    const host = this.element.querySelector(
-      `#block-${this.block} [data-preview]`
-    );
+    this.previewId = source.dataset.previewSuggestion;
+    if (this.mobile.matches) {
+      return;
+    }
+    const host = this.element.querySelector(`#block-${this.block} [data-preview]`);
     if (!host) {
       return;
     }
+    const heading = document.createElement("div");
+    heading.className = "tw-preview-heading";
     const title = document.createElement("p");
     title.className = "tw-preview-label";
-    title.textContent = `${this.labelsValue.preview} · ${card.dataset.author}`;
+    title.tabIndex = -1;
+    title.textContent = source.dataset.label;
+    heading.append(title);
     const diff = document.createElement("div");
     diff.className = "tw-diff";
-    if (card.dataset.translated === "true") {
-      diff.textContent = card.querySelector("[data-diff-output]").textContent;
+    if (source.dataset.translated === "true") {
+      diff.append(source.content.cloneNode(true));
     } else {
-      renderDiff(diff, card.dataset.original, card.dataset.replacement);
+      renderDiff(diff, source.dataset.original, source.dataset.replacement);
     }
-    const cards = [...this.panelTarget.querySelectorAll("[data-suggestion]")];
-    const position = cards.indexOf(card);
-    const controls = document.createElement("div");
-    controls.className = "tw-preview-controls";
-    if (cards.length > 1) {
-      [-1, 1].forEach((direction) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent =
-          this.labelsValue[direction < 0
-            ? "previous"
-            : "next"];
-        button.disabled =
-          position + direction < 0 || position + direction >= cards.length;
-        button.addEventListener("click", (event) => {
-          event.stopPropagation();
-          this.showPreview(cards[position + direction]);
-        });
-        controls.append(button);
-      });
-      title.textContent += ` · ${position + 1} / ${cards.length}`;
+    const sources = [...this.panelTarget.querySelectorAll('[data-preview-suggestion][data-pending="true"]')];
+    const position = sources.indexOf(source);
+    if (position >= 0 && sources.length > 1) {
+      heading.append(this.previewControls(sources, position));
     }
-    host.replaceChildren(title, controls, diff);
+    host.replaceChildren(heading, diff);
     host.hidden = false;
     this.panelTarget.querySelectorAll("[data-preview-id]").forEach((button) => {
-      button.setAttribute(
-        "aria-pressed",
-        button.dataset.previewId === card.dataset.suggestion
-      );
+      const selected = button.dataset.previewId === this.previewId;
+      button.hidden = selected;
+      button.setAttribute("aria-pressed", selected);
     });
-    this.element.querySelector(
-      `#block-${this.block} [data-valid-text]`
-    ).hidden = true;
+    this.panelTarget.querySelectorAll("[data-marked-id]").forEach((label) => {
+      label.hidden = label.dataset.markedId !== this.previewId;
+    });
+    this.element.querySelector(`#block-${this.block} [data-valid-text]`).hidden = true;
+  }
+  previewControls(sources, position) {
+    const controls = document.createElement("div");
+    controls.className = "tw-preview-controls";
+    [-1, 1].forEach((direction) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "button button__sm button__transparent-secondary tw-preview-arrow";
+      button.setAttribute("aria-label", this.labelsValue[direction < 0
+        ? "previous"
+        : "next"]);
+      const arrow = document.createElement("span");
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = direction < 0
+        ? "‹"
+        : "›";
+      button.append(arrow);
+      button.disabled = position + direction < 0 || position + direction >= sources.length;
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const next = sources[position + direction];
+        if (this.panelTarget.querySelector("[data-detail-id]").dataset.detailId) {
+          this.open(this.block, "suggestions", next.dataset.previewSuggestion);
+        } else {
+          this.showPreview(next);
+          const focus = this.element.querySelector(`[data-preview] button[aria-label="${button.getAttribute("aria-label")}"]:not([disabled])`) || this.element.querySelector("[data-preview] button:not([disabled])");
+          focus?.focus({ preventScroll: true });
+        }
+      });
+      controls.append(button);
+    });
+    return controls;
+  }
+  commentSuggestion() {
+    if (!this.signedInValue) {
+      this.loginTarget.click();
+      return;
+    }
+    this.commentFocusPending = true;
+    this.focusComment();
+  }
+  focusComment() {
+    const field = this.panelTarget.querySelector("[data-decidim-comments] textarea:not([disabled])");
+    if (field) {
+      this.commentFocusPending = false;
+      field.focus();
+      field.scrollIntoView({ block: "center" });
+    }
   }
   async withdraw(event) {
     const url = event.currentTarget.dataset.url;

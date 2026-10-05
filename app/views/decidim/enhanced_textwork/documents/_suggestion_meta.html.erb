@@ -1,0 +1,4 @@
+<div class="tw-suggestion-meta">
+  <span class="label <%= { "pending" => "warning", "accepted" => "success", "rejected" => "alert" }.fetch(suggestion.status, "") %> tw-state"><%= tw("state_#{suggestion.status}") %></span>
+  <span class="tw-meta"><% if local_assigns[:author] %><%= suggestion.author.name %> · <% end %><%= l(suggestion.created_at.to_date) %> · <%= tw("base_version", number: suggestion.block_version.number) %></span>
+</div>

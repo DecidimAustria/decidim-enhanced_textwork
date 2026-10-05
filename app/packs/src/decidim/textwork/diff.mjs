@@ -78,9 +78,39 @@ export const diffTokens = (original, replacement) => {
   return result;
 };
 
-export const renderDiff = (container, original, replacement) => {
+// Preserve every change, shortening only unchanged context between/around edits.
+export const diffSnippet = (segments, context = 3) => segments.flatMap((segment, index) => {
+  if (segment.kind !== "same") {
+    return [segment];
+  }
+  const words = [...segment.text.matchAll(/\S+/gu)];
+  const before = index > 0;
+  const after = index < segments.length - 1;
+  const keep = (before
+    ? context
+    : 0) + (after
+    ? context
+    : 0);
+  if (words.length <= keep || (!before && !after)) {
+    return [segment];
+  }
+  const head = before
+    ? segment.text.slice(0, words[context - 1].index + words[context - 1][0].length)
+    : "";
+  const tail = after
+    ? segment.text.slice(words[words.length - context].index)
+    : "";
+  return [{ kind: "same", text: `${head} … ${tail}` }];
+});
+
+// The fourth argument selects a presentation, keeping the comparison identical.
+// eslint-disable-next-line max-params
+export const renderDiff = (container, original, replacement, compact = false) => {
+  const segments = diffTokens(original, replacement);
   container.replaceChildren(
-    ...diffTokens(original, replacement).map(({ kind, text }) => {
+    ...(compact
+      ? diffSnippet(segments)
+      : segments).map(({ kind, text }) => {
       if (kind === "same") {
         return document.createTextNode(text);
       }

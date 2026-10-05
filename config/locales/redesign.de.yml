@@ -2,6 +2,20 @@
 de:
   decidim:
     textwork:
+      marked_in_text: "Im Text markiert"
+      details: "Details"
+      suggestion_title: "Änderungsvorschlag zu Absatz %{number}"
+      change_marked: "Die Änderung ist im Text markiert."
+      suggestion_comments: "Kommentare zum Vorschlag"
+      comment_suggestion: "Vorschlag kommentieren"
+      decision_reason: "Begründung der Moderation"
+      propose_change: "Änderung vorschlagen"
+      edit_instruction: "Bearbeiten Sie den Absatz direkt im Text. Ihre Änderung wird dort markiert."
+      view_existing: "Vorhandene Vorschläge ansehen"
+      edit_directly: "Sie bearbeiten den Absatztext direkt."
+      preview_label: "Vorschau: Vorschlag %{index} von %{count} · %{name}"
+      preview_closed: "Vorschau: Vorschlag von %{name}"
+      last_changed: "zuletzt geändert am %{date}"
       removed_reason: Der Absatz wurde entfernt.
       paragraph: Absatz %{number}
       paragraph_label: Absatz

@@ -2,6 +2,20 @@
 en:
   decidim:
     textwork:
+      marked_in_text: "Highlighted in the text"
+      details: "Details"
+      suggestion_title: "Suggested change to paragraph %{number}"
+      change_marked: "The change is highlighted in the text."
+      suggestion_comments: "Comments on the suggestion"
+      comment_suggestion: "Comment on this suggestion"
+      decision_reason: "Moderation decision"
+      propose_change: "Suggest a change"
+      edit_instruction: "Edit the paragraph directly in the text. Your change will be highlighted there."
+      view_existing: "View existing suggestions"
+      edit_directly: "You will edit the paragraph text directly."
+      preview_label: "Preview: suggestion %{index} of %{count} · %{name}"
+      preview_closed: "Preview: suggestion by %{name}"
+      last_changed: "last changed on %{date}"
       removed_reason: The paragraph was removed.
       paragraph: Paragraph %{number}
       paragraph_label: Paragraph

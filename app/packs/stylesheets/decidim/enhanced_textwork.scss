@@ -37,29 +37,66 @@
 .tw-actions, .tw-interactions { display: flex; align-items: start; gap: .25rem; flex-wrap: wrap; }
 .tw-icon, .tw-like { display: inline-flex; gap: .3rem; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: .35rem; font-size: .9rem; }
 .tw-like[aria-pressed=true] { font-weight: 700; text-decoration: underline; }
-.tw-is-open .tw-layout { grid-template-columns: minmax(0,1fr) minmax(22rem,26.25rem); }
+.tw-is-open .tw-layout { grid-template-columns: minmax(0,1fr) minmax(22rem,24rem); }
 .tw-is-open .tw-toc { grid-column: 1; position: static; }
 .tw-is-open .tw-document { grid-column: 1; }
 .tw-is-open .tw-panel { grid-column: 2; grid-row: 1 / span 2; }
 .tw-is-open .tw-heading { flex-wrap: wrap; }
-.tw-panel { border: 1px solid var(--tw-border); border-radius: .5rem; background: white; position: sticky; top: 1rem; max-height: calc(100dvh - 2rem); overflow-y: auto; min-width: 0; padding: 1.25rem; font-size: .95rem; }
-.tw-panel-header { display: flex; justify-content: space-between; align-items: start; gap: 1rem; h2 { font-size: 1.35rem; font-weight: 700; } }
-.tw-panel-tools { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; font-size: .85rem; a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; } }
-.tw-tabs { display: flex; border-bottom: 1px solid var(--tw-border); margin: .75rem -1.25rem 1.25rem; padding: 0 1rem; gap: .5rem;
-  button { flex: 1; font-size: .85rem; padding: .6rem .25rem; border-bottom: 3px solid transparent; }
+.tw-panel { @apply bg-white rounded-lg border border-gray-3; position: sticky; top: 1rem; max-height: calc(100dvh - 2rem); min-width: 0; font-size: 1rem; }
+.tw-panel-content { display: flex; flex-direction: column; max-height: inherit; min-height: 0; }
+.tw-panel-header { @apply p-4; display: flex; justify-content: space-between; align-items: start; gap: .5rem; flex-shrink: 0;
+  > div:first-child { min-width: 0; flex: 1; }
+  h2 { @apply text-xl font-bold; } .tw-muted { margin-top: .25rem; }
+}
+.tw-panel-tools { display: flex; flex-shrink: 0; .tw-icon { padding: .25rem; } }
+.tw-tabs { display: flex; border-bottom: 1px solid var(--tw-border); padding: 0 1rem; gap: .5rem; flex-shrink: 0;
+  button { flex: 1; min-width: 0; font-size: 1rem; font-weight: 600; padding: .75rem .25rem; border-bottom: 3px solid transparent; }
   [aria-current=page] { border-color: var(--secondary); font-weight: 700; }
 }
-.tw-panel-body { min-width: 0; > p { margin-bottom: 1rem; } }
-.tw-mobile-quote { display: none; }
-.tw-suggestion { padding: 1rem 0; border-bottom: 1px solid var(--tw-border); h3 { font-weight: 600; } button { font-size: .875rem; margin-right: .4rem; } }
+.tw-panel-body { @apply p-4; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; > p { margin-bottom: 1rem; } }
+.tw-panel-footer { @apply p-4; border-top: 1px solid var(--tw-border); flex-shrink: 0; .tw-muted { margin-top: .5rem; } }
+.tw-panel .tw-mobile, .tw-mobile-quote { display: none; }
+.tw-text-button { @apply font-semibold underline; display: inline-flex; align-items: center; gap: .4rem; text-align: left; padding: .25rem 0; }
+.tw-sort { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin-bottom: .75rem;
+  label { @apply text-gray-2; margin: 0; } select { width: auto; min-width: 0; margin: 0; font-size: 1rem; flex-shrink: 1; }
+}
+.tw-suggestions { display: grid; gap: .75rem; }
+.tw-suggestion { @apply border border-gray-3 rounded-md px-3 py-2; min-width: 0;
+  h3 { @apply text-md font-bold; line-height: 1.3; } h3 button { font: inherit; }
+}
+.tw-suggestion--closed { @apply bg-background; }
+.tw-suggestion-meta { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap;
+  .tw-meta { font-size: .875rem; } .tw-state { border-radius: 999px; white-space: nowrap; }
+}
+.tw-own-actions { display: flex; flex-wrap: wrap; gap: 0 1.25rem; }
+.tw-card-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .25rem .75rem;
+  .tw-like { padding-left: 0; font-size: 1rem; font-weight: 600; }
+}
+.tw-marked { @apply text-gray-2 font-semibold text-sm; }
+.tw-outdated { @apply text-gray-2 font-semibold text-sm; margin-block: .5rem; }
+.tw-suggestion-detail { display: grid; gap: 1rem; margin-top: 1rem;
+  h3 { @apply text-xl font-bold; line-height: 1.3; } h4 { @apply font-bold; margin-bottom: .25rem; }
+  .tw-diff { margin: 0; } .tw-own-actions:empty { display: none; }
+}
+.tw-suggestion-comments { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--tw-border);
+  > h3 { @apply text-md font-bold; margin-bottom: 1rem; }
+}
+.tw-closed { margin-top: .75rem; summary { cursor: pointer; color: var(--secondary); text-decoration: underline; font-weight: 600; padding-block: .75rem; } }
+.tw-existing { @apply bg-background rounded p-3; margin-bottom: 1rem; }
+.tw-editor-title { @apply text-xl font-bold; margin-bottom: .75rem; }
 .tw-diff { white-space: pre-wrap; line-height: 1.65; margin: .75rem 0; overflow-wrap: anywhere; }
 .tw-diff ins { color: theme("colors.black"); background: color-mix(in srgb, theme("colors.success") 18%, white); text-decoration: underline; }
 .tw-diff del { color: theme("colors.black"); background: color-mix(in srgb, theme("colors.alert") 14%, white); text-decoration: line-through; }
-.tw-preview-label { font-size: .85rem; font-weight: 600; margin-bottom: 1rem; }
+.tw-preview-heading { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+.tw-preview-label { @apply bg-background rounded-full px-3 py-1 text-sm font-semibold; }
+.tw-preview-controls { display: flex; gap: .25rem; }
+.tw-preview-arrow { min-width: 44px; min-height: 44px; padding: 0 !important; span { font-size: 1.75rem; line-height: 1; } }
+.tw-diff-snippet, .tw-diff-full { @apply bg-background rounded px-3 py-2; font-size: .9375rem; }
+.tw-suggestion .tw-diff-snippet { margin: .25rem 0; }
 .tw-editor { label { display: block; font-weight: 600; margin-bottom: .5rem; } textarea { width: 100%; font: inherit; line-height: 1.5; min-height: 10rem; padding: .75rem; border: 1px solid var(--secondary); background: white; color: inherit; } h3 { margin-top: 1rem; font-size: 1rem; font-weight: 600; } }
 .tw-panel form textarea { width: 100%; }
-.tw-form-actions { display: flex; gap: 1rem; justify-content: space-between; margin-top: 1rem; }
-.tw-new { margin: 1.25rem 0; width: 100%; }
+.tw-form-actions { display: flex; gap: .75rem; justify-content: flex-end; flex-wrap: wrap; }
+.tw-new { width: 100%; }
 .tw-history-link { display: inline-block; margin: 3rem 0; text-decoration: underline; }
 .tw-confirm { max-width: min(28rem,calc(100vw - 2rem)); border: 1px solid var(--tw-border); border-radius: .5rem; padding: 1.5rem; h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; } div { display: flex; gap: 1rem; flex-wrap: wrap; } &::backdrop { background: rgb(0 0 0 / .45); } }
 .tw-status:not(:empty) { padding: 1rem; margin-top: 1rem; border: 1px solid var(--secondary); }
@@ -72,15 +109,34 @@
   .tw-heading h2 { font-size: 1.35rem; }
   .tw-paragraph { grid-template-columns: 44px minmax(0,1fr); gap: .5rem; padding: 1rem .25rem; }
   .tw-actions { grid-column: 2; justify-content: flex-end; }
-  .tw-panel { position: fixed; inset: auto 0 0; z-index: 60; height: 75dvh; max-height: 85dvh; border-radius: 1rem 1rem 0 0; padding: 1rem; padding-bottom: max(1rem, env(safe-area-inset-bottom)); box-shadow: 0 -.25rem 1.5rem rgb(0 0 0 / .15); }
+  .tw-panel { position: fixed; inset: auto 0 0; z-index: 60; height: 75dvh; max-height: 85dvh; border-radius: 1rem 1rem 0 0; padding: 0; box-shadow: 0 -.25rem 1.5rem rgb(0 0 0 / .15); }
   .tw-overlay { position: fixed; inset: 0; z-index: 59; background: rgb(0 0 0 / .35); }
-  .tw-mobile-quote { display: block; font-size: .9rem; border-left: 3px solid var(--tw-border); padding-left: .75rem; margin: 1rem 0; }
+  .tw-mobile-quote { display: block; font-size: .9rem; border-left: 3px solid var(--tw-border); padding-left: .75rem; margin: 0 0 1rem; }
   .tw-copy { font-size: 1.125rem; }
-  .tw-tabs { margin-inline: -1rem; }
+  .tw-panel-content { height: 100%; }
+  .tw-panel-header { padding: .75rem 1rem; }
+  .tw-panel-header h2 { font-size: 1.25rem; }
+  .tw-panel-body { flex: 1; }
+  .tw-panel-footer { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  .tw-tabs button { font-size: .9375rem; }
+  .tw-desktop { display: none; }
+  .tw-panel .tw-mobile { display: block; }
+  .tw-panel button.tw-mobile { display: inline-flex; }
+  .tw-form-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .tw-form-actions .button { padding-inline: .5rem; }
+  .tw-suggestion { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: .5rem;
+    > :not(.tw-suggestion-meta):not(h3) { grid-column: 1 / -1; }
+    h3 { grid-column: 1; grid-row: 1; }
+    .tw-suggestion-meta { display: contents; }
+    .tw-state { grid-column: 2; grid-row: 1; align-self: center; }
+    .tw-meta { grid-column: 1 / -1; grid-row: 2; }
+  }
+  .tw-panel-footer > .tw-muted { display: none; }
+  .tw-suggestion-detail h3 { font-size: 1.125rem; }
+  .tw-suggestion-detail .tw-diff-full { font-size: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) { .tw-page * { scroll-behavior: auto !important; } }
 
-.tw-preview-controls { display: flex; gap: 1rem; font-size: .875rem; }
 
 // Core Dropdown changes aria-hidden; a panel menu must also leave the tab order.
 .tw-panel-tools [role="menu"][aria-hidden="true"] { display: none; }
@@ -88,3 +144,11 @@
 @media (max-width: 1023px) {
   .tw-suggestion [data-preview-id] { display: none; }
 }
+
+// The Core mobile form normally lives in a fullscreen layer. Inside our dialog
+// it remains inline, so its submit control participates in the panel focus order.
+.tw-panel #add-comment-anchor { display: block; }
+.tw-panel .add-comment-mobile, .tw-panel .comment__form-mobile-banner { display: none; }
+.tw-panel .publish-comment-button { position: static; padding: 0; height: auto; box-shadow: none; background: transparent; }
+.tw-panel .emoji__button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; right: .25rem; bottom: .25rem; }
+.tw-panel .emoji__container textarea { padding-bottom: 3rem; }

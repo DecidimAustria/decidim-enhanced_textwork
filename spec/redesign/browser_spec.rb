@@ -164,9 +164,9 @@ RSpec.describe "Textwork reading and participation", type: :system do
     visit routes.document_path(document, locale: :en)
     click_link "Suggestions for paragraph 1.1"
     expect(page).to have_css(".tw-panel [data-suggestion]", count: 5)
-    expect(page).to have_css("[data-preview]", text: "1 / 5")
+    expect(page).to have_css("[data-preview]", text: "suggestion 1 of 5")
     4.times { click_button "Next suggestion" }
-    expect(page).to have_css("[data-preview]", text: "5 / 5")
+    expect(page).to have_css("[data-preview]", text: "suggestion 5 of 5")
     expect(page).to have_button("Next suggestion", disabled: true)
     within(all(".tw-panel [data-suggestion]").last) { click_button "Suggestion by #{user.name}" }
     expect(page).to have_current_path(/suggestion=/)
@@ -174,6 +174,79 @@ RSpec.describe "Textwork reading and participation", type: :system do
     within(".tw-confirm") { click_button "Withdraw" }
     expect(page).to have_content("Your suggestion was withdrawn.")
     expect(block.suggestions.where(status: "withdrawn").count).to eq(1)
+  end
+
+  it "separates compact cards from details and keeps preview navigation in sync" do
+    editor.update(block, body: "First second third fourth fifth sixth seventh eighth ninth tenth.", expected_version: 1)
+    2.times do |index|
+      Decidim::EnhancedTextwork::SaveSuggestion.call(block.reload, user, body: block.original.sub("fifth", "replacement #{index}"), expected_version: 2)
+    end
+    visit routes.document_path(document, locale: :en)
+    click_link "Suggestions for paragraph 1.1"
+    expect(page).to have_css(".tw-suggestion .tw-diff-snippet", count: 2)
+    expect(page).to have_css(".tw-suggestion .tw-diff-snippet", text: "…")
+    expect(page).to have_css("[data-marked-id]", count: 1, text: "Highlighted in the text")
+    expect(page).to have_button("Show in text", count: 1)
+    within(all(".tw-suggestion").first) { click_button "Suggestion by #{user.name}" }
+    expect(page).to have_css(".tw-suggestion-detail h3", text: "Suggested change to paragraph 1.1")
+    expect(page).to have_no_css(".tw-tabs")
+    expect(page).to have_no_css(".tw-suggestion-detail [data-diff-output]")
+    click_button "Next suggestion"
+    expect(page).to have_css("[data-preview]", text: "suggestion 2 of 2")
+    expect(page).to have_current_path(/suggestion=#{block.suggestions.order(:id).first.id}/)
+    within(".tw-panel") { click_button "All suggestions" }
+    click_button "Suggest your own change"
+    expect(page).to have_button("View existing suggestions")
+    expect(page).to have_no_content("A new line starting")
+  end
+
+  it "keeps mobile actions visible and opens the suggestion comment field" do
+    5.times do |index|
+      Decidim::EnhancedTextwork::SaveSuggestion.call(block, user, body: "More trees and shade, proposal #{index}.", expected_version: 1)
+    end
+    visit routes.document_path(document, locale: :en)
+    [390, 320].each do |width|
+      page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width:, height: 844, deviceScaleFactor: 1, mobile: true)
+      click_link "Suggestions for paragraph 1.1"
+      expect(page).to have_button("Details", count: 5)
+      expect(page.evaluate_script("document.querySelector('.tw-panel-footer').getBoundingClientRect().bottom <= innerHeight")).to be(true)
+      expect(page.evaluate_script("document.documentElement.scrollWidth <= innerWidth")).to be(true)
+      within(all(".tw-suggestion").first) { click_button "Details" }
+      expect(page).to have_css(".tw-suggestion-detail .tw-diff-full")
+      expect(page).to have_no_css(".tw-tabs")
+      click_button "Comment on this suggestion"
+      expect(page).to have_css(".tw-panel textarea:focus")
+      within ".tw-panel" do
+        find("textarea:focus").set("Mobile comment at #{width}px.")
+        click_button "Publish comment"
+        expect(page).to have_content("Mobile comment at #{width}px.")
+      end
+      page.driver.browser.action.send_keys(:escape).perform
+    end
+  end
+
+  it "keeps completed suggestions out of the preview sequence and labels older versions" do
+    3.times do |index|
+      Decidim::EnhancedTextwork::SaveSuggestion.call(block, user, body: "More trees and shade, proposal #{index}.", expected_version: 1)
+    end
+    closed = block.suggestions.order(:id).last
+    closed.update!(status: "accepted")
+    editor.update(block, body: "More trees and shade near schools.", expected_version: 1)
+    visit routes.document_path(document, locale: :en)
+    click_link "Suggestions for paragraph 1.1"
+    expect(page).to have_css("[data-preview]", text: "suggestion 1 of 2")
+    expect(page).to have_css("[data-preview]", text: "version 1")
+    click_button "Next suggestion"
+    expect(page).to have_css("[data-preview]", text: "suggestion 2 of 2")
+    expect(page).to have_button("Next suggestion", disabled: true)
+    find(".tw-closed summary").click
+    within(".tw-closed") do
+      expect(page).to have_content("Accepted")
+      click_button "Suggestion by #{user.name}"
+    end
+    expect(page).to have_current_path(/suggestion=#{closed.id}/)
+    expect(page).to have_no_button("Next suggestion")
+    expect(page).to have_css(".tw-suggestion-detail", text: "Accepted")
   end
 
   it "keeps only the last requested paragraph when switching quickly" do
@@ -190,26 +263,44 @@ RSpec.describe "Textwork reading and participation", type: :system do
     end
   end
 
-  it "passes automated WCAG A/AA checks in the reading view and comment panel" do
+  it "passes automated WCAG checks in comments, suggestion cards, details and editor" do
+    Decidim::EnhancedTextwork::SaveSuggestion.call(block, user, body: "More trees and shade!", expected_version: 1)
+    visit routes.document_path(document, locale: :en)
+    expect_no_accessibility_violations
+    click_link "Comments on paragraph 1.1"
+    expect(page).to have_css(".tw-panel [data-decidim-comments]")
+    expect_no_accessibility_violations
+    click_button "Suggestions (1)"
+    expect(page).to have_css(".tw-suggestion")
+    expect_no_accessibility_violations
+    click_button "Suggestion by #{user.name}"
+    expect(page).to have_css(".tw-suggestion-detail")
+    expect_no_accessibility_violations
+    page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 390, height: 844, deviceScaleFactor: 1, mobile: true)
+    expect_no_accessibility_violations
+    click_button "Edit", exact: true
+    expect(page).to have_field("You are editing this paragraph")
+    expect_no_accessibility_violations
+  end
+
+  def expect_no_accessibility_violations
     page.execute_script(File.read(File.expand_path("../../node_modules/axe-core/axe.min.js", __dir__)))
-    [nil, "Comments on paragraph 1.1"].each do |action|
-      click_link action if action
-      expect(page).to have_css(".tw-panel [data-decidim-comments]") if action
-      violations = page.driver.browser.execute_async_script(<<~JS)
-        const done = arguments[0];
-        axe.run(document.querySelector('.tw-page'), {runOnly: {type:'tag', values:['wcag2a','wcag2aa','wcag21aa','wcag22aa','best-practice']}})
-          .then(result => done(result.violations.map(issue => ({id:issue.id, targets:issue.nodes.map(node => node.target)}))));
-      JS
-      expect(violations).to eq([])
-    end
+    violations = page.driver.browser.execute_async_script(<<~JS)
+      const done = arguments[0];
+      axe.run(document.querySelector('.tw-page'), {runOnly: {type:'tag', values:['wcag2a','wcag2aa','wcag21aa','wcag22aa','best-practice']}})
+        .then(result => done(result.violations.map(issue => ({id:issue.id, targets:issue.nodes.map(node => node.target)}))));
+    JS
+    expect(violations).to eq([])
   end
 
   # Disabled controls are skipped by axe's contrast rule. Measure the visible
   # label separately, compositing alpha/opacity against its rendered background.
   def expect_readable_comment_submit
+    page.execute_script("arguments[0].scrollIntoView({block: 'center'})", find('.comment__form-submit button[type="submit"]'))
     # Core animates color changes; assert the settled state without a fixed sleep.
-    page.document.synchronize(errors: [RSpec::Expectations::ExpectationNotMetError]) do
-      expect(comment_submit_contrast).to be >= 4.5
+    page.document.synchronize(errors: [Capybara::ExpectationNotMet]) do
+      contrast = comment_submit_contrast
+      raise Capybara::ExpectationNotMet, "Expected comment label contrast >= 4.5, got #{contrast}" if contrast < 4.5
     end
   end
 

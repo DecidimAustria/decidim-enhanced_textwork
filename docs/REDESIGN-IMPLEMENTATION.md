@@ -79,3 +79,45 @@ Vor produktivem Einsatz bleiben die fachliche/visuelle Abnahme, ein vollständig
 WCAG-2.2-AA-Audit, Tests mit repräsentativen langen Dokumenten und dem tatsächlich
 konfigurierten Übersetzungsdienst erforderlich. Die automatische Prüfung allein
 bestätigt keine vollständige Barrierefreiheit.
+
+## Korrektur der Amendment-Oberfläche
+
+Der erneute Vergleich mit `desktop.dc.html`, `mobil.dc.html` und Bauanleitung
+5.3/5.4 zeigte, dass die erste Umsetzung trotz bestandener Funktionstests den
+vorgegebenen Aufbau nicht ausreichend übernommen hatte. Insbesondere war die
+Detailansicht nur eine erweiterte Karte, und die Karten zeigten vollständige
+Absatzvergleiche. Die frühere visuelle Prüfung war dafür nicht ausreichend.
+
+Die Oberfläche trennt jetzt Karten und Detailansicht. Karten zeigen jede
+Änderung mit etwa drei Wörtern unverändertem Kontext, Status aus dem
+Decidim-Label-Baustein und den sichtbaren Zustand „Im Text markiert“. Auf dem
+Desktop steht der vollständige Vergleich im Dokument; mobil im Detail des
+Sheets. Die Vorschau zeigt Nummer, Gesamtzahl, Verfasser und bei veralteten
+Vorschlägen die frühere Fassung. Abgeschlossene Vorschläge gehören nicht zur
+Navigation durch offene Vorschläge. Auch aus der Detailansicht kann geblättert
+werden, wobei Adresse und Diskussion gemeinsam wechseln.
+
+Das mobile Sheet hat einen eigenen scrollbaren Inhaltsbereich sowie einen
+festen Kopf und Aktionsbereich. Der Editor enthält die Anleitung und den
+Rückweg zu vorhandenen Vorschlägen. Der Listenhinweis erscheint nur bei Listen.
+Die mobilen Karten bieten zusätzlich „Details“.
+
+Die Core-Kommentaransichten bleiben eingebunden. Ihre mobile Formularhülle wird
+im Textwork-Panel mit lokal begrenztem CSS direkt angezeigt; der Core-Button zum
+Öffnen einer weiteren Vollbildansicht entfällt dort. „Vorschlag kommentieren“
+fokussiert das Formular und wartet gegebenenfalls auf dessen Initialisierung.
+Der Emoji-Button hat im Panel eine Bedienfläche von 44 × 44 px.
+
+Die Browserprüfungen umfassen Karten, Details, Navigation, ältere Fassungen,
+abgeschlossene Vorschläge, Editor und mobiles Kommentieren bei 390/320 px.
+Axe prüft jetzt zusätzlich Vorschlagsliste, Detailansicht und mobilen Editor.
+Der separate Kontrasttest wartet mit einer von Capybara behandelten Exception
+auf das Ende des Core-Farbwechsels; die vorher verwendete RSpec-Exception wurde
+von Capybara nicht erneut geprüft. Ein bestandener Testlauf ersetzt weiterhin
+keine vollständige visuelle und fachliche Abnahme durch den Auftraggeber.
+
+Abschlussprüfung am 5. Oktober 2026: **54 RSpec-Beispiele, 0 Fehler**, davon
+12 Browserabläufe. JavaScript-Diff-Tests, ESLint, RuboCop für die geänderte
+Testsuite und Asset-Build erfolgreich. Desktop-Karten und Detailansicht sowie
+die mobile Detailansicht wurden zusätzlich in der lokalen deutschen Oberfläche
+mit den Vorlagen verglichen. Es sind keine Datenbankmigrationen erforderlich.
