@@ -4,15 +4,13 @@
   width: calc(100% - 3rem); max-width: 82rem; margin: 2.5rem auto 4rem;
   color: theme("colors.black"); font-family: inherit; overflow-wrap: anywhere;
   [hidden] { display: none !important; }
-  a, button { color: var(--secondary); }
+  a:not(.button):not(.dropdown__button), button:not(.button):not(.dropdown__button) { color: var(--secondary); }
   button, summary, .tw-icon, .tw-number { min-height: 44px; }
   button { cursor: pointer; }
-  button:disabled { cursor: not-allowed; opacity: .55; }
+  button:disabled { cursor: not-allowed; }
   :is(button,a,summary,textarea,select):focus-visible { outline: 3px solid var(--secondary); outline-offset: 3px; }
   svg { width: 1.15em; height: 1.15em; fill: currentColor; flex-shrink: 0; }
   h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; margin-bottom: 1.5rem; }
-  .button { color: white; }
-  .button__text-secondary { color: var(--secondary); }
 }
 .tw-intro { margin-bottom: 2.5rem; p { margin: .5rem 0; } }
 .tw-muted, .tw-summary, .tw-meta { color: theme("colors.gray.2"); font-size: .9rem; line-height: 1.5; }

@@ -76,6 +76,20 @@ RSpec.describe "Textwork reading and participation", type: :system do
     expect(block.comments.where(author: user).count).to eq(1)
   end
 
+  it "keeps the comment submit label readable when disabled and enabled" do
+    click_link "Comments on paragraph 1.1"
+    within ".tw-panel" do
+      expect(page).to have_button("Publish comment", disabled: true)
+      expect_readable_comment_submit
+      find("textarea:not([disabled])").set("A readable action.")
+      expect(page).to have_button("Publish comment", disabled: false)
+      expect_readable_comment_submit
+      find("textarea:not([disabled])").set("")
+      expect(page).to have_button("Publish comment", disabled: true)
+      expect_readable_comment_submit
+    end
+  end
+
   it "protects drafts, marks punctuation and submits a suggestion" do
     click_link "Suggestions for paragraph 1.1"
     fill_in "You are editing this paragraph", with: "More trees and shade!"
@@ -188,5 +202,48 @@ RSpec.describe "Textwork reading and participation", type: :system do
       JS
       expect(violations).to eq([])
     end
+  end
+
+  # Disabled controls are skipped by axe's contrast rule. Measure the visible
+  # label separately, compositing alpha/opacity against its rendered background.
+  def expect_readable_comment_submit
+    # Core animates color changes; assert the settled state without a fixed sleep.
+    page.document.synchronize(errors: [RSpec::Expectations::ExpectationNotMetError]) do
+      expect(comment_submit_contrast).to be >= 4.5
+    end
+  end
+
+  def comment_submit_contrast
+    page.evaluate_script(<<~'JS')
+      (() => {
+        const button = document.querySelector('.tw-panel .comment__form-submit button[type="submit"]');
+        const label = button.querySelector('span');
+        const color = value => value.match(/[\d.]+/g).map(Number);
+        const blend = (front, back, opacity = 1) => {
+          const alpha = (front[3] ?? 1) * opacity;
+          return front.slice(0, 3).map((value, index) => value * alpha + back[index] * (1 - alpha));
+        };
+        const ancestors = [];
+        for (let element = button.parentElement; element; element = element.parentElement) ancestors.unshift(element);
+        let surface = [255, 255, 255];
+        let opacity = 1;
+        ancestors.forEach(element => {
+          const style = getComputedStyle(element);
+          surface = blend(color(style.backgroundColor), surface);
+          opacity *= Number(style.opacity);
+        });
+        const style = getComputedStyle(button);
+        const background = blend(color(style.backgroundColor), surface);
+        const foreground = blend(color(getComputedStyle(label).color), background);
+        opacity *= Number(style.opacity);
+        const luminance = rgb => rgb.map(value => {
+          const channel = value / 255;
+          return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+        }).reduce((total, value, index) => total + value * [0.2126, 0.7152, 0.0722][index], 0);
+        const light = luminance(blend([...foreground, 1], surface, opacity));
+        const dark = luminance(blend([...background, 1], surface, opacity));
+        return (Math.max(light, dark) + 0.05) / (Math.min(light, dark) + 0.05);
+      })()
+    JS
   end
 end
