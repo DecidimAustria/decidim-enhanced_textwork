@@ -1,50 +1,101 @@
-# Independent Textwork implementation
+# Textwork alpha3 implementation
 
-## Architecture
+Target: official Decidim 0.32.1, Ruby 3.4.7. Branch: `feature/textwork-redesign`.
+The [alpha2 implementation](history/ALPHA2-IMPLEMENTATION.md) is historical.
 
-Target: official Decidim 0.32.1, Ruby 3.4.7. Plugin: 2.0.0.alpha2. Branch: `feature/standalone-textwork`.
+## Architecture and data
 
-The component manifest `textwork` mounts independent public and administrative Rails engines. It does not add routes, settings, controller prepends or view overrides to Proposals or Collaborative Texts. Gem dependencies are Core, Comments, Kramdown and Rubyzip. The old component manifest is deliberately not reused.
+The existing gem and namespace are retained. The `textwork` component owns its
+public/admin engines and depends explicitly on Core, Admin and Comments. There
+are no Proposals or Collaborative Texts models, routes or patches. Loading the
+plugin without either component is checked by `bin/check-independence`.
 
-| Model | Purpose |
+| Model | Responsibility |
 | --- | --- |
-| `Document` | One document per component, localized title/description and publication state. |
-| `Section` | Stable identity, heading/paragraph level, ordering, comments, follows, moderation and current revision pointer. |
-| `Revision` | Immutable localized text/title, sequence number, editor and creation date. |
-| `Support` | Unique participant support for a revision or amendment. Repeated requests do not add duplicate supports. |
-| `Amendment` | Exact base revision, author, proposed text and reason, pending/accepted/rejected/withdrawn state, decision actor/date/reason and accepted result revision. |
-| `DocumentVersion` | Immutable ordered references to paragraph revisions, plus document metadata, at publication and subsequent published edits/reordering/acceptance. |
+| Document | Original locale, translated metadata, publication/trash, Core search, agreement/follows for unstructured documents. |
+| Block | Stable heading/paragraph identity, position and heading_depth, current text, comments or chapter likes/follows. |
+| BlockVersion | Immutable original text, consecutive version, author, origin and accepted suggestion/adjustment. |
+| Suggestion | Exact base version and changeset, author, reason, decision, moderation, comments and Core likes. |
+| DocumentRevision | Immutable import/add/remove/move record with positions, numbers and text where applicable. |
+| TranslationRequest | Unique resource/field/target/source-digest request and proxy for the configured Core translation provider. |
 
-Models live under `Decidim::EnhancedTextwork`; tables use the new `decidim_textwork_*` prefix. In particular, the new section model does not reuse the legacy `Paragraph` type, so old polymorphic references cannot accidentally resolve to unrelated new IDs.
+Schema changes are additive. Alpha2 tables remain, but their removed model classes
+and old public flows are not compatibility adapters. A new component is required;
+see [migration boundaries](MIGRATION.md). The obsolete pending suggestion counter
+was deliberately not added: public counts derive from visible pending suggestions,
+grouped once for the whole reading page.
 
-## Participation and authorization
+## Rules and concurrency
 
-Public writes require the same organization, a visible resource, participation permission in the space, action authorization and applicable component/phase settings. Reads and writes scope resource IDs through the current component/document. Moderated sections and their amendments are excluded from public views. Core Comments is attached through `CommentableWithComponent`, with an additional visibility/block guard.
+Text and structure changes lock the document first. Accepting a suggestion checks
+the version displayed in the admin form; stale suggestions remain acceptable after
+review, but a concurrent edit returns a conflict. New original text creates one
+BlockVersion and one PaperTrail text version. Position and counter updates do not
+create text versions. A reviewed identical final text still records its acceptance.
 
-An organization administrator or a user with an administrator role in the current participatory space may decide amendments. An author, evaluator or administrator of another space does not gain that right. The component administration also uses Decidim's normal administrative access checks.
+Removal sets `removed_at`, rejects every pending suggestion with a localized reason
+and retains contributions. Removed content and visible discussions are readable
+from the version history. Document trash similarly preserves blocks and contributions.
+Chapter likes remain across edits and moves. They are not revision supports.
 
-All mutations that affect paragraph versions or supports lock the document. Amendment acceptance checks the base revision against the current revision before replacing it. A stale acceptance returns a conflict, and a second decision cannot create another revision. Pending amendments may still be rejected if stale. Supports submitted from an outdated page are refused for the old revision, while existing supports can be withdrawn from its history page if participation is enabled.
+Editing an own pending suggestion rebases it to the current paragraph version.
+Its first like or comment sets a permanent feedback timestamp, preventing later
+edits even if feedback is removed. Withdrawal remains possible while pending.
 
-Revision rows are read-only after creation. Published sections cannot be deleted through the draft-delete endpoint. Administrative text edits create a revision; reordering preserves paragraph IDs. Only unpublished draft sections can be removed. Comments stay in a paragraph-wide discussion, explicitly labelled as spanning revisions. Amendment discussions remain attached to the amendment and its base revision.
+Reads/writes scope IDs through the current component. Public writes check the
+organization, resource visibility, space participation, Core ActionAuthorizer and
+phase switches. Decisions require organization or participatory-space admin rights.
+Core verification dialogs are used when required. Hidden suggestions are excluded
+from counts, lists and direct-link content; original blocks cannot be reported.
 
-Amendment decisions are recorded through Decidim traceability and notify the submitting participant using the normal event infrastructure. The local test application captures outgoing mail locally.
+## Browser integration
 
-## Import and export
+One Stimulus controller owns the selected paragraph, request cancellation, browser
+history, drafts, focus and mobile sheet. Panel GETs are cancellable; submitted
+comment writes finish before switching resources. The actual textarea moves into
+the document on desktop and stays in the sheet on mobile.
 
-Editor HTML is sanitized by Decidim and parsed into top-level headings and paragraph blocks without the former Proposals parser. Markdown uses Kramdown followed by the same sanitizer. ODT reads heading/paragraph text from a bounded `content.xml`, rejects entity declarations and external document types, and does not fetch resources. Imports require an empty component and are transactional. Original office formatting, tables, images and tracked changes are outside the import contract.
+The browser diff preserves whitespace, line breaks and punctuation. A bounded LCS
+calculation falls back to a full replacement for very large differences. It writes
+text nodes, not participant-provided HTML. Markdown rendering accepts a small safe
+subset and escapes raw HTML.
 
-The DOCX writer emits a text report. It excludes moderated/deleted content and replies whose parent is excluded. It is not a database-complete preservation format.
+The controls use Core Like/Unlike/CreateFollow commands with resource-specific
+responses. This avoids Core's single-resource DOM IDs without introducing another
+likes table. The comments adapter is a local subclass for cancellable reads and
+scoped sorting; it does not modify Core prototypes, forms, views or write endpoints.
+These two adapter boundaries need regression tests when upgrading Decidim.
 
-## Validation and local test data
+## Languages, events and files
 
-Tests cover import/publication, component boundaries, hidden/draft content, phase blocks, login, revision-bound supports, immutable history, stale/duplicate decisions, process-administrator boundaries and exports. Browser scenarios exercise the editor, core comment submission, supports/unvote, amendment submission/commenting/acceptance and responsive document presentation.
+Manual translations take precedence. Original changes retain them in
+`outdated_translations` and clear active translations. Admins can review and restore
+them. Machine responses are accepted only for the exact current source and locale;
+they do not create content/history versions. Completed translations can be reused
+if the same original returns. Failed jobs have bounded retries; later page requests
+can retry after a cooldown. Use a persistent queue in deployed applications; the
+local app deliberately uses memory-only jobs.
 
-Verified on 2026-10-04: **46 examples, 0 failures**, including the browser scenarios above, against official Decidim 0.32.1. Localtest passed Rails autoloading and the asset build; rerunning seeds preserved existing data.
+Core events deliver to the suggestion author, chapter followers and/or people who
+agreed, according to the event. Recipients are deduplicated, the actor is excluded,
+and delivery waits until the enclosing transaction commits. Comment events remain
+Core events with the resource recipient hook. Rejection includes its reason.
 
-`bin/check-independence` verifies that loading the component does not load Proposals or Collaborative Texts. Schema changes are additive and the installation task explicitly installs the external gem's migration.
+Editor, Markdown, ODT and DOCX inputs create headings and complete list/paragraph
+blocks. XML and ZIP sizes are bounded; external entities are rejected. Office page
+layout, tables, images, tracked changes and complex styles/numbering are outside
+the converter. Imported content must be reviewed before publication.
 
-`decidim-localtest` retains its original Proposals components. Independent examples are separate components with a separate seed marker, so rerunning setup preserves manual test changes. The local database was dumped before creating the independent examples; backups and credentials remain ignored. This is not a migration of the prototype data and is not a rehearsal on a legacy customer installation.
+Word export includes current text, pending visible suggestions, visible comments
+and agreement counts. It uses one requested language and refuses missing
+translations instead of silently mixing languages. It is not a complete archive.
 
-## Release boundaries
+## Verification and limits
 
-This remains a development alpha, not an approved production upgrade. Legacy conversion, full historical archival, external integration compatibility and a representative legacy rehearsal are separate work. The document design remains the existing prototype; the requested larger redesign has not been implemented here. A complete WCAG 2.2 AA audit also remains separate from the functional and responsive checks.
+The reproducible checks and acceptance matrix are in
+[REDESIGN-IMPLEMENTATION.md](REDESIGN-IMPLEMENTATION.md). Functional tests use a
+separate test database; no customer data or external translation service is used.
+Automatic accessibility checks and keyboard/reflow tests cover the reading view
+and panel. They are not a complete WCAG 2.2 AA certification. Instance colors,
+assistive technologies, large real documents and the chosen production translation
+provider still require acceptance testing before a production release.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0.alpha3 — development
+
+- Replace the alpha2 participation model with stable blocks, original-text versions and suggestions, in the same gem.
+- Add the document reading view, asynchronous discussion panel, mobile sheet, keyboard focus and draft protection.
+- Use Core likes and follows for chapters and Core comments/votes for paragraphs and suggestions.
+- Add administrative editing, reviewed stale acceptance, structural history and soft removal with automatic reasoned rejection.
+- Translate on demand through a version-bound provider adapter; preserve outdated manual translations.
+- Add DOCX import, single-language reports, moderation integration and chapter notifications.
+- Keep legacy tables; no conversion from 1.x or alpha1/2. The separate 3033 test app preserves alpha2 on 3032.
+
 ## 2.0.0.alpha2
 
 - Replace the Proposals extension with an independent Textwork component and additive tables.

@@ -6,3 +6,6 @@ development_app/
 tmp/
 coverage/
 *.gem
+
+node_modules/
+node_modules

@@ -1,0 +1,173 @@
+---
+en:
+  decidim:
+    textwork:
+      removed_reason: The paragraph was removed.
+      paragraph: Paragraph %{number}
+      paragraph_label: Paragraph
+      suggestion_by: Suggestion by %{name} for paragraph %{number}
+      by: Suggestion by %{name}
+      contents: Contents
+      intro: 'How to participate: use the speech bubble beside a paragraph to comment,
+        or the pencil to suggest a change.'
+      summary: "%{paragraphs} paragraphs · %{comments} comments · %{suggestions} pending
+        suggestions"
+      like: Agree
+      liked: Agreed
+      follow: Follow
+      followed: Following – unfollow
+      comments: Comments
+      suggestions: Suggestions
+      suggestions_for: Suggestions for paragraph %{number}
+      comments_for: Comments on paragraph %{number}
+      discussion: Paragraph discussion
+      close: Close
+      login: Sign in
+      error: Something went wrong. Please try again.
+      loading: Loading …
+      copied: Link copied.
+      copy_link: Copy link
+      versions: Version history
+      document_history: Document history
+      version: Version %{number}
+      base_version: based on version %{number}
+      version_label: Version
+      initial_text: Original text
+      no_suggestions: No suggestions yet.
+      all_suggestions: All suggestions
+      closed: Closed suggestions (%{count})
+      sort: Sort
+      most_liked: Most agreement
+      newest: Newest first
+      new_suggestion: Suggest your own change
+      suggestions_blocked: New suggestions are closed in this phase.
+      state_pending: Pending
+      state_accepted: Accepted
+      state_rejected: Rejected
+      state_withdrawn: Withdrawn
+      outdated: The paragraph has changed since this suggestion.
+      outdated_review: This suggestion is based on an older version. Review the current
+        paragraph and adjust the final text before accepting.
+      justification: Justification
+      optional_justification: Justification (optional)
+      answer: Decision explanation (required for rejection)
+      show_original: Show original with changes
+      show_in_text: Show in text
+      edit: Edit
+      withdraw: Withdraw
+      withdrawn: Your suggestion was withdrawn.
+      edit_original: Changes refer to the original text (%{language}).
+      existing_suggestions: This paragraph already has %{count} suggestions. If one
+        matches your idea, you can agree with it.
+      you_edit: You are editing this paragraph
+      live_preview: Your changes
+      list_hint: Start a new line with “- ” to add a list item.
+      cancel: Cancel
+      submit: Submit suggestion
+      submitted: Your suggestion was submitted.
+      discard_question: Discard draft?
+      keep_editing: Keep editing
+      discard: Discard
+      removed: This paragraph was removed.
+      unavailable: This suggestion is unavailable.
+      back: Back to document
+      empty: No document has been published yet.
+      conflict: The text has changed. Reload the current version and review your changes.
+      invalid: The change could not be saved. Check required fields and the current
+        version.
+      admin_title: Manage Textwork
+      original_language: Original language
+      file: File (Word, ODT or Markdown)
+      import: Create document
+      imported: The document was created.
+      invalid_file: The file could not be read. Use Word, ODT or Markdown up to 2
+        MB.
+      publish: Publish
+      unpublish: Unpublish
+      preview: Preview
+      metadata: Edit title and introduction
+      title: Title
+      description: Introduction
+      save: Save
+      saved: Saved.
+      export: Export Word document
+      export_language: Export language
+      author: Author
+      actions: Actions
+      review: Review and decide
+      document_text: Document text
+      heading: Chapter heading
+      position: Position
+      move: Move
+      remove: Remove
+      remove_confirm: Remove this block? Pending suggestions will be rejected with
+        an explanation. Contributions remain in the history.
+      add_block: Add block
+      kind: Kind
+      depth: Heading level
+      body: Text
+      current_text: Current text
+      final_text: Final text
+      accept: Accept
+      reject: Reject
+      outdated_translation: Outdated translation – review before reusing
+      translation: Reviewed translation
+      translation_pending: Translation is being prepared. The original text is shown.
+      translation_failed: Translation is currently unavailable. The original text
+        is shown.
+      history_import: Import
+      history_suggestion: Accepted suggestion
+      history_editorial: Editorial change
+      history_block_added: Block added
+      history_block_removed: Block removed
+      history_block_moved: Block moved
+      admin_log:
+        create: "%{user_name} changed the Textwork content."
+        update: "%{user_name} changed the Textwork content."
+        delete: "%{user_name} changed the Textwork content."
+        accept: "%{user_name} changed the Textwork content."
+        reject: "%{user_name} changed the Textwork content."
+      export_missing_translation: The export is not yet fully available in the selected
+        language. Complete or review translations and try again.
+      withdraw_question: Withdraw suggestion?
+      trashed: The document is in the trash. Its content and contributions are preserved.
+      restored: The document was restored.
+      trash: Move to trash
+      restore: Restore
+      trash_confirm: Move the document to the trash? It can be restored later.
+      previous: Previous suggestion
+      next: Next suggestion
+      translation_reviewed: This translation has been reviewed against the new original.
+    events:
+      textwork:
+        suggestion_created:
+          email_subject: New suggestion
+          email_intro: 'New suggestion: %{resource_title}'
+          email_outro: You receive this message because of your contribution, agreement
+            or subscription.
+          notification_title: 'New suggestion: <a href="%{resource_path}">%{resource_title}</a>.'
+        suggestion_accepted:
+          email_subject: Suggestion accepted
+          email_intro: 'Suggestion accepted: %{resource_title}'
+          email_outro: You receive this message because of your contribution, agreement
+            or subscription.
+          notification_title: 'Suggestion accepted: <a href="%{resource_path}">%{resource_title}</a>.'
+        suggestion_rejected:
+          email_subject: Suggestion rejected
+          email_intro: 'Suggestion rejected: %{resource_title}. %{decision_reason}'
+          email_outro: You receive this message because of your contribution, agreement
+            or subscription.
+          notification_title: 'Suggestion rejected: <a href="%{resource_path}">%{resource_title}</a>.
+            %{decision_reason}'
+        editorial_change:
+          email_subject: Editorial text change
+          email_intro: 'Editorial text change: %{resource_title}'
+          email_outro: You receive this message because of your contribution, agreement
+            or subscription.
+          notification_title: 'Editorial text change: <a href="%{resource_path}">%{resource_title}</a>.'
+        structure_changed:
+          email_subject: Document structure changed
+          email_intro: 'Document structure changed: %{resource_title}'
+          email_outro: You receive this message because of your contribution, agreement
+            or subscription.
+          notification_title: 'Document structure changed: <a href="%{resource_path}">%{resource_title}</a>.'

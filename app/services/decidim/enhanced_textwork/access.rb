@@ -8,7 +8,7 @@ module Decidim
         return true if user.admin?
 
         space = component.participatory_space
-        space.respond_to?(:user_roles) && space.user_roles(:admin).where(user:).exists?
+        space.respond_to?(:user_roles) && space.user_roles(:admin).exists?(user:)
       end
 
       def self.allowed?(user, resource, action)

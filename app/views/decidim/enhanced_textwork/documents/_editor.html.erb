@@ -1,0 +1,16 @@
+<p><%= tw("edit_original", language: @document.locale) %></p>
+<% if @block.pending_suggestions_count.positive? %><p><%= tw("existing_suggestions", count: @block.pending_suggestions_count) %></p><% end %>
+<% if current_component.current_settings.suggestions_blocked %><p role="status"><%= tw("suggestions_blocked") %></p><% elsif !Decidim::EnhancedTextwork::Access.allowed?(current_user, @block, :suggest) %>
+  <%= action_authorized_link_to :suggest, tw("new_suggestion"), document_path(@document, block: @block.id), resource: @block, class: "button button__sm button__secondary" %>
+<% else %>
+<%= form_with url: (@suggestion ? block_suggestion_path(@block, @suggestion) : block_suggestions_path(@block)), method: @suggestion ? :patch : :post, id: "tw-suggestion-form", data: { action: "submit->textwork#submit input->textwork#changed", suggestion_form: true } do %>
+  <%= hidden_field_tag :expected_version, @block.current_version_number %>
+  <div data-editor-home><div class="tw-editor" data-editor data-original="<%= @block.original %>">
+    <%= label_tag :tw_body, tw("you_edit") %><%= text_area_tag :body, @suggestion ? @suggestion.original : @block.original, id: "tw_body", rows: 7, maxlength: 5000, required: true, form: "tw-suggestion-form", data: { action: "input->textwork#changed" } %>
+    <p class="tw-muted"><%= tw("list_hint") %></p><h3><%= tw("live_preview") %></h3><div class="tw-diff" data-live-diff></div>
+  </div></div>
+  <%= label_tag :tw_justification, tw("optional_justification") %><%= text_area_tag :justification, @suggestion&.original(:justification), id: "tw_justification", maxlength: 1000, rows: 3 %>
+  <div class="tw-form-actions"><button type="button" data-open-block="<%= @block.id %>" data-mode="suggestions"><%= tw("cancel") %></button><button type="submit" class="button button__sm button__secondary" data-submit><%= tw("submit") %></button></div>
+  <p data-form-error role="alert"></p>
+<% end %>
+<% end %>

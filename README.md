@@ -1,35 +1,43 @@
 # Decidim Enhanced Textwork
 
-Independent participatory documents for **Decidim 0.32.1**, version **2.0.0.alpha2**.
+Independent participatory documents for **Decidim 0.32.1**, **2.0.0.alpha3**.
+Development branch: `feature/textwork-redesign`.
 
-Textwork is a separate component with its own documents, sections, text revisions, supports and amendments. It has **no runtime dependency on Proposals, Participatory Texts or Collaborative Texts**. It uses `decidim-core` and `decidim-comments` for the platform integration, comments, follows, moderation, authorization and decision notifications.
+Textwork gives each paragraph a stable identity. Participants read a document,
+comment on a paragraph and suggest a replacement for its original text. They can
+agree with and follow chapters, and discuss or agree with individual suggestions.
+Administrators review suggestions in the component administration.
 
-This is a development alpha for new components. **There is no automatic migration from Textwork 1.x or the Proposals-based alpha1.** Back up existing data and read [the migration plan](docs/MIGRATION.md) before changing an installation. No legacy tables are deleted by this release.
+The gem retains its name and `Decidim::EnhancedTextwork` namespace. It depends on
+Core, Admin and Comments, with **no Proposals, Participatory Texts or Collaborative
+Texts dependency**. Its distinct contribution is stable blocks with their own
+original-text versions; comments and addresses survive reordering.
 
-## Features
+## Participation
 
-- Read a structured document with a contents list and a discussion panel for the selected paragraph.
-- Comment on paragraphs and amendments using Decidim's threaded comments, including comment votes.
-- Support a particular paragraph revision. After a change, old supports remain with the old revision and the new revision starts without supports.
-- Propose a changed text, explain it, discuss it, support it, or withdraw your pending amendment.
-- Organization administrators and administrators of the component's participatory process/space can accept or reject amendments. Being the author does not grant decision rights.
-- Acceptance creates a new paragraph revision and a document snapshot. A stale amendment cannot overwrite a newer revision; rejection remains possible.
-- View previous paragraph revisions and their support counts. Paragraph discussions span revisions; amendments retain their exact base revision.
-- Import editor content, Markdown or ODT, review/edit/reorder unpublished sections, remove drafts and publish the document. Later administrative edits create new revisions too.
-- Download a Word report containing published text, current-revision support counts, visible amendments and comment threads.
-- Use German or English and the instance's Decidim styling.
+- Desktop reading view with contents navigation and a discussion panel; mobile bottom sheet.
+- Paragraph selection, comments, likes, follows and suggestions without a full-page reload.
+- Core threaded comments, positive/negative comment votes, verification rules and moderation.
+- Core Likes on chapters and suggestions, using small resource-scoped controls. Agreement stays when chapter text changes. A document without headings has agreement/follow controls at its title.
+- Suggestions retain their exact original version. Authors may edit before the first feedback and withdraw while pending. Removing feedback does not reopen editing.
+- Admins may accept a stale suggestion after reviewing the current text and adjusting the final wording. A version check prevents overwriting a concurrent edit.
+- Admins may add, move and remove blocks. Removed blocks retain their history and discussion; pending suggestions are rejected with an explicit reason.
+- On-demand translations, with manual translations retained as outdated after original changes. Machine results cannot overwrite a newer original.
+- Chapter notifications through Core events, without duplicate recipients or notifications to the acting user.
+- Editor, Markdown, ODT and DOCX import; a Word report in one selected language.
 
-The ODT importer preserves heading structure and paragraph text. It does not reproduce office styles, tables, embedded media or tracked changes. The Word export is a readable report, not a complete archival backup; it excludes moderated/deleted content and does not include uploaded files or every historical revision.
+This is an alpha for **new components**, not a production upgrade. There is **no
+conversion from Textwork 1.x, alpha1 or alpha2**. Existing tables are retained but
+old records are not usable through the new runtime. Read [migration boundaries](docs/MIGRATION.md)
+before replacing an installation. Keep old applications/backups available separately.
 
-## Local installation
+## Install in a development application
 
-Add the gem to a Decidim 0.32.1 application using Ruby 3.4:
+Use Ruby 3.4 and official Decidim 0.32.1:
 
 ```ruby
 gem "decidim-enhanced_textwork", path: "../decidim-enhanced_textwork"
 ```
-
-Install dependencies and the plugin's own migrations, then rebuild assets and restart:
 
 ```sh
 bundle install
@@ -38,37 +46,46 @@ bin/rails db:migrate
 bin/rails assets:precompile
 ```
 
-Decidim's `choose_target_plugins` task only selects bundled modules. It does not replace the explicit plugin migration installation above.
+Restart Rails, add a **Textwork** component, import into its empty administration,
+review the resulting blocks, and publish the document and component. Comments,
+agreement and suggestions have separate phase controls. Decisions are restricted
+to organization/participatory-space admins.
 
-1. Add a **Textwork** component to a participatory space.
-2. Configure comments, amendments and phase-specific support/comment blocks.
-3. Open its administration, enter a document title and paste a text, or choose a Markdown/ODT file up to 2 MB. A selected file takes precedence over editor content.
-4. Review, edit and reorder the sections, then publish the document and component.
-5. Participants can read, support and discuss the text. Amendment decisions are available to authorized administrators on the amendment page.
+For machine translations, configure the instance’s normal
+`Decidim.machine_translation_service` and enable translations in the organization.
+Use a persistent job backend in a deployed application. The local demonstration
+uses in-process jobs and does not call an external translation provider.
 
-The component manifest is `textwork`. New tables use `decidim_textwork_*`, keeping them separate from old `decidim_enhanced_textwork_*` data. Disabling this gem does not turn documents into Proposals.
+Office import extracts headings, paragraphs and whole lists, not page layout,
+tables, images or tracked changes. DOCX recognizes standard heading styles and
+bold/italic runs; office-specific styles and complex list numbering are not
+faithfully reproduced. Review imported text before publication. Word export is a
+readable report, not a complete archival backup. Missing translations prevent a
+mixed-language export; eligible missing fields are queued together.
 
-## Development
+## Development and verification
 
-Use `.ruby-version` and `.node-version`, PostgreSQL, ImageMagick and Chrome/Chromium:
+Use `.ruby-version`, `.node-version`, PostgreSQL, ImageMagick and Chrome:
 
 ```sh
 bundle install
-export DATABASE_HOST=127.0.0.1
-export DATABASE_PORT=5432
-# Set local DATABASE_USERNAME and DATABASE_PASSWORD if required.
 bin/test-setup
 bundle exec rspec spec
+bin/check-independence
+npm install
+npm test
+npm run lint
+bundle exec rubocop
 ```
 
-`bin/test-setup` creates/reuses an ignored test application and does not reset databases. Its database is `enhanced_textwork_test_test`. Never point tests at an installation database. The test application's full Decidim bundle includes other components, but the plugin itself only requires Core and Comments. `bin/check-independence` additionally loads the plugin in a separate Ruby process without requiring the full Decidim bundle and refuses a Proposals/Collaborative Texts load.
+`bin/test-setup` creates an ignored dummy application and does not reset a database.
+Never point tests at an installation database. Set `TEXTWORK_TEST_APP` to an existing
+isolated test application's absolute path when using that app's bundle. The
+integration/browser suites live in `spec/redesign`.
 
-Set `DECIDIM_PATH=../decidim` consistently for Bundler and subsequent commands only when testing the sibling framework checkout instead of released gems.
+For this workspace, use `decidim-localtest-redesign` on **localhost:3033**, with this
+branch checked out at `.worktrees/textwork-redesign`. Alpha2 remains on port3032.
+See [implementation and checks](docs/IMPLEMENTATION.md), [source findings](docs/ERKUNDUNG.md)
+and [delivery checklist](docs/REDESIGN-IMPLEMENTATION.md).
 
-See [implementation and validation](docs/IMPLEMENTATION.md) and [migration options](docs/MIGRATION.md). The Proposals-based prototype remains on `feature/proposals-textwork-2.0` at `dff08cb`; the independent implementation is on `feature/standalone-textwork`.
-
-## History and license
-
-Version 1 copied and adapted Proposals. Alpha1 replaced that copy with a Proposals extension. Alpha2 removes that component dependency because Decidim has announced the future replacement of Participatory Texts, and Collaborative Texts does not implement the paragraph participation workflow required here.
-
-Software: AGPL-3.0. README: CC-BY-3.0 AT.
+Software: AGPL-3.0-or-later. README: CC-BY-3.0 AT.

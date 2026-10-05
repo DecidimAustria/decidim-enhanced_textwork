@@ -1,0 +1,17 @@
+inherit_gem:
+  decidim-dev: rubocop-decidim.yml
+
+AllCops:
+  TargetRubyVersion: 3.4
+  Exclude:
+    - 'spec/decidim_dummy_app/**/*'
+    - 'vendor/**/*'
+    - 'textwork-uebergabe/**/*'
+
+# These integration suites span commands, controllers and models together.
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - 'spec/redesign/**/*'
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/redesign/**/*'

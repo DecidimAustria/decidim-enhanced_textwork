@@ -1,0 +1,24 @@
+en:
+  decidim:
+    components:
+      textwork:
+        name: Textwork
+        actions:
+          like: Agree
+          suggest: Suggest a change
+          comment: Comment
+          vote_comment: Vote on a comment
+        settings:
+          global:
+            announcement: Announcement
+            comments_enabled: Comments enabled
+            comments_max_length: Maximum comment length
+            likes_enabled: Agreement enabled
+            resources_permissions_enabled: Resource permissions enabled
+          step:
+            announcement: Announcement
+            comments_blocked: Comments blocked
+            likes_blocked: Agreement blocked
+            suggestions_blocked: Suggestions blocked
+    textwork:
+      existing_document: This component already contains a document. Restore it from trash or use an empty component.

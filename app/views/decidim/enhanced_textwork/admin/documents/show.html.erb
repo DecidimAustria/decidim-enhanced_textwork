@@ -1,0 +1,64 @@
+<div class="item_show__header"><h1 class="item_show__header-title"><%= tw("admin_title") %></h1></div>
+<div class="item__edit item__edit-1col"><div class="item__edit-form form-defaults">
+<% unless @document %>
+  <%= decidim_form_for(@form, url: create_document_path, html: { class: "form-defaults" }) do |f| %>
+    <div class="form__wrapper">
+      <%= f.translated :text_field, :title %>
+      <%= f.translated :text_area, :description %>
+      <%= f.select :locale, current_organization.available_locales.map { |locale| [locale, locale] }, label: tw("original_language") %>
+      <%= f.editor :content, required: false %>
+      <%= f.file_field :document, accept: ".md,.markdown,.odt,.docx", label: tw("file") %>
+    </div>
+    <%= f.submit tw("import"), class: "button button__sm button__secondary" %>
+  <% end %>
+<% else %>
+  <h2><%= @document.original(:title) %></h2>
+  <% if @document.deleted? %>
+    <p><%= tw("trashed") %></p><%= button_to tw("restore"), restore_document_path, method: :patch, class: "button button__sm button__secondary" %>
+  <% else %>
+  <%= button_to tw("trash"), trash_document_path, method: :delete, data: { confirm: tw("trash_confirm") }, class: "button button__sm button__text-secondary" %>
+  <p><%= tw("original_language") %>: <%= @document.locale %></p>
+  <%= button_to tw(@document.published? ? "unpublish" : "publish"), publish_document_path, method: :patch, class: "button button__sm button__secondary" %>
+  <%= link_to tw("preview"), Decidim::EngineRouter.main_proxy(current_component).document_path(@document), target: "_blank", rel: "noopener" if @document.published? %>
+  <details><summary><%= tw("metadata") %></summary>
+    <%= form_with url: update_document_path, method: :patch, class: "form-defaults" do %>
+      <% current_organization.available_locales.each do |locale| %>
+        <% [:title, :description].each do |field| %>
+          <% if (old = @document.outdated_translations.dig(field.to_s, locale)).present? %><details><summary><%= tw("outdated_translation") %> · <%= tw(field.to_s) %></summary><blockquote><%= old %></blockquote></details><% end %>
+        <% end %>
+        <%= label_tag "title_#{locale}", "#{tw('title')} (#{locale})" %><%= text_field_tag "title[#{locale}]", @document.title[locale], id: "title_#{locale}" %>
+        <%= label_tag "description_#{locale}", "#{tw('description')} (#{locale})" %><%= text_area_tag "description[#{locale}]", @document.description[locale], id: "description_#{locale}" %>
+      <% end %>
+      <%= submit_tag tw("save"), class: "button button__sm button__secondary" %>
+    <% end %>
+  </details>
+  <%= form_with url: export_document_path, method: :get do %>
+    <%= label_tag :language, tw("export_language") %><%= select_tag :language, options_for_select(current_organization.available_locales, @document.locale) %>
+    <%= submit_tag tw("export"), class: "button button__sm button__secondary" %>
+  <% end %>
+  <h2><%= tw("suggestions") %> (<%= @suggestions.count %>)</h2>
+  <table class="table-list"><thead><tr><th><%= tw("paragraph_label") %></th><th><%= tw("author") %></th><th><%= tw("version_label") %></th><th><%= tw("actions") %></th></tr></thead>
+    <tbody><% @suggestions.each do |suggestion| %><tr><td><%= suggestion.block.number %></td><td><%= suggestion.author.name %></td><td><%= suggestion.block_version.number %><%= " · #{tw('outdated')}" if suggestion.outdated? %></td><td><%= link_to tw("review"), review_suggestion_path(suggestion_id: suggestion.id) %></td></tr><% end %></tbody>
+  </table>
+  <h2><%= tw("document_text") %></h2>
+  <ol><% @blocks.each do |block| %><li class="mb-8">
+    <h3><%= block.number %> · <%= tw(block.kind) %></h3><div class="editor-content"><%= Decidim::EnhancedTextwork::Markdown.render(block.original) %></div>
+    <%= link_to tw("edit"), edit_block_path(block_id: block.id), class: "button button__sm button__text-secondary" %>
+    <%= form_with url: move_block_path(block_id: block.id), method: :patch do %>
+      <%= label_tag "position_#{block.id}", tw("position") %><%= number_field_tag :position, block.position, min: 1, max: @blocks.size, id: "position_#{block.id}" %>
+      <%= submit_tag tw("move") %>
+    <% end %>
+    <%= button_to tw("remove"), remove_block_path(block_id: block.id), method: :delete, data: { confirm: tw("remove_confirm") }, class: "button button__sm button__text-secondary" %>
+  </li><% end %></ol>
+  <details><summary><%= tw("add_block") %></summary>
+    <%= form_with url: add_block_path, class: "form-defaults" do %>
+      <%= label_tag :kind, tw("kind") %><%= select_tag :kind, options_for_select([[tw("paragraph_label"), "paragraph"], [tw("heading"), "heading"]]) %>
+      <%= label_tag :depth, tw("depth") %><%= number_field_tag :depth, 1, min: 1, max: 3 %>
+      <%= label_tag :position, tw("position") %><%= number_field_tag :position, @blocks.size + 1, min: 1, max: @blocks.size + 1 %>
+      <%= label_tag :body, tw("body") %><%= text_area_tag :body, "", required: true, rows: 6 %>
+      <%= submit_tag tw("add_block"), class: "button button__sm button__secondary" %>
+    <% end %>
+  </details>
+  <% end %>
+<% end %>
+</div></div>

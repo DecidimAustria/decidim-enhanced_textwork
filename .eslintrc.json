@@ -1,0 +1,9 @@
+{
+  "extends": "@decidim/eslint-config",
+  "root": true,
+  "settings": {
+    "react": { "version": "detect" },
+    "import/resolver": { "node": { "extensions": [".js", ".mjs", ".scss"], "moduleDirectory": ["app/packs", "node_modules"] } }
+  },
+  "rules": { "no-relative-import-paths/no-relative-import-paths": ["warn", { "allowSameFolder": false, "rootDir": "app/packs" }] }
+}

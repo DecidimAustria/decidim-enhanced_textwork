@@ -2,7 +2,7 @@
 
 ## Current status
 
-The target is now **Textwork 2.0.0.alpha2**, an independent `textwork` component on Decidim 0.32.1. The earlier proposal to migrate to core Proposals is superseded. Its [detailed analysis](history/PROPOSALS-MIGRATION.md) remains as historical evidence of the source-data complexity, not a current conversion recipe or estimate.
+The target is now **Textwork 2.0.0.alpha3**, an independent `textwork` component on Decidim 0.32.1. The earlier proposal to migrate to core Proposals is superseded. Its [detailed analysis](history/PROPOSALS-MIGRATION.md) remains as historical evidence of the source-data complexity, not a current conversion recipe or estimate.
 
 **No legacy converter is implemented. Do not install this alpha over a working Textwork 1.x installation.** The new code does not register the old `enhanced_textwork` manifest or old `Paragraph` class. Old data is not automatically deleted, but it is not automatically usable either. The new tables and models are deliberately distinct from the old ones.
 
@@ -13,17 +13,17 @@ Keeping the gem name does not transfer data. The independent architecture and th
 | Source | New target / required treatment |
 | --- | --- |
 | Legacy component and document metadata | `textwork` component and `Document`; translate settings and preserve component identity where safe. Never switch the manifest before source data and references are validated. |
-| Paragraphs and headings | Stable `Section` plus an initial `Revision`; preserve translations, order and hierarchy. Old answers, costs and status values need an agreed mapping or an indexed archive, because the new model does not use Proposal states. |
-| Historical paragraph versions | Reconstruct immutable `Revision` records where reliable, retain raw source payloads, and build document snapshots only where their composition can be established. Do not fabricate historical document versions. |
-| Paragraph supports | `Support` pointing to the exact target revision where it can be established. Old supports usually refer to a paragraph, not a recorded revision; preserve that uncertainty explicitly. Attaching them to the imported current snapshot is a policy decision, not proof that participants supported that precise wording. Preserve temporary votes separately until their target semantics are agreed. |
-| Amendments and replacement paragraphs | Own `Amendment`, linked to the mapped section and a justified base revision, with discussion, author, state and decisions preserved. Old Core amendment IDs and replacement-paragraph IDs need separate mappings. |
-| Comments and replies | Keep IDs where possible and remap immediate/root commentable references to `Section` or the new `Amendment`. Preserve votes, authors, timestamps, moderation and deletion states. |
+| Paragraphs and headings | Stable `Block` plus an initial `BlockVersion`; preserve translations, order and hierarchy. Old answers, costs and status values need an agreed mapping or an indexed archive, because the new model does not use Proposal states. |
+| Historical paragraph versions | Reconstruct immutable `BlockVersion` records where reliable, retain raw source payloads, and build document snapshots only where their composition can be established. Do not fabricate historical document versions. |
+| Paragraph supports | Preserve as historical participation. Do not convert paragraph/revision support into chapter agreement: the target and meaning differ. Current chapter agreement uses Core Likes and persists across edits. |
+| Amendments and replacement paragraphs | Own `Suggestion`, linked to the mapped block and a justified base revision, with discussion, author, state and decisions preserved. Old Core amendment IDs and replacement-paragraph IDs need separate mappings. |
+| Comments and replies | Keep IDs where possible and remap immediate/root commentable references to `Block` or the new `Suggestion`. Preserve votes, authors, timestamps, moderation and deletion states. |
 | Follows, moderation, attachments and resource links | Map resource type/ID pairs and both link endpoints; retain files and access controls. Features without a current administration flow need explicit archival or implementation before promising continued usability. |
 | Internal notes, evaluation assignments, old answers and removed settings | Preserve in a restricted, indexed archive unless a dedicated corresponding feature is implemented. They must not silently become public comments or disappear. |
 | Collaborative drafts and access requests | Preserve separately with authorship, discussions, files and provenance; the new module does not recreate that old collaboration workflow. |
 | Logs, notifications, jobs, groups and taxonomy relations | Audit and transform or archive explicitly. Neither the core upgrade nor a string replacement is sufficient for old custom types and serialized references. |
 
-The user's approved behavior for newly created data is that support applies to a specific text revision and only administrators decide amendments. A legacy conversion must document where old records lack the information needed to establish those semantics.
+The redesign uses lasting chapter agreement and administrator decisions on suggestions. This supersedes alpha2’s revision-bound supports. A converter must retain historical votes separately unless an operator explicitly approves a mapping.
 
 ## Conversion sequence if a real installation needs it
 
@@ -60,3 +60,15 @@ If no operator needs continued editing, document a breaking upgrade with a verif
 The earlier 10–18 / 20–40 person-day ranges described conversion into Proposals and are **not confirmed estimates for this target**. Independent Textwork needs different mappings, particularly for support revisions and unsupported administrative data. Retain the initial inventory timebox of approximately 0.5–2 person-days for one available representative backup; estimate implementation after the data contract and archive boundary are known.
 
 No legacy conversion or deletion is authorized by this plan. The current change implements the independent module and local test setup only.
+
+
+## Alpha2 to alpha3
+
+The schema additions leave alpha2 tables in place, but the alpha3 runtime no longer
+loads Section, Revision, Support, Amendment or DocumentVersion. The Document table
+is extended; existing documents are not automatically converted to blocks. Do not
+install alpha3 over an alpha2 application expecting its reading views, comments,
+GlobalIDs or historical notifications to keep working. Preserve the alpha2 application
+and its backup as a separate archive until conversion has been designed and tested.
+The 3033 demonstration uses separate databases and therefore does not exercise a
+legacy conversion. No removal of source data is included in this branch.

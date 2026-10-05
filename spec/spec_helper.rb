@@ -4,7 +4,7 @@ ENV["RAILS_ENV"] = "test"
 ENV["DECIDIM_AVAILABLE_LOCALES"] = "en,ca,es,de"
 
 require "bundler/setup"
-require_relative "decidim_dummy_app/config/environment"
+require File.join(ENV.fetch("TEXTWORK_TEST_APP", File.expand_path("decidim_dummy_app", __dir__)), "config/environment")
 require "rspec/rails"
 require "factory_bot_rails"
 require "decidim/core/test/factories"
@@ -16,8 +16,8 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.order = :random
+  config.around { |example| I18n.with_locale(:en) { example.run } }
   config.before do
-    I18n.locale = :en
     ActiveJob::Base.queue_adapter = :test
   end
 end

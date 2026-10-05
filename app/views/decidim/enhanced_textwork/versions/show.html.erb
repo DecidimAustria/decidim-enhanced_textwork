@@ -1,0 +1,1 @@
+<main class="container py-12"><%= cell("decidim/version", current_version, index: params[:id], versioned_resource: versioned_resource, path: proc { |extra| url_for(action: :show, id: params[:id], **extra) }, versions_path: proc { block_versions_path(versioned_resource) }) %></main>

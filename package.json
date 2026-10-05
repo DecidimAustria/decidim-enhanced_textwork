@@ -1,0 +1,12 @@
+{
+  "name": "decidim-enhanced-textwork-development",
+  "private": true,
+  "scripts": {
+    "test": "node spec/javascript/diff_test.mjs",
+    "lint": "eslint app/packs --ext .js,.mjs"
+  },
+  "devDependencies": {
+    "@decidim/eslint-config": "0.32.1",
+    "@decidim/dev": "0.32.1"
+  }
+}

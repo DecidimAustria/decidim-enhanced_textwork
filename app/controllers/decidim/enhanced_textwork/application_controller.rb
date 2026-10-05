@@ -4,22 +4,18 @@ module Decidim
   module EnhancedTextwork
     class ApplicationController < Decidim::Components::BaseController
       include Decidim::FormFactory
-      helper Decidim::EnhancedTextwork::TextsHelper
+
+      helper Decidim::EnhancedTextwork::ReadingHelper
       helper Decidim::FollowableHelper
       helper Decidim::Comments::CommentsHelper
       rescue_from Decidim::ActionForbidden, with: -> { head :forbidden }
       private
 
       def published_document
-        @document ||= Document.where(component: current_component).where.not(published_at: nil).first!
-      end
-
-      def visible_sections
-        published_document.sections.not_hidden.includes(:current_revision)
-      end
-
-      def visible_amendments
-        Amendment.where(section: visible_sections, component: current_component).not_hidden
+        @document ||= begin
+          scope = Document.published.where(component: current_component)
+          params[:document_id].presence || (controller_name == "documents" && params[:id].presence) ? scope.find(params[:document_id] || params[:id]) : scope.first!
+        end
       end
 
       def ensure_allowed!(resource, action)

@@ -1,0 +1,14 @@
+<div class="item_show__header"><h1 class="item_show__header-title"><%= tw("edit") %> · <%= @block.number %></h1></div>
+<div class="item__edit item__edit-1col"><div class="item__edit-form">
+<%= form_with url: update_block_path(block_id: @block.id), method: :patch, class: "form-defaults" do %>
+  <%= hidden_field_tag :expected_version, @block.current_version_number %>
+  <%= label_tag :body, "#{tw('body')} (#{@block.original_locale})" %><%= text_area_tag :body, @block.original, rows: 12, required: true %>
+  <% current_organization.available_locales.excluding(@block.original_locale).each do |locale| %>
+    <%= label_tag "translation_#{locale}", "#{tw('translation')} (#{locale})" %>
+    <% if (old = @block.outdated_translations.dig("body", locale)).present? %><details><summary><%= tw("outdated_translation") %></summary><blockquote><%= old %></blockquote></details><% end %>
+    <%= text_area_tag "translations[#{locale}]", @block.body[locale], rows: 6, id: "translation_#{locale}" %>
+    <%= check_box_tag "reviewed[]", locale, false, id: "reviewed_#{locale}" %><%= label_tag "reviewed_#{locale}", tw("translation_reviewed") %>
+  <% end %>
+  <%= submit_tag tw("save"), class: "button button__sm button__secondary" %><%= link_to tw("cancel"), textwork_path %>
+<% end %>
+</div></div>

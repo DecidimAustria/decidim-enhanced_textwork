@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "decidim/core"
+require "decidim/admin"
 require "decidim/comments"
 require "decidim/enhanced_textwork/version"
 require "decidim/enhanced_textwork/engine"

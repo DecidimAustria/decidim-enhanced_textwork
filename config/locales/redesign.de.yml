@@ -1,0 +1,178 @@
+---
+de:
+  decidim:
+    textwork:
+      removed_reason: Der Absatz wurde entfernt.
+      paragraph: Absatz %{number}
+      paragraph_label: Absatz
+      suggestion_by: Änderungsvorschlag von %{name} zu Absatz %{number}
+      by: Vorschlag von %{name}
+      contents: Inhaltsverzeichnis
+      intro: 'So beteiligen Sie sich: Neben jedem Absatz können Sie über die Sprechblase
+        kommentieren und über den Bleistift eine Änderung vorschlagen.'
+      summary: "%{paragraphs} Absätze · %{comments} Kommentare · %{suggestions} offene
+        Änderungsvorschläge"
+      like: Stimme zu
+      liked: Zugestimmt
+      follow: Folgen
+      followed: Gefolgt – nicht mehr folgen
+      comments: Kommentare
+      suggestions: Änderungsvorschläge
+      suggestions_for: Änderungsvorschläge zu Absatz %{number}
+      comments_for: Kommentare zu Absatz %{number}
+      discussion: Beteiligung am Absatz
+      close: Schließen
+      login: Anmelden
+      error: Das hat nicht geklappt. Bitte versuchen Sie es erneut.
+      loading: Wird geladen …
+      copied: Link kopiert.
+      copy_link: Link kopieren
+      versions: Versionsverlauf
+      document_history: Änderungsverlauf des Dokuments
+      version: Fassung %{number}
+      base_version: zu Fassung %{number}
+      version_label: Fassung
+      initial_text: Ausgangstext
+      no_suggestions: Noch keine Änderungsvorschläge.
+      all_suggestions: Alle Änderungsvorschläge
+      closed: Abgeschlossene Vorschläge (%{count})
+      sort: Sortieren
+      most_liked: Meiste Zustimmung
+      newest: Neueste zuerst
+      new_suggestion: Eigene Änderung vorschlagen
+      suggestions_blocked: In dieser Phase können keine neuen Änderungen vorgeschlagen
+        werden.
+      state_pending: Offen
+      state_accepted: Angenommen
+      state_rejected: Abgelehnt
+      state_withdrawn: Zurückgezogen
+      outdated: Der Absatz wurde seither geändert.
+      outdated_review: Dieser Vorschlag bezieht sich auf eine ältere Fassung. Prüfen
+        Sie den aktuellen Absatz und passen Sie den endgültigen Text vor der Annahme
+        an.
+      justification: Begründung
+      optional_justification: Begründung (optional)
+      answer: Begründung der Entscheidung (bei Ablehnung erforderlich)
+      show_original: Original mit Markierung anzeigen
+      show_in_text: Im Text zeigen
+      edit: Bearbeiten
+      withdraw: Zurückziehen
+      withdrawn: Ihr Änderungsvorschlag wurde zurückgezogen.
+      edit_original: Änderungen beziehen sich auf den Originaltext (%{language}).
+      existing_suggestions: Zu diesem Absatz gibt es bereits %{count} Vorschläge.
+        Passt einer davon, genügt Ihre Zustimmung.
+      you_edit: Sie bearbeiten diesen Absatz
+      live_preview: So sieht Ihre Änderung aus
+      list_hint: Eine neue Zeile, die mit „- “ beginnt, fügt einen Listenpunkt hinzu.
+      cancel: Abbrechen
+      submit: Vorschlag einreichen
+      submitted: Ihr Änderungsvorschlag wurde eingereicht.
+      discard_question: Entwurf verwerfen?
+      keep_editing: Weiter bearbeiten
+      discard: Verwerfen
+      removed: Dieser Absatz wurde entfernt.
+      unavailable: Dieser Änderungsvorschlag ist nicht verfügbar.
+      back: Zurück zum Dokument
+      empty: Es wurde noch kein Dokument veröffentlicht.
+      conflict: Der Text wurde inzwischen geändert. Bitte laden Sie die aktuelle Fassung
+        und prüfen Sie Ihre Änderung erneut.
+      invalid: Die Änderung konnte nicht gespeichert werden. Bitte prüfen Sie die
+        Pflichtfelder und die aktuelle Fassung.
+      admin_title: Textwork verwalten
+      original_language: Originalsprache
+      file: Datei (Word, ODT oder Markdown)
+      import: Dokument anlegen
+      imported: Das Dokument wurde angelegt.
+      invalid_file: Die Datei konnte nicht gelesen werden. Erlaubt sind Word, ODT
+        und Markdown bis 2 MB.
+      publish: Veröffentlichen
+      unpublish: Veröffentlichung zurücknehmen
+      preview: Vorschau
+      metadata: Titel und Einleitung bearbeiten
+      title: Titel
+      description: Einleitung
+      save: Speichern
+      saved: Gespeichert.
+      export: Als Word exportieren
+      export_language: Exportsprache
+      author: Verfasser:in
+      actions: Aktionen
+      review: Prüfen und entscheiden
+      document_text: Dokumenttext
+      heading: Kapitelüberschrift
+      position: Position
+      move: Umstellen
+      remove: Entfernen
+      remove_confirm: Block entfernen? Offene Vorschläge werden begründet abgelehnt.
+        Alle Beiträge bleiben im Verlauf erhalten.
+      add_block: Block hinzufügen
+      kind: Art
+      depth: Gliederungsebene
+      body: Text
+      current_text: Aktueller Text
+      final_text: Endgültiger Text
+      accept: Annehmen
+      reject: Ablehnen
+      outdated_translation: Veraltete Übersetzung – vor Übernahme prüfen
+      translation: Geprüfte Übersetzung
+      translation_pending: Übersetzung wird erstellt. Sie sehen den Originaltext.
+      translation_failed: Übersetzung derzeit nicht verfügbar. Sie sehen den Originaltext.
+      history_import: Import
+      history_suggestion: Angenommener Änderungsvorschlag
+      history_editorial: Redaktionelle Änderung
+      history_block_added: Block hinzugefügt
+      history_block_removed: Block entfernt
+      history_block_moved: Block umgestellt
+      admin_log:
+        create: "%{user_name} hat den Textwork-Inhalt geändert."
+        update: "%{user_name} hat den Textwork-Inhalt geändert."
+        delete: "%{user_name} hat den Textwork-Inhalt geändert."
+        accept: "%{user_name} hat den Textwork-Inhalt geändert."
+        reject: "%{user_name} hat den Textwork-Inhalt geändert."
+      export_missing_translation: Der Export ist noch nicht vollständig in der gewählten
+        Sprache verfügbar. Bitte ergänzen oder prüfen Sie die Übersetzungen und versuchen
+        Sie es erneut.
+      withdraw_question: Änderungsvorschlag zurückziehen?
+      trashed: Das Dokument liegt im Papierkorb. Seine Inhalte und Beiträge bleiben
+        erhalten.
+      restored: Das Dokument wurde wiederhergestellt.
+      trash: In den Papierkorb verschieben
+      restore: Wiederherstellen
+      trash_confirm: Dokument in den Papierkorb verschieben? Es kann später wiederhergestellt
+        werden.
+      previous: Vorheriger Vorschlag
+      next: Nächster Vorschlag
+      translation_reviewed: Diese Übersetzung wurde gegen den neuen Originaltext geprüft.
+    events:
+      textwork:
+        suggestion_created:
+          email_subject: Neuer Änderungsvorschlag
+          email_intro: 'Neuer Änderungsvorschlag: %{resource_title}'
+          email_outro: Sie erhalten diese Nachricht wegen Ihres Beitrags, Ihrer Zustimmung
+            oder Ihres Abonnements.
+          notification_title: 'Neuer Änderungsvorschlag: <a href="%{resource_path}">%{resource_title}</a>.'
+        suggestion_accepted:
+          email_subject: Änderungsvorschlag angenommen
+          email_intro: 'Änderungsvorschlag angenommen: %{resource_title}'
+          email_outro: Sie erhalten diese Nachricht wegen Ihres Beitrags, Ihrer Zustimmung
+            oder Ihres Abonnements.
+          notification_title: 'Änderungsvorschlag angenommen: <a href="%{resource_path}">%{resource_title}</a>.'
+        suggestion_rejected:
+          email_subject: Änderungsvorschlag abgelehnt
+          email_intro: 'Änderungsvorschlag abgelehnt: %{resource_title}. %{decision_reason}'
+          email_outro: Sie erhalten diese Nachricht wegen Ihres Beitrags, Ihrer Zustimmung
+            oder Ihres Abonnements.
+          notification_title: 'Änderungsvorschlag abgelehnt: <a href="%{resource_path}">%{resource_title}</a>.
+            %{decision_reason}'
+        editorial_change:
+          email_subject: Redaktionelle Textänderung
+          email_intro: 'Redaktionelle Textänderung: %{resource_title}'
+          email_outro: Sie erhalten diese Nachricht wegen Ihres Beitrags, Ihrer Zustimmung
+            oder Ihres Abonnements.
+          notification_title: 'Redaktionelle Textänderung: <a href="%{resource_path}">%{resource_title}</a>.'
+        structure_changed:
+          email_subject: Dokumentaufbau geändert
+          email_intro: 'Dokumentaufbau geändert: %{resource_title}'
+          email_outro: Sie erhalten diese Nachricht wegen Ihres Beitrags, Ihrer Zustimmung
+            oder Ihres Abonnements.
+          notification_title: 'Dokumentaufbau geändert: <a href="%{resource_path}">%{resource_title}</a>.'

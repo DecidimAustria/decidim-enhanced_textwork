@@ -1,0 +1,15 @@
+<div class="item_show__header"><h1 class="item_show__header-title"><%= tw("review") %> · <%= @block.number %></h1></div>
+<div class="item__edit item__edit-1col"><div class="item__edit-form form-defaults">
+<p><%= @suggestion.author.name %> · <%= tw("version", number: @suggestion.block_version.number) %></p>
+<%= textwork_diff(@suggestion.changeset["original"], @suggestion.original) %>
+<% if @suggestion.outdated? %><div class="callout warning" role="status"><%= tw("outdated_review") %></div><h2><%= tw("current_text") %></h2><blockquote><%= @block.original %></blockquote><% end %>
+<p><%= @suggestion.original(:justification) %></p>
+<%= form_with url: decide_suggestion_path(suggestion_id: @suggestion.id), method: :patch, class: "form-defaults" do %>
+  <%= hidden_field_tag :expected_version, @block.current_version_number %>
+  <%= label_tag :body, tw("final_text") %><%= text_area_tag :body, @suggestion.original, rows: 12, maxlength: 5000 %>
+  <%= label_tag :answer, tw("answer") %><%= text_area_tag :answer, "", rows: 4 %>
+  <%= button_tag tw("accept"), name: :decision, value: "accepted", class: "button button__sm button__secondary" %>
+  <%= button_tag tw("reject"), name: :decision, value: "rejected", class: "button button__sm button__text-secondary" %>
+<% end %>
+<%= link_to tw("cancel"), textwork_path %>
+</div></div>

@@ -21,6 +21,14 @@ module Decidim
       def html(content, indent: 0)
         fragment = Nokogiri::HTML.fragment(content.to_s)
         fragment.css("script, style").remove
+        fragment.css("a[href]").each do |link|
+          target = link["href"]
+          link.add_next_sibling(Nokogiri::XML::Text.new(" (#{target})", fragment.document)) unless link.text == target
+        end
+        fragment.css("li").each do |item|
+          marker = item.parent.name == "ol" ? "#{item.xpath("preceding-sibling::li").size + 1}. " : "• "
+          item.prepend_child(Nokogiri::XML::Text.new(marker, fragment.document))
+        end
         fragment.css("br").each { |node| node.replace("\n") }
         fragment.css("p, div, h1, h2, h3, h4, h5, h6, li, blockquote").each do |node|
           node.add_next_sibling(Nokogiri::XML::Text.new("\n", fragment.document))

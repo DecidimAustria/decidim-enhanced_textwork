@@ -5,7 +5,7 @@ module Decidim
     module Admin
       class ApplicationController < Decidim::Admin::Components::BaseController
         before_action :authorize_textwork
-        helper Decidim::EnhancedTextwork::TextsHelper
+        helper Decidim::EnhancedTextwork::ReadingHelper
 
         private
 

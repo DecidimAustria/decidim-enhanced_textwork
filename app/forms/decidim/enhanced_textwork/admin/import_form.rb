@@ -5,8 +5,11 @@ module Decidim
     module Admin
       class ImportForm < Decidim::Form
         include TranslatableAttributes
+
         translatable_attribute :title, String
         translatable_attribute :description, String
+        attribute :locale, String, default: -> { I18n.locale.to_s }
+        validates :locale, inclusion: { in: ->(form) { form.current_organization.available_locales } }
         attribute :content, String
         attribute :document, Object
         validates :title, translatable_presence: true
@@ -18,7 +21,7 @@ module Decidim
         end
 
         def component_must_be_empty
-          errors.add(:content, I18n.t("decidim.enhanced_textwork.admin.existing_paragraphs")) if Document.exists?(component: current_component)
+          errors.add(:content, I18n.t("decidim.textwork.existing_document")) if Document.with_deleted.exists?(component: current_component)
         end
       end
     end

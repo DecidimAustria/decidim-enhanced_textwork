@@ -1,0 +1,24 @@
+de:
+  decidim:
+    components:
+      textwork:
+        name: Textarbeit
+        actions:
+          like: Zustimmen
+          suggest: Änderung vorschlagen
+          comment: Kommentieren
+          vote_comment: Über einen Kommentar abstimmen
+        settings:
+          global:
+            announcement: Ankündigung
+            comments_enabled: Kommentare aktiviert
+            comments_max_length: Maximale Kommentarlänge
+            likes_enabled: Zustimmung aktiviert
+            resources_permissions_enabled: Berechtigungen je Inhalt aktiviert
+          step:
+            announcement: Ankündigung
+            comments_blocked: Kommentare gesperrt
+            likes_blocked: Zustimmung gesperrt
+            suggestions_blocked: Änderungsvorschläge gesperrt
+    textwork:
+      existing_document: Diese Komponente enthält bereits ein Dokument. Stellen Sie es aus dem Papierkorb wieder her oder verwenden Sie eine leere Komponente.

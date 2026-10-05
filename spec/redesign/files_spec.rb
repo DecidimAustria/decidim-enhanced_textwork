@@ -1,0 +1,47 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+require "zip"
+
+RSpec.describe "Redesign imports and exports" do
+  def upload(name, content)
+    Struct.new(:original_filename, :data) do
+      def size = data.bytesize
+
+      def read(limit) = data.byteslice(0, limit)
+    end.new(name, content)
+  end
+
+  def archive(name, xml)
+    Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry(name)
+      zip.write(xml)
+    end.string
+  end
+
+  it "imports an entire Word list as one paragraph" do
+    xml = '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Chapter</w:t></w:r></w:p><w:p><w:pPr><w:numPr><w:numId w:val="1"/></w:numPr></w:pPr><w:r><w:t>First</w:t></w:r></w:p><w:p><w:pPr><w:numPr><w:numId w:val="1"/></w:numPr></w:pPr><w:r><w:t>Second</w:t></w:r></w:p></w:body></w:document>'
+    html = Decidim::EnhancedTextwork::DocumentInput.read(upload("text.docx", archive("word/document.xml", xml)))
+    blocks = Decidim::EnhancedTextwork::Markdown.from_html(html)
+    expect(blocks.map { |block| block[:kind] }).to eq(%w(heading paragraph))
+    expect(blocks.last[:body]).to eq("- First\n- Second")
+  end
+
+  it "rejects XML entity declarations" do
+    file = upload("text.docx", archive("word/document.xml", '<!DOCTYPE x [<!ENTITY e SYSTEM "file:///etc/passwd">]><x>&e;</x>'))
+    expect { Decidim::EnhancedTextwork::DocumentInput.read(file) }.to raise_error(Decidim::EnhancedTextwork::DocumentInput::Invalid)
+  end
+
+  it "exports one selected language and refuses a mixed-language report" do
+    document = create(:textwork_document, title: { en: "A plan", de: "Ein Plan" }, description: { en: "", de: "" })
+    admin = create(:user, :admin, organization: document.organization)
+    block = Decidim::EnhancedTextwork::EditDocument.new(document, admin).add(kind: "paragraph", body: "More trees.")
+    expect { Decidim::EnhancedTextwork::ReadingExport.new(document, "de").export }.to raise_error(Decidim::EnhancedTextwork::ReadingExport::MissingTranslation)
+    block.update!(body: block.body.merge("de" => "Mehr Bäume."))
+    data = Decidim::EnhancedTextwork::ReadingExport.new(document, "de").export
+    xml = nil
+    Zip::File.open_buffer(data) { |zip| xml = zip.read("word/document.xml") }
+    expect(xml.force_encoding("UTF-8")).to include("Mehr Bäume.")
+    expect(xml).not_to include("More trees.")
+  end
+end

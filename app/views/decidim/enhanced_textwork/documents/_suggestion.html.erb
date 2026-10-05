@@ -1,0 +1,12 @@
+<section class="tw-suggestion" data-suggestion="<%= suggestion.id %>" data-original="<%= suggestion.changeset['original'] %>" data-replacement="<%= suggestion.original %>" data-author="<%= suggestion.author.name %>" data-translated="<%= I18n.locale.to_s != @document.locale && params[:original] != '1' %>">
+  <div class="tw-meta"><span><%= tw("state_#{suggestion.status}") %></span> · <%= l(suggestion.created_at.to_date) %> · <%= tw("base_version", number: suggestion.block_version.number) %></div>
+  <h3><button type="button" data-open-block="<%= @block.id %>" data-mode="suggestions" data-suggestion-id="<%= suggestion.id %>"><%= tw("by", name: suggestion.author.name) %></button></h3>
+  <% if suggestion.outdated? %><p class="tw-muted"><%= tw("outdated") %></p><% end %>
+  <div class="tw-diff" data-diff-output><% if I18n.locale.to_s != @document.locale && params[:original] != '1' %><%= textwork_reading(suggestion) %><%= link_to tw("show_original"), document_path(@document, block: @block.id, suggestion: suggestion.id, original: 1) %><% end %></div>
+  <% if detail && suggestion.original(:justification).present? %><h4><%= tw("justification") %></h4><%= textwork_reading(suggestion, :justification) %><% end %>
+  <% if suggestion.original(:answer).present? %><h4><%= tw("answer") %></h4><%= textwork_reading(suggestion, :answer) %><% end %>
+  <%= render "interactions", resource: suggestion, follow: false %>
+  <button type="button" data-action="textwork#preview" data-preview-id="<%= suggestion.id %>"><%= tw("show_in_text") %></button>
+  <% if suggestion.editable_by?(current_user) %><button type="button" data-open-block="<%= @block.id %>" data-mode="edit" data-suggestion-id="<%= suggestion.id %>"><%= tw("edit") %></button><% end %>
+  <% if suggestion.withdrawable_by?(current_user) %><button type="button" data-action="textwork#withdraw" data-url="<%= withdraw_suggestion_path(suggestion) %>"><%= tw("withdraw") %></button><% end %>
+</section>

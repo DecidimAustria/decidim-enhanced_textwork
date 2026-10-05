@@ -16,7 +16,8 @@ module Decidim
         tables = @connection.tables.sort
         legacy_tables = tables.grep(/\A#{TABLE_PREFIX}/)
         components = if tables.include?("decidim_components")
-                       @connection.select_all("SELECT id, participatory_space_id, participatory_space_type FROM decidim_components WHERE manifest_name = 'enhanced_textwork' ORDER BY id").to_a
+                       @connection.select_all("SELECT id, participatory_space_id, participatory_space_type FROM decidim_components " \
+                                              "WHERE manifest_name = 'enhanced_textwork' ORDER BY id").to_a
                      else
                        []
                      end
@@ -24,8 +25,8 @@ module Decidim
         {
           format_version: 1,
           migration_supported: false,
-          components: components,
-          tables: legacy_tables.to_h { |table| [table, count(table)] },
+          components:,
+          tables: legacy_tables.index_with { |table| count(table) },
           references: reference_counts(tables - legacy_tables)
         }
       end
