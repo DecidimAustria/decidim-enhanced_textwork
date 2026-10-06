@@ -1,0 +1,178 @@
+# UI strings. Translated from de.yml by Claude, not reviewed by a native speaker.
+# Key names are a proposal and should be aligned with Decidim core naming.
+en:
+  decidim:
+    components:
+      textwork:
+        name: Textwork
+        actions:
+          comment: Comment
+          like: Agree
+          suggest: Suggest a change
+        settings:
+          global:
+            comments_max_length: Comments max length
+          step:
+            comments_blocked: Comments blocked
+            suggestions_blocked: Suggestions blocked
+            likes_blocked: Agreement blocked
+    textwork:
+      documents:
+        show:
+          summary: "%{paragraphs} paragraphs · %{comments} comments · %{suggestions} open suggestions"
+          how_to_participate_html: "How to take part: next to each paragraph you can comment using %{comment_icon} and suggest a change using %{suggest_icon}."
+          how_to_participate_mobile_html: "How to take part: below each paragraph you can comment using %{comment_icon} and suggest a change using %{suggest_icon}."
+          comment_icon_label: the speech bubble
+          suggest_icon_label: the pencil
+      toc:
+        title: Contents
+        button: Table of contents
+        collapse: Hide contents
+        count_hint: Number = comments and open suggestions
+      blocks:
+        number_link_label: "Open paragraph %{number}, link to paragraph"
+        comments_button_label: "Show comments on paragraph %{number}"
+        comments_button_tooltip: Comment
+        suggestions_button_label: "Suggest a change to paragraph %{number} or show suggestions"
+        suggestions_button_tooltip: Suggest a change
+        like: "I agree · %{count}"
+        liked: "Agreed · %{count}"
+        like_chapter_label: "Agree with chapter %{number}"
+        unlike_chapter_label: "Withdraw agreement with chapter %{number}"
+        follow_chapter_label: "Follow chapter %{number}"
+        follow_chapter_tooltip: Follow chapter
+        editing_label: You are editing this paragraph
+        preview_label: "Preview: suggestion %{index} of %{total} · %{author}"
+        previous_suggestion: Previous suggestion
+        next_suggestion: Next suggestion
+      panel:
+        title: "Paragraph %{number}"
+        close: Close panel
+        more_actions: More actions for this paragraph
+        version_original: "Version %{number} · original text"
+        version_changed: "Version %{number} · last changed on %{date}"
+        menu:
+          copy_link: Copy link to paragraph
+          versions: Version history
+        tabs:
+          comments: "Comments (%{count})"
+          suggestions: "Suggestions (%{count})"
+      comments:
+        empty: No comments on this paragraph yet.
+        new_label: Comment on this paragraph
+        placeholder: Write a comment ...
+        submit: Comment
+      suggestions:
+        empty: No suggestions for this paragraph yet.
+        sort_label: Sort by
+        sort_most_liked: Most agreement
+        sort_newest: Newest first
+        new: Suggest your own change
+        new_hint: You edit the paragraph text directly.
+        byline: "Suggestion by %{author}"
+        label: "Suggestion by %{author} for paragraph %{number}"
+        meta: "%{date} · for version %{version}"
+        outdated_hint: The paragraph has been changed since.
+        show_in_text: Show in text
+        shown_in_text: Marked in text
+        show_closed: "Show: closed suggestions (%{count})"
+        hide_closed: "Hide: closed suggestions (%{count})"
+        report: Report
+        unavailable: This suggestion is not available.
+        withdraw: Withdraw
+        edit: Edit
+        status:
+          pending: Open
+          accepted: Accepted
+          rejected: Rejected
+        moderation_answer: "Moderation's reason: %{answer}"
+        show:
+          back: "← All suggestions"
+          title: "Suggestion for paragraph %{number}"
+          marked_in_text: The change is marked in the text.
+          justification: Reason
+          no_justification: No reason given.
+          comments_title: "Comments on this suggestion (%{count})"
+          comments_empty: No comments on this suggestion yet.
+          new_comment_label: Comment on this suggestion
+        form:
+          title: Suggest a change
+          instructions: Edit the paragraph directly in the text. Your change is marked there.
+          text_label: Edit the paragraph text
+          list_hint: "A new line starting with “- ” adds a list item."
+          original_language_hint: "Changes apply to the original text (%{language})."
+          existing:
+            one: "There is already 1 suggestion for this paragraph. If it fits, your agreement is enough."
+            other: "There are already %{count} suggestions for this paragraph. If one of them fits, your agreement is enough."
+          view_existing: View existing suggestions
+          preview_title: This is what your change looks like
+          preview_empty: No change yet. Edit the text in the field.
+          justification_label: Reason (optional)
+          cancel: Cancel
+          submit: Submit suggestion
+          submit_short: Submit
+        discard:
+          title: Discard draft?
+          body: Your change to the paragraph has not been submitted yet.
+          keep: Keep editing
+          confirm: Discard
+        create:
+          success: Your suggestion has been submitted.
+          invalid: The suggestion could not be saved.
+          unchanged: The text has not been changed.
+        update:
+          success: Your suggestion has been updated.
+          not_allowed: The suggestion can no longer be edited because someone has already agreed or commented.
+        withdraw_action:
+          confirm: Do you really want to withdraw your suggestion?
+          success: Your suggestion has been withdrawn.
+      history:
+        title: Document change history
+        block_removed_notice: This paragraph has been removed.
+      translations:
+        pending: Translation in progress
+        machine_translated: Machine translated
+        show_original_with_marks: Show original with changes marked
+      diff:
+        inserted: inserted
+        deleted: deleted
+      versions:
+        origin:
+          import: Original text
+          suggestion: "From the suggestion by %{author}"
+          suggestion_adjusted: "From the suggestion by %{author}, adjusted by moderation"
+          editorial: Editorial change
+      admin:
+        suggestions:
+          index:
+            title: Open suggestions
+          accept:
+            title: Accept suggestion
+            final_text_label: Final text of the paragraph
+            outdated_warning: "This suggestion refers to version %{version}. The paragraph has been changed since. Check the final text before accepting."
+            current_text_label: Current text of the paragraph
+            submit: Accept
+            success: The suggestion has been accepted. The paragraph has a new version.
+          reject:
+            title: Reject suggestion
+            answer_label: Reason (required)
+            submit: Reject
+            success: The suggestion has been rejected.
+        blocks:
+          edit:
+            title: Editorial change to paragraph
+            hint: The change creates a new version and is visible in the version history.
+            success: The paragraph has been changed.
+    events:
+      textwork:
+        suggestion_accepted:
+          notification_title: "Your suggestion for paragraph %{number} in “%{document}” has been accepted."
+        suggestion_rejected:
+          notification_title: "Your suggestion for paragraph %{number} in “%{document}” has been rejected."
+        suggestion_created:
+          notification_title: "New suggestion for paragraph %{number} in “%{document}”."
+        block_changed:
+          follower_title: "Paragraph %{number} in “%{document}” has a new version."
+          liker_title: "A chapter you agreed with has changed: “%{chapter}” in “%{document}”."
+        block_commented:
+          notification_title: "New comment on paragraph %{number} in “%{document}”."

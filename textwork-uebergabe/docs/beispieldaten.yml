@@ -1,0 +1,93 @@
+# Beispieldaten für die Präsentationsinstanz.
+# Grundlage für lib/decidim/textwork/seeds.rb. Erfunden sind: alle Namen in eckigen
+# Klammern, die Zahlen der Zustimmungen und die Texte der Änderungsvorschläge.
+# "text" ist die Markdown-Teilmenge aus Abschnitt 3.1 der Bauanleitung.
+
+document:
+  locale: de
+  title: "Ein grüneres Viertel"
+  description: "Ein Beispieldokument zum Testen von Kommentaren, Zustimmung und Änderungsvorschlägen."
+
+blocks:
+  - key: h1
+    kind: heading
+    depth: 1
+    text: "Mehr Grün im Alltag"
+    likes: 0
+
+  - key: p11
+    kind: paragraph
+    text: "Wir möchten mehr Bäume und schattige Sitzplätze in unserem Viertel schaffen."
+    comments:
+      - author: "Testperson"
+        text: "Besonders beim Spielplatz fehlen noch schattige Sitzplätze."
+      - author: "[Person A]"
+        text: "[Text des zweiten Kommentars]"
+    suggestions:
+      - author: "Testperson"
+        likes: 0
+        replace: "Wir möchten mehr Bäume und schattige Sitzplätze – besonders beim Spielplatz – in unserem Viertel schaffen."
+
+  - key: p12
+    kind: paragraph
+    # Dieser Absatz steht in Fassung 2. Fassung 1 lautete:
+    version_1: "Öffentliche Grünflächen sollen für alle Menschen nutzbar sein."
+    text: "Öffentliche Grünflächen sollen gut erreichbar und für alle Menschen nutzbar sein."
+    suggestions:
+      - author: "[Person F]"
+        status: accepted
+        based_on_version: 1
+        replace: "Öffentliche Grünflächen sollen gut erreichbar und für alle Menschen nutzbar sein."
+      - author: "[Person H]"
+        status: pending
+        based_on_version: 1      # veraltet: bleibt offen, Hinweis "Der Absatz wurde seither geändert."
+        likes: 0
+        replace: "Öffentliche Grünflächen sollen für alle Menschen kostenfrei nutzbar sein."
+      - author: "[Person G]"
+        status: rejected
+        based_on_version: 2
+        answer: "[Begründung der Moderation]"
+        replace: "Öffentliche Grünflächen sollen gut erreichbar und nur für Anwohnende nutzbar sein."
+      - author: "Testperson"
+        status: pending
+        based_on_version: 2
+        likes: 3
+        replace: "Öffentliche Grünflächen sollen sehr gut erreichbar und für alle Menschen nutzbar sein."
+      - author: "[Person B]"
+        status: pending
+        based_on_version: 2
+        likes: 12
+        replace: "Öffentliche Grünflächen sollen barrierefrei erreichbar und für alle Menschen nutzbar sein."
+      - author: "[Person C]"
+        status: pending
+        based_on_version: 2
+        likes: 7
+        replace: "Öffentliche Grünflächen sollen gut erreichbar, gepflegt und für alle Menschen nutzbar sein."
+      - author: "[Person D]"
+        status: pending
+        based_on_version: 2
+        likes: 5
+        replace: "Öffentliche Grünflächen sollen zu Fuß gut erreichbar und für alle Menschen kostenlos nutzbar sein."
+      - author: "[Person E]"
+        status: pending
+        based_on_version: 2
+        likes: 1
+        replace: "Öffentliche Grünflächen und Parks sollen gut erreichbar und für alle Menschen nutzbar sein."
+
+  - key: h2
+    kind: heading
+    depth: 1
+    text: "Gemeinsam umsetzen"
+    likes: 0
+
+  - key: p21
+    kind: paragraph
+    text: "Anwohnerinnen und Anwohner sollen die Planung begleiten und [Fortsetzung des Absatzes]."
+
+  # Nicht im Mockup, ergänzt, damit die Präsentation eine Liste zeigt (Entscheidungen 12 und 13).
+  - key: p22
+    kind: paragraph
+    text: |
+      - Regelmäßige Treffen im Viertel
+      - Eine Ansprechperson in der Verwaltung
+      - Jährlicher Bericht über den Fortschritt

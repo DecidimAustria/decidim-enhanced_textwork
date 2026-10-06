@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Dokumentansicht mit Panel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+body{margin:0}
+p,blockquote{white-space:pre-line}
+a{color:#1f4b73}a:hover{color:#12314d}
+button{font:inherit;cursor:pointer;white-space:nowrap}
+.tabs button{white-space:normal;overflow-wrap:break-word;hyphens:manual;min-width:0;font-size:16px;line-height:1.25;padding:6px 4px}
+.para:hover{background:#f5f8f6}
+button:disabled{opacity:.45;cursor:not-allowed}
+.seg{margin-right:0.25em}
+</style>
+</helmet>
+<div style="font-family: 'Source Sans 3', system-ui, sans-serif; color: #1a1a1a; background: #ffffff; min-height: 1060px; font-size: 18px; line-height: 1.5">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 40px; border-bottom: 1px solid #e3e6e8">
+<a href="#top" style="color: #1a1a1a; font-weight: 600">Decidim Localtest</a>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px">
+<a href="#top" style="font-weight: 600; text-decoration: none; padding: 10px 0">Testperson</a>
+<a href="#top" style="font-weight: 600; text-decoration: none; padding: 10px 0">Menü</a>
+</div>
+</header>
+
+<nav aria-label="Brotkrumen" style="background: #27614f; padding: 14px 40px; display: flex; flex-wrap: wrap; gap: 12px; font-weight: 600">
+<a href="#top" style="color: #ffffff">Start</a><span style="color: #cfe3da">›</span>
+<a href="#top" style="color: #ffffff">Beteiligungsprozesse</a><span style="color: #cfe3da">›</span>
+<a href="#top" style="color: #ffffff">Textwork ausprobieren</a><span style="color: #cfe3da">›</span>
+<span style="color: #ffffff">Beispieldokument</span>
+</nav>
+
+<main style="max-width: 1320px; margin: 0 auto; padding: 40px 40px 64px; box-sizing: border-box">
+
+<div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px">
+<h1 style="margin: 0; font-size: 44px; line-height: 1.15; font-weight: 700">Ein grüneres Viertel</h1>
+<div style="width: 56px; height: 4px; background: #e0a82e"></div>
+<p style="margin: 0; color: #4a545e; font-size: 20px">Ein Beispieldokument zum Testen von Kommentaren, Unterstützungen und Änderungsvorschlägen.</p>
+<p style="margin: 0; color: #4a545e; font-size: 16px">4 Absätze · 2 Kommentare · 7 offene Änderungsvorschläge</p></div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start">
+
+<sc-if value="{{showToc}}" hint-placeholder-val="{{true}}">
+<nav aria-label="Inhaltsverzeichnis" style="flex: 1 1 200px; max-width: 260px; display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4a545e; margin-bottom: 8px">Inhalt</div>
+<sc-for list="{{tocItems}}" as="t" hint-placeholder-count="2">
+<sc-if value="{{t.cur}}" hint-placeholder-val="{{false}}"><a href="{{t.href}}" aria-current="true" onClick="{{t.go}}" style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 4px; background: #eef4f1; box-shadow: inset 4px 0 0 #27614f; color: #1a1a1a; font-weight: 700; text-decoration: none"><span>{{t.label}}</span><span style="color: #27614f">{{t.count}}</span></a></sc-if>
+<sc-if value="{{t.notCur}}" hint-placeholder-val="{{true}}"><a href="{{t.href}}" onClick="{{t.go}}" style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 4px; color: #1a1a1a; text-decoration: none"><span>{{t.label}}</span><span style="color: #4a545e">{{t.count}}</span></a></sc-if>
+</sc-for>
+<div style="font-size: 14px; color: #4a545e; padding: 8px 12px">Zahl = Kommentare und offene Änderungsvorschläge</div>
+<sc-if value="{{tocCollapsible}}" hint-placeholder-val="{{false}}"><button onClick="{{hideToc}}" style="align-self: flex-start; min-height: 44px; padding: 0 12px; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px; text-decoration: underline">Inhalt einklappen</button></sc-if>
+</nav>
+</sc-if>
+
+<article style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-if value="{{tocHidden}}" hint-placeholder-val="{{false}}"><button onClick="{{showTocBtn}}" style="align-self: flex-start; min-height: 44px; margin: 0 12px 4px; padding: 0 14px; background: #ffffff; color: #1f4b73; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Inhaltsverzeichnis</button></sc-if>
+<p style="margin: 0 0 8px; padding: 0 12px 12px; font-size: 16px; color: #4a545e; border-bottom: 1px solid #e3e6e8">So beteiligen Sie sich: Neben jedem Absatz können Sie über <svg role="img" aria-label="die Sprechblase" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1f4b73" stroke-width="2" style="vertical-align: -3px"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg> kommentieren und über <svg role="img" aria-label="den Bleistift" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a5a00" stroke-width="2" style="vertical-align: -3px"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg> eine Änderung vorschlagen.</p>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+
+<sc-if value="{{r.isHeading}}" hint-placeholder-val="{{false}}">
+<div id="{{r.anchor}}" style="position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 8px 12px; scroll-margin-top: 16px">
+<sc-if value="{{r.flash}}" hint-placeholder-val="{{false}}"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; outline: 3px solid #e0a82e; background: rgba(224, 168, 46, 0.14); border-radius: 4px; pointer-events: none"></div></sc-if>
+<span style="font-size: 14px; color: #4a545e; font-weight: 600">{{r.num}}</span>
+<h2 style="margin: 0; font-size: 26px; font-weight: 700">{{r.title}}</h2>
+<div style="display: flex; gap: 4px; justify-content: flex-end">
+<sc-if value="{{r.likeOff}}" hint-placeholder-val="{{true}}"><button aria-pressed="false" aria-label="Kapitel {{r.num}} zustimmen" title="Kapitel zustimmen" onClick="{{r.like}}" style="min-width: 52px; min-height: 44px; padding: 0 6px; background: transparent; color: #1f4b73; border: 0; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg><span style="font-size: 16px; font-weight: 600">Stimme zu · 0</span></button></sc-if>
+<sc-if value="{{r.likeOn}}" hint-placeholder-val="{{false}}"><button aria-pressed="true" aria-label="Zustimmung zu Kapitel {{r.num}} zurücknehmen" title="Sie stimmen diesem Kapitel zu" onClick="{{r.like}}" style="min-width: 52px; min-height: 44px; padding: 0 6px; background: transparent; color: #1f4b73; border: 0; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg><span style="font-size: 16px; font-weight: 700">Zugestimmt · 1</span></button></sc-if>
+<button aria-label="Kapitel {{r.num}} folgen" title="Kapitel folgen" style="min-width: 52px; min-height: 44px; padding: 0 6px; background: transparent; color: #1f4b73; border: 0; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4"/></svg></button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{r.isPara}}" hint-placeholder-val="{{true}}">
+<div class="para" id="{{r.anchor}}" style="position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr) 112px; gap: 16px; align-items: start; padding: 12px; border-radius: 4px; scroll-margin-top: 16px">
+<sc-if value="{{r.selected}}" hint-placeholder-val="{{false}}"><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #eef4f1; outline: 2px solid #27614f; border-radius: 4px"></div></sc-if>
+<a href="{{r.href}}" onClick="{{r.pickK}}" aria-label="Absatz {{r.num}} öffnen, Link zum Absatz" style="position: relative; font-size: 14px; font-weight: 700; padding: 12px 8px 12px 0; margin-top: -3px">{{r.num}}</a>
+<div style="position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<sc-if value="{{r.plain}}" hint-placeholder-val="{{true}}"><p onClick="{{r.pickText}}" style="max-width: 34em; margin: 0; font-size: 20px; padding: 6px 0; cursor: pointer">{{r.text}}</p></sc-if>
+<sc-if value="{{r.preview}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 2px">
+<div style="font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #fdf1d3; color: #6b4500">Vorschau: {{r.previewLabel}}</div>
+<sc-if value="{{r.multi}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; gap: 4px">
+<button aria-label="Vorheriger Vorschlag" onClick="{{r.prev}}" style="width: 44px; height: 44px; background: #ffffff; color: #1f4b73; border: 1px solid #8a959f; border-radius: 4px; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<button aria-label="Nächster Vorschlag" onClick="{{r.next}}" style="width: 44px; height: 44px; background: #ffffff; color: #1f4b73; border: 1px solid #8a959f; border-radius: 4px; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+</div>
+</sc-if>
+</div>
+<p style="margin: 0; font-size: 20px; padding: 0 0 6px"><sc-for list="{{r.segs}}" as="g" hint-placeholder-count="3"><sc-if value="{{g.same}}" hint-placeholder-val="{{true}}"><span class="seg">{{g.text}}</span></sc-if><sc-if value="{{g.ins}}" hint-placeholder-val="{{false}}"><ins class="seg" style="background: #d5ecdc; color: #0f4a26; text-decoration: underline; text-decoration-thickness: 2px; padding: 1px 3px; border-radius: 3px; font-weight: 600">{{g.text}}</ins></sc-if><sc-if value="{{g.del}}" hint-placeholder-val="{{false}}"><del class="seg" style="background: #fbe0e0; color: #8a1f1f; padding: 1px 3px; border-radius: 3px">{{g.text}}</del></sc-if></sc-for></p>
+</sc-if>
+<sc-if value="{{r.editing}}" hint-placeholder-val="{{false}}">
+<label for="ed-text" style="margin-top: 6px; font-size: 14px; font-weight: 700; color: #1f4b73">Sie bearbeiten diesen Absatz</label>
+<textarea id="ed-text" rows="4" value="{{r.draft}}" onChange="{{r.onDraft}}" style="font: inherit; font-size: 20px; line-height: 1.5; padding: 10px 12px; border: 2px solid #1f4b73; border-radius: 4px; resize: vertical; box-sizing: border-box; width: 100%; background: #ffffff"></textarea>
+<div style="font-size: 14px; font-weight: 700; color: #4a545e">So sieht Ihre Änderung aus</div>
+<sc-if value="{{r.editChanged}}" hint-placeholder-val="{{false}}"><p aria-live="polite" style="margin: 0; font-size: 20px; padding: 0 0 6px"><sc-for list="{{r.editSegs}}" as="g" hint-placeholder-count="3"><sc-if value="{{g.same}}" hint-placeholder-val="{{true}}"><span class="seg">{{g.text}}</span></sc-if><sc-if value="{{g.ins}}" hint-placeholder-val="{{false}}"><ins class="seg" style="background: #d5ecdc; color: #0f4a26; text-decoration: underline; text-decoration-thickness: 2px; padding: 1px 3px; border-radius: 3px; font-weight: 600">{{g.text}}</ins></sc-if><sc-if value="{{g.del}}" hint-placeholder-val="{{false}}"><del class="seg" style="background: #fbe0e0; color: #8a1f1f; padding: 1px 3px; border-radius: 3px">{{g.text}}</del></sc-if></sc-for></p></sc-if>
+<sc-if value="{{r.editUnchanged}}" hint-placeholder-val="{{true}}"><p style="margin: 0; font-size: 16px; color: #4a545e; padding: 0 0 6px">Noch keine Änderung. Bearbeiten Sie den Text im Feld.</p></sc-if>
+</sc-if>
+</div>
+<div style="position: relative; display: flex; gap: 4px; justify-content: flex-end">
+<button title="Änderung vorschlagen" aria-label="Änderung zu Absatz {{r.num}} vorschlagen oder Vorschläge anzeigen" onClick="{{r.pickA}}" style="min-width: 52px; min-height: 44px; padding: 0 6px; background: transparent; color: #8a5a00; border: 0; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>{{r.aCount}}</button>
+<button title="Kommentieren" aria-label="Kommentare zu Absatz {{r.num}} anzeigen" onClick="{{r.pickK}}" style="min-width: 52px; min-height: 44px; padding: 0 6px; background: transparent; color: #1f4b73; border: 0; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>{{r.kCount}}</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{r.isDivider}}" hint-placeholder-val="{{false}}"><div style="height: 1px; background: #e3e6e8; margin: 16px 0"></div></sc-if>
+
+<sc-if value="{{r.isEnd}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; padding: 0 12px 16px 76px; font-size: 16px; color: #4a545e; border-bottom: 1px solid #e3e6e8; margin-bottom: 16px">
+<span>{{r.label}}</span>
+<sc-if value="{{r.likeOff}}" hint-placeholder-val="{{true}}"><button aria-pressed="false" onClick="{{r.like}}" style="min-height: 44px; padding: 0; background: transparent; color: #1f4b73; border: 0; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>Stimme zu · 0</button></sc-if>
+<sc-if value="{{r.likeOn}}" hint-placeholder-val="{{false}}"><button aria-pressed="true" onClick="{{r.like}}" style="min-height: 44px; padding: 0; background: transparent; color: #1f4b73; border: 0; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>Zugestimmt · 1</button></sc-if>
+<button style="min-height: 44px; padding: 0; background: transparent; color: #1f4b73; border: 0; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4"/></svg>Folgen</button>
+</div>
+</sc-if>
+
+</sc-for>
+</article>
+
+<sc-if value="{{panelOpen}}" hint-placeholder-val="{{true}}">
+<aside aria-label="{{selTitle}}" style="flex: 1 1 360px; max-width: 420px; min-width: 0; border: 1px solid #c9d1d8; border-radius: 6px; background: #ffffff; display: flex; flex-direction: column">
+
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px 0">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700">{{selTitle}}</h2>
+<div style="display: flex; align-items: center; gap: 4px">
+<div style="position: relative">
+<button aria-label="Weitere Aktionen zum Absatz" aria-haspopup="menu" onClick="{{toggleMenu}}" style="width: 44px; height: 44px; background: transparent; color: #1a1a1a; border: 0; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+<div role="menu" style="position: absolute; top: 46px; right: 0; z-index: 2; min-width: 230px; background: #ffffff; border: 1px solid #c9d1d8; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,0.14); padding: 6px; display: flex; flex-direction: column">
+<button role="menuitem" style="min-height: 44px; padding: 0 12px; background: transparent; border: 0; text-align: left; color: #1a1a1a">Link zum Absatz kopieren</button>
+<button role="menuitem" style="min-height: 44px; padding: 0 12px; background: transparent; border: 0; text-align: left; color: #1a1a1a">Versionsverlauf</button>
+</div>
+</sc-if>
+</div>
+<button aria-label="Panel schließen" onClick="{{closePanel}}" style="width: 44px; height: 44px; background: transparent; border: 0; color: #1a1a1a; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+</div>
+</div>
+
+<p style="margin: 0; padding: 0 20px 10px; font-size: 14px; color: #4a545e">{{selVersion}}</p>
+
+<sc-if value="{{showComments}}" hint-placeholder-val="{{true}}">
+<div class="tabs" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid #c9d1d8; padding: 0 20px">
+<button aria-pressed="true" style="min-height: 48px; background: transparent; border: 0; border-bottom: 3px solid #1f4b73; color: #1a1a1a; font-weight: 700">{{kTab}}</button>
+<button aria-pressed="false" onClick="{{toChanges}}" style="min-height: 48px; background: transparent; border: 0; border-bottom: 3px solid transparent; color: #4a545e; font-weight: 600">{{aTab}}</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px">
+<sc-if value="{{noComments}}" hint-placeholder-val="{{false}}"><p style="margin: 0; color: #4a545e">Noch keine Kommentare zu diesem Absatz.</p></sc-if>
+<sc-for list="{{comments}}" as="c" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border: 1px solid #e3e6e8; border-radius: 6px">
+<div style="display: flex; justify-content: space-between; gap: 12px; font-size: 16px"><a href="#top" style="font-weight: 700">{{c.author}}</a><span style="color: #4a545e">{{c.date}}</span></div>
+<p style="margin: 0">{{c.text}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 0 20px">
+<sc-if value="{{c.upOff}}" hint-placeholder-val="{{true}}"><button aria-pressed="false" aria-label="Zustimmen" onClick="{{c.up}}" style="min-height: 44px; min-width: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>0</button></sc-if>
+<sc-if value="{{c.upOn}}" hint-placeholder-val="{{false}}"><button aria-pressed="true" aria-label="Zustimmung zurücknehmen" onClick="{{c.up}}" style="min-height: 44px; min-width: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>1</button></sc-if>
+<sc-if value="{{c.downOff}}" hint-placeholder-val="{{true}}"><button aria-pressed="false" aria-label="Ablehnen" onClick="{{c.down}}" style="min-height: 44px; min-width: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(180deg)"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>0</button></sc-if>
+<sc-if value="{{c.downOn}}" hint-placeholder-val="{{false}}"><button aria-pressed="true" aria-label="Ablehnung zurücknehmen" onClick="{{c.down}}" style="min-height: 44px; min-width: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(180deg)"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>1</button></sc-if>
+<button style="min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px">Antworten</button>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 20px 20px; border-top: 1px solid #e3e6e8">
+<label for="neu" style="font-size: 16px; font-weight: 600">Kommentar zu diesem Absatz</label>
+<textarea id="neu" rows="2" placeholder="Kommentar schreiben ..." style="font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #8a959f; border-radius: 4px; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px">
+<span></span>
+<button style="min-height: 44px; padding: 0 18px; background: #1f4b73; color: #ffffff; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600">Kommentieren</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showChanges}}" hint-placeholder-val="{{false}}">
+<div class="tabs" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid #c9d1d8; padding: 0 20px">
+<button aria-pressed="false" onClick="{{toComments}}" style="min-height: 48px; background: transparent; border: 0; border-bottom: 3px solid transparent; color: #4a545e; font-weight: 600">{{kTab}}</button>
+<button aria-pressed="true" style="min-height: 48px; background: transparent; border: 0; border-bottom: 3px solid #1f4b73; color: #1a1a1a; font-weight: 700">{{aTab}}</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px">
+<sc-if value="{{multiCh}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; font-size: 16px">
+<label for="sort-v" style="color: #4a545e">Sortierung</label>
+<select id="sort-v" value="{{sortVal}}" onChange="{{onSort}}" style="min-height: 44px; padding: 0 12px; font: inherit; font-size: 16px; border: 1px solid #8a959f; border-radius: 4px; background: #ffffff"><option value="agree">Meiste Zustimmung</option><option value="new">Neueste zuerst</option></select>
+</div>
+</sc-if>
+<sc-if value="{{showNotice}}" hint-placeholder-val="{{false}}"><p role="status" style="margin: 0; padding: 10px 12px; background: #e3f1e8; color: #0f4a26; border-radius: 4px; font-size: 16px; font-weight: 600">Ihr Änderungsvorschlag wurde eingereicht.</p></sc-if>
+<sc-if value="{{noChanges}}" hint-placeholder-val="{{false}}"><p style="margin: 0; color: #4a545e">Noch keine Änderungsvorschläge zu diesem Absatz.</p></sc-if>
+<sc-for list="{{changes}}" as="v" hint-placeholder-count="1">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; border: 1px solid #e3e6e8; border-radius: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #fdf1d3; color: #6b4500">Offen</span>
+<span style="font-size: 14px; color: #4a545e">{{v.meta}}</span>
+</div>
+<button onClick="{{v.open}}" style="padding: 4px 0; background: transparent; border: 0; color: #1f4b73; text-align: left; white-space: normal; text-decoration: underline; font-size: 17px; font-weight: 700; line-height: 1.3">{{v.title}}</button>
+<sc-if value="{{v.hasDiff}}" hint-placeholder-val="{{true}}"><p style="margin: 0; padding: 6px 10px; background: #f3f5f6; border-radius: 4px; font-size: 15px"><sc-for list="{{v.snip}}" as="g" hint-placeholder-count="3"><sc-if value="{{g.same}}" hint-placeholder-val="{{true}}"><span class="seg">{{g.text}}</span></sc-if><sc-if value="{{g.ins}}" hint-placeholder-val="{{false}}"><ins class="seg" style="background: #d5ecdc; color: #0f4a26; text-decoration: underline; text-decoration-thickness: 2px; padding: 1px 3px; border-radius: 3px; font-weight: 600">{{g.text}}</ins></sc-if><sc-if value="{{g.del}}" hint-placeholder-val="{{false}}"><del class="seg" style="background: #fbe0e0; color: #8a1f1f; padding: 1px 3px; border-radius: 3px">{{g.text}}</del></sc-if></sc-for></p></sc-if>
+<sc-if value="{{v.noDiff}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 10px 12px; background: #f3f5f6; border-radius: 4px; font-size: 16px; color: #4a545e">[Vorschau der Textänderung]</p></sc-if>
+<sc-if value="{{v.outdated}}" hint-placeholder-val="{{false}}"><span style="font-size: 14px; color: #6b4500; font-weight: 600">Der Absatz wurde seither geändert.</span></sc-if>
+<sc-if value="{{v.own}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; gap: 0 20px">
+<button onClick="{{v.withdraw}}" style="min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-size: 16px; font-weight: 600; text-decoration: underline">Zurückziehen</button>
+<sc-if value="{{v.canEdit}}" hint-placeholder-val="{{false}}"><button onClick="{{v.editIt}}" style="min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-size: 16px; font-weight: 600; text-decoration: underline">Bearbeiten</button></sc-if>
+</div>
+</sc-if>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px">
+<button style="min-height: 44px; padding: 0; background: transparent; color: #1f4b73; border: 0; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>{{v.agreeLabel}}</button>
+<sc-if value="{{v.notShown}}" hint-placeholder-val="{{false}}"><button onClick="{{v.show}}" style="min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-size: 16px; font-weight: 600; text-decoration: underline">Im Text zeigen</button></sc-if>
+<sc-if value="{{v.shown}}" hint-placeholder-val="{{true}}"><span style="font-size: 14px; font-weight: 700; color: #6b4500">Im Text markiert</span></sc-if>
+
+</div>
+</div>
+</sc-for>
+<sc-if value="{{hasClosed}}" hint-placeholder-val="{{false}}"><button aria-expanded="{{closedOpen}}" onClick="{{toggleClosed}}" style="align-self: flex-start; min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px; text-decoration: underline; white-space: normal; text-align: left">{{closedLabel}}</button></sc-if>
+<sc-if value="{{closedOpen}}" hint-placeholder-val="{{false}}">
+<sc-for list="{{closed}}" as="z" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 10px 14px; border: 1px solid #e3e6e8; border-radius: 6px; background: #fafbfb">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px">
+<sc-if value="{{z.isAcc}}" hint-placeholder-val="{{false}}"><span style="font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #d9efdf; color: #0f4a26">Angenommen</span></sc-if>
+<sc-if value="{{z.isRej}}" hint-placeholder-val="{{false}}"><span style="font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #fbe0e0; color: #8a1f1f">Abgelehnt</span></sc-if>
+<sc-if value="{{z.isStale}}" hint-placeholder-val="{{false}}"><span style="font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #e3e6e8; color: #333c44">Frühere Fassung</span></sc-if>
+<span style="font-size: 16px; font-weight: 700">Vorschlag von {{z.author}}</span>
+</div>
+<span style="font-size: 14px; color: #4a545e">{{z.meta}}</span>
+<p style="margin: 0; padding: 6px 10px; background: #f3f5f6; border-radius: 4px; font-size: 15px"><sc-for list="{{z.snip}}" as="g" hint-placeholder-count="3"><sc-if value="{{g.same}}" hint-placeholder-val="{{true}}"><span class="seg">{{g.text}}</span></sc-if><sc-if value="{{g.ins}}" hint-placeholder-val="{{false}}"><ins class="seg" style="background: #d5ecdc; color: #0f4a26; text-decoration: underline; text-decoration-thickness: 2px; padding: 1px 3px; border-radius: 3px; font-weight: 600">{{g.text}}</ins></sc-if><sc-if value="{{g.del}}" hint-placeholder-val="{{false}}"><del class="seg" style="background: #fbe0e0; color: #8a1f1f; padding: 1px 3px; border-radius: 3px">{{g.text}}</del></sc-if></sc-for></p>
+<sc-if value="{{z.hasNote}}" hint-placeholder-val="{{false}}"><span style="font-size: 14px; color: #4a545e">{{z.note}}</span></sc-if>
+</div>
+</sc-for>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 20px 20px; border-top: 1px solid #e3e6e8">
+<button onClick="{{startEdit}}" style="min-height: 44px; padding: 0 16px; background: #1f4b73; color: #ffffff; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600">Eigene Änderung vorschlagen</button>
+<span style="font-size: 14px; color: #4a545e">Sie bearbeiten den Absatztext direkt.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{showEdit}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 0 20px 20px; border-top: 1px solid #c9d1d8">
+<h3 style="margin: 16px 0 0; font-size: 20px; font-weight: 700">Änderung vorschlagen</h3>
+<p style="margin: 0; font-size: 16px; color: #4a545e">Bearbeiten Sie den Absatz direkt im Text. Ihre Änderung wird dort markiert.</p>
+<sc-if value="{{listHint}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 14px; color: #4a545e">Eine neue Zeile, die mit „- “ beginnt, fügt einen Listenpunkt hinzu.</p></sc-if>
+<sc-if value="{{hasExisting}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: #fdf6e3; border-radius: 4px; font-size: 16px">
+<span>{{existingText}} Passt einer davon, genügt Ihre Zustimmung.</span>
+<button onClick="{{cancelEdit}}" style="align-self: flex-start; min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px; text-decoration: underline">Vorhandene Vorschläge ansehen</button>
+</div>
+</sc-if>
+<label for="ed-grund" style="font-size: 16px; font-weight: 600">Begründung (optional)</label>
+<textarea id="ed-grund" rows="2" value="{{reason}}" onChange="{{onReason}}" style="font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #8a959f; border-radius: 4px; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+<sc-if value="{{confirmOpen}}" hint-placeholder-val="{{false}}">
+<div role="alert" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; background: #fdf6e3; border: 1px solid #d9b25a; border-radius: 4px; font-size: 16px">
+<span style="font-weight: 700">Entwurf verwerfen?</span>
+<span>Ihre Änderung am Absatz ist noch nicht eingereicht.</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button onClick="{{keepEditing}}" style="min-height: 44px; padding: 0 14px; background: #1f4b73; color: #ffffff; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600; font-size: 16px">Weiter bearbeiten</button>
+<button onClick="{{discard}}" style="min-height: 44px; padding: 0 14px; background: #ffffff; color: #8a1f1f; border: 1px solid #8a1f1f; border-radius: 4px; font-weight: 600; font-size: 16px">Verwerfen</button>
+</div>
+</div>
+</sc-if>
+<div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 4px">
+<button onClick="{{cancelEdit}}" style="min-height: 44px; padding: 0 16px; background: #ffffff; color: #1f4b73; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600">Abbrechen</button>
+<button onClick="{{submitEdit}}" disabled="{{editUnchanged}}" style="min-height: 44px; padding: 0 16px; background: #1f4b73; color: #ffffff; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600">Vorschlag einreichen</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showDetail}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 0 20px 20px; border-top: 1px solid #c9d1d8">
+<button onClick="{{back}}" style="align-self: flex-start; min-height: 44px; padding: 0; background: transparent; border: 0; color: #1f4b73; font-weight: 600; font-size: 16px">← Alle Änderungsvorschläge</button>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #fdf1d3; color: #6b4500">Offen</span>
+<span style="font-size: 14px; color: #4a545e">{{dMeta}}</span>
+</div>
+<h3 style="margin: 0; font-size: 20px; font-weight: 700; line-height: 1.3">{{dTitle}}</h3>
+<p style="margin: 0; font-size: 16px; color: #4a545e">Die Änderung ist im Text markiert.</p>
+<sc-if value="{{dOutdated}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 14px; color: #6b4500; font-weight: 600">Der Absatz wurde seither geändert.</p></sc-if>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 16px; font-weight: 700">Begründung</div>
+<p style="margin: 0; font-size: 16px; color: #4a545e">{{dReason}}</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px">
+<sc-if value="{{dAgreeOff}}" hint-placeholder-val="{{true}}"><button aria-pressed="false" onClick="{{dAgree}}" style="min-height: 44px; padding: 0; background: transparent; color: #1f4b73; border: 0; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>{{dAgreeLabelOff}}</button></sc-if>
+<sc-if value="{{dAgreeOn}}" hint-placeholder-val="{{false}}"><button aria-pressed="true" onClick="{{dAgree}}" style="min-height: 44px; padding: 0; background: transparent; color: #1f4b73; border: 0; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/></svg>{{dAgreeLabelOn}}</button></sc-if>
+<button style="min-height: 44px; padding: 0; background: transparent; border: 0; color: #8a1f1f; font-size: 16px; font-weight: 600; text-decoration: underline">Melden</button>
+</div>
+<div style="height: 1px; background: #e3e6e8"></div>
+<div style="font-size: 16px; font-weight: 700">Kommentare zum Vorschlag (0)</div>
+<p style="margin: 0; font-size: 16px; color: #4a545e">Noch keine Kommentare zu diesem Vorschlag.</p>
+<label for="neu-v" style="font-size: 16px; font-weight: 600">Kommentar zu diesem Vorschlag</label>
+<textarea id="neu-v" rows="2" placeholder="Kommentar schreiben ..." style="font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #8a959f; border-radius: 4px; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+<button style="align-self: flex-end; min-height: 44px; padding: 0 18px; background: #1f4b73; color: #ffffff; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600">Kommentieren</button>
+</div>
+</sc-if>
+
+</aside>
+</sc-if>
+</div>
+</main>
+
+<sc-if value="{{loginOpen}}" hint-placeholder-val="{{false}}">
+<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; background: rgba(20, 28, 36, 0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+<div role="dialog" aria-modal="true" aria-labelledby="login-titel" style="width: 100%; max-width: 440px; box-sizing: border-box; background: #ffffff; border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.25); padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<h2 id="login-titel" style="margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2">Anmelden, um fortzufahren</h2>
+<button aria-label="Dialog schließen" onClick="{{closeLogin}}" style="width: 44px; height: 44px; margin: -8px -8px 0 0; background: transparent; border: 0; color: #1a1a1a; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+</div>
+<p style="margin: 0; color: #4a545e; font-size: 16px">Ihre Eingabe bleibt erhalten. Nach der Anmeldung geht es an derselben Stelle weiter.</p>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="login-mail" style="font-size: 16px; font-weight: 600">E-Mail</label>
+<input id="login-mail" type="email" style="font: inherit; min-height: 44px; padding: 0 12px; border: 1px solid #8a959f; border-radius: 4px; box-sizing: border-box; width: 100%">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="login-pw" style="font-size: 16px; font-weight: 600">Passwort</label>
+<input id="login-pw" type="password" style="font: inherit; min-height: 44px; padding: 0 12px; border: 1px solid #8a959f; border-radius: 4px; box-sizing: border-box; width: 100%">
+</div>
+<button onClick="{{closeLogin}}" style="min-height: 48px; background: #1f4b73; color: #ffffff; border: 1px solid #1f4b73; border-radius: 4px; font-weight: 600">Anmelden</button>
+<a href="#top" style="font-weight: 600; text-align: center; padding: 10px 0">Noch kein Konto? Konto erstellen</a>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+componentDidMount() {
+this._spy = () => {
+if (this._lock && Date.now() < this._lock) return;
+let cur = 'a1';
+['a1', 'a2'].forEach((id) => { const e = document.getElementById(id); if (e && e.getBoundingClientRect().top < 200) cur = id; });
+if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4 && window.scrollY > 0) cur = 'a2';
+if (((this.state || {}).cur || 'a1') !== cur) this.setState({ cur: cur });
+};
+window.addEventListener('scroll', this._spy, { passive: true });
+}
+componentWillUnmount() { window.removeEventListener('scroll', this._spy); }
+renderVals() {
+const s = this.state || {};
+const selNum = s.sel === undefined ? '1.1' : s.sel;
+const tab = s.tab || 'k';
+const paras = [
+{ num: '1.1', anchor: 'p11', text: 'Wir möchten mehr Bäume und schattige Sitzplätze in unserem Viertel schaffen.',
+comments: [
+{ author: 'Testperson', date: '04.10.2026 13:28', text: 'Besonders beim Spielplatz fehlen noch schattige Sitzplätze.' },
+{ author: '[Name]', date: '[Datum]', text: '[Text des zweiten Kommentars]' }
+],
+changes: [{ id: '11a', agree: 0, title: 'Schatten beim Spielplatz ergänzen', author: 'Testperson', newText: 'Wir möchten mehr Bäume und schattige Sitzplätze – besonders beim Spielplatz – in unserem Viertel schaffen.' }] },
+{ num: '1.2', anchor: 'p12', text: 'Öffentliche Grünflächen sollen gut erreichbar und für alle Menschen nutzbar sein.', version: 2, closedRaw: [
+{ status: 'acc', author: '[Person F]', base: 'Öffentliche Grünflächen sollen für alle Menschen nutzbar sein.', newText: 'Öffentliche Grünflächen sollen gut erreichbar und für alle Menschen nutzbar sein.', meta: '[Datum] · zu Fassung 1 · in Fassung 2 übernommen' },
+{ status: 'rej', author: '[Person G]', base: 'Öffentliche Grünflächen sollen gut erreichbar und für alle Menschen nutzbar sein.', newText: 'Öffentliche Grünflächen sollen gut erreichbar und nur für Anwohnende nutzbar sein.', meta: '[Datum] · zu Fassung 2', note: 'Begründung der Moderation: [Text]' }
+],
+comments: [],
+changes: [
+{ id: '12a', agree: 3, title: '„sehr gut“ statt „gut“', author: 'Testperson', newText: 'Öffentliche Grünflächen sollen sehr gut erreichbar und für alle Menschen nutzbar sein.' },
+{ id: '12b', agree: 12, title: 'Barrierefrei erreichbar', author: '[Person B]', newText: 'Öffentliche Grünflächen sollen barrierefrei erreichbar und für alle Menschen nutzbar sein.' },
+{ id: '12c', agree: 7, title: 'Pflege ergänzen', author: '[Person C]', newText: 'Öffentliche Grünflächen sollen gut erreichbar, gepflegt und für alle Menschen nutzbar sein.' },
+{ id: '12d', agree: 5, title: 'Zu Fuß und kostenlos', author: '[Person D]', newText: 'Öffentliche Grünflächen sollen zu Fuß gut erreichbar und für alle Menschen kostenlos nutzbar sein.' },
+{ id: '12e', agree: 1, title: 'Parks ausdrücklich nennen', author: '[Person E]', newText: 'Öffentliche Grünflächen und Parks sollen gut erreichbar und für alle Menschen nutzbar sein.' },
+{ id: '12f', agree: 0, title: '', author: '[Person H]', baseVersion: 1, baseText: 'Öffentliche Grünflächen sollen für alle Menschen nutzbar sein.', newText: 'Öffentliche Grünflächen sollen für alle Menschen kostenfrei nutzbar sein.' }
+] },
+{ num: '2.1', anchor: 'p21', text: 'Anwohnerinnen und Anwohner sollen die Planung begleiten und [...]', comments: [], changes: [] },
+{ num: '2.2', anchor: 'p22', text: '- Regelmäßige Treffen im Viertel\n- Eine Ansprechperson in der Verwaltung\n- Jährlicher Bericht über den Fortschritt', comments: [], changes: [] }
+];
+const words = (t) => String(t).replace(/\n/g, ' \n ').trim().split(/[ \t]+/).filter(Boolean);
+const eq = (a, b) => a.replace(/[.,;:!?]+$/, '') === b.replace(/[.,;:!?]+$/, '');
+const diff = (a, b) => {
+const x = words(a), y = words(b), n = x.length, m = y.length, t = [];
+for (let i = 0; i <= n; i++) t.push(new Array(m + 1).fill(0));
+for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) t[i][j] = eq(x[i], y[j]) ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]);
+const out = [];
+const push = (k, w) => { const l = out[out.length - 1]; if (l && l.k === k) l.text += ' ' + w; else out.push({ k: k, text: w }); };
+let i = 0, j = 0;
+while (i < n && j < m) {
+if (eq(x[i], y[j])) { push('s', y[j]); i++; j++; }
+else if (t[i + 1][j] >= t[i][j + 1]) { push('d', x[i]); i++; }
+else { push('i', y[j]); j++; }
+}
+while (i < n) { push('d', x[i]); i++; }
+while (j < m) { push('i', y[j]); j++; }
+return out.map((o) => ({ text: o.text, same: o.k === 's', ins: o.k === 'i', del: o.k === 'd' }));
+};
+const added = s.added || {};
+const snip = (segs) => segs.map((g, i) => {
+if (!g.same) return g;
+const w = g.text.split(' ');
+let t = g.text;
+if (i === 0 && w.length > 3) t = '… ' + w.slice(-3).join(' ');
+else if (i === segs.length - 1 && w.length > 3) t = w.slice(0, 3).join(' ') + ' …';
+else if (i > 0 && i < segs.length - 1 && w.length > 6) t = w.slice(0, 3).join(' ') + ' … ' + w.slice(-3).join(' ');
+return Object.assign({}, g, { text: t });
+});
+const sortMode = s.sort || 'agree';
+paras.forEach((p) => {
+const list = p.changes.concat(added[p.num] || []).filter((v) => !(s.withdrawn || {})[v.id]).map((v, i) => { const nt = (s.edited || {})[v.id] || v.newText; const sg = nt ? diff(v.baseText || p.text, nt) : []; return Object.assign({ agree: 0 }, v, { newText: nt, order: i, hasDiff: !!nt, noDiff: !nt, segs: sg, snip: snip(sg) }); });
+list.sort((a, b) => sortMode === 'new' ? b.order - a.order : ((b.agree - a.agree) || (a.order - b.order)));
+p.changes = list;
+list.forEach((v) => { v.date = v.date || (v.author === 'Testperson' ? '04.10.2026' : '[Datum]'); v.meta = v.date + ' · zu Fassung ' + (v.baseVersion || p.version || 1); v.outdated = !!v.baseVersion && v.baseVersion < (p.version || 1); });
+p.closed = (p.closedRaw || []).map((z) => Object.assign({}, z, { snip: snip(diff(z.base, z.newText)), isAcc: z.status === 'acc', isRej: z.status === 'rej', isStale: z.status === 'stale', hasNote: !!z.note }));
+});
+const sel = paras.find((p) => p.num === selNum) || null;
+const hasDetail = !!sel && s.detail !== null && s.detail !== undefined;
+const d = hasDetail ? sel.changes[s.detail] || null : null;
+const dKey = d ? 'dag' + d.id : '';
+const nCh = sel ? sel.changes.length : 0;
+let pvIdx = null;
+if (d) pvIdx = s.detail;
+else if (sel && tab === 'a' && nCh > 0) pvIdx = typeof s.pv === 'number' && s.pv < nCh ? s.pv : 0;
+const pv = pvIdx !== null && sel && sel.changes[pvIdx] && sel.changes[pvIdx].hasDiff ? sel.changes[pvIdx] : null;
+const editing = !!sel && !!s.edit;
+const draft = typeof s.draft === 'string' ? s.draft : (sel ? sel.text : '');
+const changed = !!sel && words(draft).join(' ') !== words(sel.text).join(' ') && words(draft).length > 0;
+const busy = editing && changed;
+const editSegs = sel ? diff(sel.text, draft) : [];
+const step = (delta) => () => {
+if (pvIdx === null || nCh < 2) return;
+const j = (pvIdx + delta + nCh) % nCh;
+this.setState(d ? { detail: j, pv: j } : { pv: j });
+};
+const pick = (num, t) => () => { if (busy) { this.setState({ confirm: true }); return; } this.setState({ sel: num, tab: t, menu: false, detail: null, edit: false, notice: false, pv: 0, toc: false }); };
+const para = (p) => ({
+isPara: true, num: p.num, anchor: p.anchor, href: '#' + p.anchor, text: p.text,
+selected: p.num === selNum,
+plain: !(p.num === selNum && (!!pv || editing)),
+preview: p.num === selNum && !!pv && !editing,
+editing: p.num === selNum && editing,
+multi: p.num === selNum && !!pv && !editing && nCh > 1,
+prev: step(-1), next: step(1),
+previewLabel: pv ? 'Vorschlag ' + (pvIdx + 1) + ' von ' + nCh + ' · ' + pv.author + (pv.outdated ? ' · zu Fassung ' + pv.baseVersion : '') : '',
+segs: p.num === selNum && pv ? pv.segs : [],
+draft: draft,
+onDraft: (e) => this.setState({ draft: e.target.value }),
+editSegs: editSegs,
+editChanged: changed,
+editUnchanged: !changed,
+kCount: p.comments.length ? String(p.comments.length) : '',
+hasA: p.changes.length > 0, aCount: p.changes.length ? String(p.changes.length) : '',
+pickK: pick(p.num, 'k'),
+pickA: p.changes.length ? pick(p.num, 'a') : () => this.setState({ sel: p.num, tab: 'a', edit: true, detail: null, draft: null, reason: '', notice: false, menu: false, pv: 0 }),
+pickText: () => {
+const g = window.getSelection ? window.getSelection() : null;
+if (g && String(g).length > 0) return;
+if (busy) { this.setState({ confirm: true }); return; }
+this.setState({ sel: p.num, tab: 'k', menu: false, detail: null, edit: false, notice: false, pv: 0 });
+}
+});
+const end = (key, label) => ({
+isEnd: true, label: label, likeOn: !!s[key], likeOff: !s[key],
+like: () => this.setState({ [key]: !s[key] })
+});
+const head = (num, title, anchor, key) => ({
+isHeading: true, num: num, title: title, anchor: anchor, flash: s.flash === anchor,
+likeOn: !!s[key], likeOff: !s[key], like: () => this.setState({ [key]: !s[key] })
+});
+const chapters = [{ id: 'a1', label: '1 Mehr Grün im Alltag', ps: [0, 1] }, { id: 'a2', label: '2 Gemeinsam umsetzen', ps: [2, 3] }];
+const curCh = s.cur || 'a1';
+const tocItems = chapters.map((c) => ({ go: (e) => {
+if (e && e.preventDefault) e.preventDefault();
+this._lock = Date.now() + 1500;
+this.setState({ cur: c.id, flash: c.id });
+const el = document.getElementById(c.id);
+if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+clearTimeout(this._fl);
+this._fl = setTimeout(() => this.setState({ flash: null }), 1800);
+}, href: '#' + c.id, label: c.label, cur: c.id === curCh, notCur: c.id !== curCh, count: String(c.ps.reduce((n, i) => n + paras[i].comments.length + paras[i].changes.length, 0)) }));
+const rows = [
+head('1', 'Mehr Grün im Alltag', 'a1', 'l1'),
+para(paras[0]), para(paras[1]), { isDivider: true },
+head('2', 'Gemeinsam umsetzen', 'a2', 'l2'),
+para(paras[2]), para(paras[3])
+];
+return {
+rows: rows,
+tocItems: tocItems,
+showToc: !sel || !!s.toc,
+tocHidden: !!sel && !s.toc,
+tocCollapsible: !!sel && !!s.toc,
+showTocBtn: () => this.setState({ toc: true }),
+hideToc: () => this.setState({ toc: false }),
+panelOpen: !!sel,
+selTitle: sel ? 'Absatz ' + sel.num : '',
+selText: sel ? sel.text : '',
+kTab: 'Kommentare (' + (sel ? sel.comments.length : 0) + ')',
+aTab: 'Änderungs\u00ADvorschläge (' + (sel ? sel.changes.length : 0) + ')',
+comments: sel ? sel.comments.map((c, i) => {
+const key = 'ag' + sel.num + '_' + i;
+return { author: c.author, date: c.date, text: c.text, upOn: s[key] === 'up', upOff: s[key] !== 'up', downOn: s[key] === 'down', downOff: s[key] !== 'down', up: () => this.setState({ [key]: s[key] === 'up' ? null : 'up' }), down: () => this.setState({ [key]: s[key] === 'down' ? null : 'down' }) };
+}) : [],
+changes: sel ? sel.changes.map((v, i) => Object.assign({}, v, { title: 'Vorschlag von ' + v.author, own: v.author === 'Testperson', canEdit: v.author === 'Testperson' && (v.agree + (s['dag' + v.id] ? 1 : 0)) === 0, withdraw: () => this.setState({ withdrawn: Object.assign({}, s.withdrawn || {}, { [v.id]: true }), detail: null, pv: 0, notice: false }), editIt: () => this.setState({ edit: true, editId: v.id, draft: v.newText, reason: '', detail: null, notice: false }), open: () => this.setState({ detail: i, pv: i, tab: 'a', menu: false }), shown: i === pvIdx, notShown: i !== pvIdx, agreeLabel: 'Stimme zu · ' + (v.agree + (s['dag' + v.id] ? 1 : 0)), show: () => this.setState({ pv: i }) })) : [],
+showDetail: !!d && !editing,
+showEdit: editing,
+draft: draft,
+reason: s.reason || '',
+onDraft: (e) => this.setState({ draft: e.target.value }),
+onReason: (e) => this.setState({ reason: e.target.value }),
+editSegs: sel ? diff(sel.text, draft) : [],
+editChanged: changed,
+editUnchanged: !changed,
+showNotice: !!s.notice,
+selVersion: sel ? 'Fassung ' + (sel.version || 1) + ((sel.version || 1) > 1 ? ' · zuletzt geändert am [Datum]' : ' · Ausgangstext') : '',
+closed: sel ? sel.closed : [],
+hasClosed: !!sel && sel.closed.length > 0,
+closedOpen: !!sel && sel.closed.length > 0 && !!s.closedOpen,
+closedLabel: (s.closedOpen ? 'Ausblenden: ' : 'Anzeigen: ') + 'abgeschlossene Vorschläge (' + (sel ? sel.closed.length : 0) + ')',
+toggleClosed: () => this.setState({ closedOpen: !s.closedOpen }),
+confirmOpen: editing && !!s.confirm,
+keepEditing: () => this.setState({ confirm: false }),
+discard: () => this.setState({ edit: false, editId: null, draft: null, reason: '', confirm: false, tab: 'a' }),
+dMeta: d ? d.author + ' · ' + d.meta : '',
+dOutdated: !!d && !!d.outdated,
+listHint: editing && /(^|\n)- /.test(draft),
+multiCh: nCh > 1,
+sortVal: sortMode,
+onSort: (e) => this.setState({ sort: e.target.value, pv: 0, detail: null }),
+hasExisting: nCh > 0,
+existingText: 'Zu diesem Absatz gibt es bereits ' + nCh + (nCh === 1 ? ' Vorschlag.' : ' Vorschläge.'),
+dAgreeLabelOff: 'Stimme zu · ' + (d ? d.agree : 0),
+dAgreeLabelOn: 'Zugestimmt · ' + ((d ? d.agree : 0) + 1),
+startEdit: () => this.setState({ edit: true, editId: null, detail: null, draft: null, reason: '', notice: false, menu: false }),
+cancelEdit: () => this.setState(busy ? { confirm: true } : { edit: false, editId: null, draft: null, reason: '', confirm: false, tab: 'a' }),
+submitEdit: () => {
+if (!changed) return;
+if (s.editId) { this.setState({ edited: Object.assign({}, s.edited || {}, { [s.editId]: words(draft).join(' ') }), edit: false, editId: null, draft: null, reason: '', tab: 'a', notice: true }); return; }
+const list = (added[sel.num] || []).concat([{ id: sel.num + '_n' + (added[sel.num] || []).length, agree: 0, title: 'Änderungsvorschlag zu Absatz ' + sel.num, author: 'Testperson', date: '05.10.2026', newText: words(draft).join(' '), reason: s.reason || '' }]);
+this.setState({ added: Object.assign({}, added, { [sel.num]: list }), edit: false, draft: null, reason: '', tab: 'a', notice: true });
+},
+dTitle: d ? 'Änderungsvorschlag zu Absatz ' + sel.num : '', dAuthor: d ? d.author : '',
+dHasDiff: !!d && d.hasDiff, dNoDiff: !!d && d.noDiff,
+dSegs: d ? d.segs : [],
+dReason: d && d.reason ? d.reason : '[Begründung der Verfasserin / des Verfassers]',
+dAgreeOn: !!d && !!s[dKey], dAgreeOff: !!d && !s[dKey],
+dAgree: () => this.setState({ [dKey]: !s[dKey] }),
+back: () => this.setState({ detail: null, tab: 'a' }),
+noComments: !!sel && sel.comments.length === 0,
+noChanges: !!sel && sel.changes.length === 0,
+showComments: !d && !editing && tab === 'k',
+showChanges: !d && !editing && tab === 'a',
+toComments: () => this.setState({ tab: 'k' }),
+toChanges: () => this.setState({ tab: 'a' }),
+closePanel: () => { if (busy) { this.setState({ confirm: true }); return; } this.setState({ sel: null, menu: false, detail: null, edit: false, notice: false, pv: 0, toc: false }); },
+loginOpen: !!s.login,
+openLogin: () => this.setState({ login: true, menu: false }),
+closeLogin: () => this.setState({ login: false }),
+menuOpen: !!s.menu,
+toggleMenu: () => this.setState({ menu: !s.menu })
+};
+}
+}
+</script>
+</body>
+</html>

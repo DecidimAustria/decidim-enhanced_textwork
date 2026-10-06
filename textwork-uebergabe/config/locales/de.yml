@@ -1,0 +1,179 @@
+# Texte der Oberfläche. Schlüsselnamen sind ein Vorschlag und sollten an die
+# Benennung im Decidim-Kern angeglichen werden. Texte der Kern-Bausteine
+# (Kommentare, Melden, Anmeldung, Admin-Standardtexte) stehen hier nicht.
+de:
+  decidim:
+    components:
+      textwork:
+        name: Textarbeit
+        actions:
+          comment: Kommentieren
+          like: Zustimmen
+          suggest: Änderung vorschlagen
+        settings:
+          global:
+            comments_max_length: Maximale Länge von Kommentaren
+          step:
+            comments_blocked: Kommentare gesperrt
+            suggestions_blocked: Änderungsvorschläge gesperrt
+            likes_blocked: Zustimmung gesperrt
+    textwork:
+      documents:
+        show:
+          summary: "%{paragraphs} Absätze · %{comments} Kommentare · %{suggestions} offene Änderungsvorschläge"
+          how_to_participate_html: "So beteiligen Sie sich: Neben jedem Absatz können Sie über %{comment_icon} kommentieren und über %{suggest_icon} eine Änderung vorschlagen."
+          how_to_participate_mobile_html: "So beteiligen Sie sich: Unter jedem Absatz können Sie über %{comment_icon} kommentieren und über %{suggest_icon} eine Änderung vorschlagen."
+          comment_icon_label: die Sprechblase
+          suggest_icon_label: den Bleistift
+      toc:
+        title: Inhalt
+        button: Inhaltsverzeichnis
+        collapse: Inhalt einklappen
+        count_hint: Zahl = Kommentare und offene Änderungsvorschläge
+      blocks:
+        number_link_label: "Absatz %{number} öffnen, Link zum Absatz"
+        comments_button_label: "Kommentare zu Absatz %{number} anzeigen"
+        comments_button_tooltip: Kommentieren
+        suggestions_button_label: "Änderung zu Absatz %{number} vorschlagen oder Vorschläge anzeigen"
+        suggestions_button_tooltip: Änderung vorschlagen
+        like: "Stimme zu · %{count}"
+        liked: "Zugestimmt · %{count}"
+        like_chapter_label: "Kapitel %{number} zustimmen"
+        unlike_chapter_label: "Zustimmung zu Kapitel %{number} zurücknehmen"
+        follow_chapter_label: "Kapitel %{number} folgen"
+        follow_chapter_tooltip: Kapitel folgen
+        editing_label: Sie bearbeiten diesen Absatz
+        preview_label: "Vorschau: Vorschlag %{index} von %{total} · %{author}"
+        previous_suggestion: Vorheriger Vorschlag
+        next_suggestion: Nächster Vorschlag
+      panel:
+        title: "Absatz %{number}"
+        close: Panel schließen
+        more_actions: Weitere Aktionen zum Absatz
+        version_original: "Fassung %{number} · Ausgangstext"
+        version_changed: "Fassung %{number} · zuletzt geändert am %{date}"
+        menu:
+          copy_link: Link zum Absatz kopieren
+          versions: Versionsverlauf
+        tabs:
+          comments: "Kommentare (%{count})"
+          suggestions: "Änderungsvorschläge (%{count})"
+      comments:
+        empty: Noch keine Kommentare zu diesem Absatz.
+        new_label: Kommentar zu diesem Absatz
+        placeholder: Kommentar schreiben ...
+        submit: Kommentieren
+      suggestions:
+        empty: Noch keine Änderungsvorschläge zu diesem Absatz.
+        sort_label: Sortierung
+        sort_most_liked: Meiste Zustimmung
+        sort_newest: Neueste zuerst
+        new: Eigene Änderung vorschlagen
+        new_hint: Sie bearbeiten den Absatztext direkt.
+        byline: "Vorschlag von %{author}"
+        label: "Änderungsvorschlag von %{author} zu Absatz %{number}"
+        meta: "%{date} · zu Fassung %{version}"
+        outdated_hint: Der Absatz wurde seither geändert.
+        show_in_text: Im Text zeigen
+        shown_in_text: Im Text markiert
+        show_closed: "Anzeigen: abgeschlossene Vorschläge (%{count})"
+        hide_closed: "Ausblenden: abgeschlossene Vorschläge (%{count})"
+        report: Melden
+        unavailable: Dieser Änderungsvorschlag ist nicht verfügbar.
+        withdraw: Zurückziehen
+        edit: Bearbeiten
+        status:
+          pending: Offen
+          accepted: Angenommen
+          rejected: Abgelehnt
+        moderation_answer: "Begründung der Moderation: %{answer}"
+        show:
+          back: "← Alle Änderungsvorschläge"
+          title: "Änderungsvorschlag zu Absatz %{number}"
+          marked_in_text: Die Änderung ist im Text markiert.
+          justification: Begründung
+          no_justification: Keine Begründung angegeben.
+          comments_title: "Kommentare zum Vorschlag (%{count})"
+          comments_empty: Noch keine Kommentare zu diesem Vorschlag.
+          new_comment_label: Kommentar zu diesem Vorschlag
+        form:
+          title: Änderung vorschlagen
+          instructions: Bearbeiten Sie den Absatz direkt im Text. Ihre Änderung wird dort markiert.
+          text_label: Text des Absatzes bearbeiten
+          list_hint: "Eine neue Zeile, die mit „- “ beginnt, fügt einen Listenpunkt hinzu."
+          original_language_hint: "Änderungen beziehen sich auf den Originaltext (%{language})."
+          existing:
+            one: "Zu diesem Absatz gibt es bereits 1 Vorschlag. Passt er, genügt Ihre Zustimmung."
+            other: "Zu diesem Absatz gibt es bereits %{count} Vorschläge. Passt einer davon, genügt Ihre Zustimmung."
+          view_existing: Vorhandene Vorschläge ansehen
+          preview_title: So sieht Ihre Änderung aus
+          preview_empty: Noch keine Änderung. Bearbeiten Sie den Text im Feld.
+          justification_label: Begründung (optional)
+          cancel: Abbrechen
+          submit: Vorschlag einreichen
+          submit_short: Einreichen
+        discard:
+          title: Entwurf verwerfen?
+          body: Ihre Änderung am Absatz ist noch nicht eingereicht.
+          keep: Weiter bearbeiten
+          confirm: Verwerfen
+        create:
+          success: Ihr Änderungsvorschlag wurde eingereicht.
+          invalid: Der Änderungsvorschlag konnte nicht gespeichert werden.
+          unchanged: Der Text wurde nicht geändert.
+        update:
+          success: Ihr Änderungsvorschlag wurde aktualisiert.
+          not_allowed: Der Vorschlag kann nicht mehr bearbeitet werden, weil bereits jemand zugestimmt oder kommentiert hat.
+        withdraw_action:
+          confirm: Möchten Sie Ihren Änderungsvorschlag wirklich zurückziehen?
+          success: Ihr Änderungsvorschlag wurde zurückgezogen.
+      history:
+        title: Änderungsverlauf des Dokuments
+        block_removed_notice: Dieser Absatz wurde entfernt.
+      translations:
+        pending: Übersetzung wird erstellt
+        machine_translated: Maschinell übersetzt
+        show_original_with_marks: Original mit Markierung anzeigen
+      diff:
+        inserted: eingefügt
+        deleted: gestrichen
+      versions:
+        origin:
+          import: Ausgangstext
+          suggestion: "Aus dem Änderungsvorschlag von %{author}"
+          suggestion_adjusted: "Aus dem Änderungsvorschlag von %{author}, von der Moderation angepasst"
+          editorial: Redaktionelle Änderung
+      admin:
+        suggestions:
+          index:
+            title: Offene Änderungsvorschläge
+          accept:
+            title: Änderungsvorschlag annehmen
+            final_text_label: Endgültiger Text des Absatzes
+            outdated_warning: "Dieser Vorschlag bezieht sich auf Fassung %{version}. Der Absatz wurde seither geändert. Prüfen Sie den endgültigen Text, bevor Sie annehmen."
+            current_text_label: Aktueller Text des Absatzes
+            submit: Annehmen
+            success: Der Änderungsvorschlag wurde angenommen. Der Absatz hat eine neue Fassung.
+          reject:
+            title: Änderungsvorschlag ablehnen
+            answer_label: Begründung (Pflicht)
+            submit: Ablehnen
+            success: Der Änderungsvorschlag wurde abgelehnt.
+        blocks:
+          edit:
+            title: Absatz redaktionell ändern
+            hint: Die Änderung erzeugt eine neue Fassung und ist im Versionsverlauf sichtbar.
+            success: Der Absatz wurde geändert.
+    events:
+      textwork:
+        suggestion_accepted:
+          notification_title: "Ihr Änderungsvorschlag zu Absatz %{number} in „%{document}“ wurde angenommen."
+        suggestion_rejected:
+          notification_title: "Ihr Änderungsvorschlag zu Absatz %{number} in „%{document}“ wurde abgelehnt."
+        suggestion_created:
+          notification_title: "Neuer Änderungsvorschlag zu Absatz %{number} in „%{document}“."
+        block_changed:
+          follower_title: "Absatz %{number} in „%{document}“ hat eine neue Fassung."
+          liker_title: "Ein Kapitel, dem Sie zugestimmt haben, hat sich geändert: „%{chapter}“ in „%{document}“."
+        block_commented:
+          notification_title: "Neuer Kommentar zu Absatz %{number} in „%{document}“."
