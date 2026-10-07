@@ -1,3 +1,5 @@
+<% append_stylesheet_pack_tag "decidim_enhanced_textwork_admin" %>
+<div class="tw-admin">
 <div class="item_show__header"><h1 class="item_show__header-title"><%= tw(@original_editable ? "edit" : "admin.documents.edit_translations") %> · <%= @block.number %></h1></div>
 <div class="item__edit item__edit-1col"><div class="item__edit-form">
 <%= form_with url: update_block_path(block_id: @block.id), method: :patch, class: "form-defaults" do %>
@@ -18,3 +20,5 @@
   <%= submit_tag tw("save"), class: "button button__sm button__secondary" %><%= link_to tw("cancel"), textwork_path %>
 <% end %>
 </div></div>
+
+</div>

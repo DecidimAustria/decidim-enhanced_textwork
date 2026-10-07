@@ -1,3 +1,5 @@
+<% append_stylesheet_pack_tag "decidim_enhanced_textwork_admin" %>
+<div class="tw-admin">
 <div class="item_show__header"><h1 class="item_show__header-title"><%= tw("review") %> · <%= @block.number %></h1></div>
 <div class="item__edit item__edit-1col"><div class="item__edit-form form-defaults">
 <p><%= @suggestion.author.name %> · <%= tw("version", number: @suggestion.block_version.number) %></p>
@@ -13,3 +15,5 @@
 <% end %>
 <%= link_to tw("cancel"), textwork_path %>
 </div></div>
+
+</div>

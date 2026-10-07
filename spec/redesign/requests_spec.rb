@@ -117,6 +117,7 @@ RSpec.describe "Redesigned Textwork", type: :request do
     sign_in admin
     get admin_routes.textwork_path
     expect(response).to have_http_status(:ok)
+    expect(response.body).to match(/<link[^>]+href="[^"]*decidim_enhanced_textwork_admin[^"]*\.css"/)
     post admin_routes.create_document_path, params: {
       import: { title: { en: "A greener neighbourhood" }, description: { en: "Read and participate" }, locale: "en",
                 content: "<h1>Greener streets</h1><p>More trees.</p><ul><li>Benches</li><li>Water</li></ul><h1>Together</h1><p>Meet monthly.</p>" }

@@ -1,3 +1,5 @@
+<% append_stylesheet_pack_tag "decidim_enhanced_textwork_admin" %>
+<div class="tw-admin">
 <div class="item_show__header"><h1 class="item_show__header-title"><%= tw("admin_title") %></h1></div>
 <div class="item__edit item__edit-1col"><div class="item__edit-form form-defaults">
 <% unless @document %>
@@ -12,6 +14,7 @@
     <%= f.submit tw("import"), class: "button button__sm button__secondary" %>
   <% end %>
 <% else %>
+  <section class="tw-admin__document">
   <h2><%= @document.original(:title) %></h2>
   <% if @document.deleted? %>
     <p><%= tw("trashed") %></p><%= button_to tw("restore"), restore_document_path, method: :patch, class: "button button__sm button__secondary" %>
@@ -21,7 +24,8 @@
   <% if @has_participation %><p role="status"><%= tw("admin.documents.locked_has_feedback") %></p><% elsif @document.published? %><p role="status"><%= tw("admin.documents.locked") %></p><% end %>
   <% if !@document.published? || @document.withdrawable? %><%= button_to tw(@document.published? ? "unpublish" : "publish"), publish_document_path, method: :patch, class: "button button__sm button__secondary" %><% end %>
   <%= link_to tw("preview"), Decidim::EngineRouter.main_proxy(current_component).document_path(@document), target: "_blank", rel: "noopener" if @document.published? %>
-  <details><summary><%= tw("metadata") %></summary>
+  </section>
+  <details class="tw-admin__details"><summary><%= tw("metadata") %></summary>
     <%= form_with url: update_document_path, method: :patch, class: "form-defaults" do %>
       <% current_organization.available_locales.each do |locale| %>
         <% [:title, :description].each do |field| %>
@@ -33,7 +37,7 @@
       <%= submit_tag tw("save"), class: "button button__sm button__secondary" %>
     <% end %>
   </details>
-  <%= form_with url: export_document_path, method: :get, class: "form-defaults my-6 flex flex-wrap items-end gap-4" do %>
+  <%= form_with url: export_document_path, method: :get, class: "form-defaults tw-admin__export" do %>
     <div><%= label_tag :language, tw("export_language") %><%= select_tag :language, options_for_select(current_organization.available_locales, @document.locale) %></div>
     <%= button_tag tw("export_action"), class: "button button__sm button__secondary" %>
   <% end %>
@@ -44,20 +48,22 @@
   </table>
   <% end %>
   <h2><%= tw("document_text") %></h2>
-  <ol><% @blocks.each do |block| %><li class="mb-8">
+  <ol class="tw-admin__blocks"><% @blocks.each do |block| %><li class="tw-admin__block">
     <% if block.image? %>
       <h3><%= tw("images.title") %></h3><%= render "image_preview", block: %>
     <% else %><h3><%= block.paragraph? ? tw("paragraph", number: block.number) : "#{block.number} · #{tw(block.kind)}" %></h3><div class="editor-content"><%= Decidim::EnhancedTextwork::Markdown.render(block.original) %></div><% end %>
+    <div class="tw-admin__block-actions">
     <%= link_to tw(@original_editable ? "edit" : "admin.documents.edit_translations"), edit_block_path(block_id: block.id), class: "button button__sm button__text-secondary" if @original_editable || (!block.image? && current_organization.available_locales.excluding(@document.locale).any?) %>
     <% if @original_editable %>
-    <%= form_with url: move_block_path(block_id: block.id), method: :patch do %>
+    <%= form_with url: move_block_path(block_id: block.id), method: :patch, class: "tw-admin__move" do %>
       <%= label_tag "position_#{block.id}", tw("position") %><%= number_field_tag :position, block.position, min: 1, max: @blocks.size, id: "position_#{block.id}" %>
-      <%= submit_tag tw("move") %>
+      <%= submit_tag tw("move"), class: "button button__sm button__secondary" %>
     <% end %>
     <%= button_to tw("remove"), remove_block_path(block_id: block.id), method: :delete, data: { confirm: tw("remove_confirm") }, class: "button button__sm button__text-secondary" %>
     <% end %>
+    </div>
   </li><% end %></ol>
-  <% if @original_editable %><details><summary><%= tw("add_block") %></summary>
+  <% if @original_editable %><details class="tw-admin__details"><summary><%= tw("add_block") %></summary>
     <%= form_with url: add_block_path, class: "form-defaults" do %>
       <%= label_tag :kind, tw("kind") %><%= select_tag :kind, options_for_select([[tw("paragraph_label"), "paragraph"], [tw("heading"), "heading"]]) %>
       <%= label_tag :depth, tw("depth") %><%= number_field_tag :depth, 1, min: 1, max: 3 %>
@@ -69,3 +75,5 @@
   <% end %>
 <% end %>
 </div></div>
+
+</div>
