@@ -12,8 +12,8 @@ plugin without either component is checked by `bin/check-independence`.
 
 | Model | Responsibility |
 | --- | --- |
-| Document | Original locale, translated metadata, publication/trash, Core search, agreement/follows for unstructured documents. |
-| Block | Stable heading/paragraph identity, position and heading_depth, current text, comments or chapter likes/follows. |
+| Document | Original locale, translated metadata, publication/trash, Core search, Core document follows; publication/participation lock. |
+| Block | Stable heading/paragraph identity, position and heading_depth, current text, paragraph comments/likes, or persistent Core editor image plus alternative text. |
 | BlockVersion | Immutable original text, consecutive version, author, origin and accepted suggestion/adjustment. |
 | Suggestion | Exact base version and changeset, author, reason, decision, moderation, comments and Core likes. |
 | DocumentRevision | Immutable import/add/remove/move record with positions, numbers and text where applicable. |
@@ -27,16 +27,16 @@ grouped once for the whole reading page.
 
 ## Rules and concurrency
 
-Text and structure changes lock the document first. Accepting a suggestion checks
-the version displayed in the admin form; stale suggestions remain acceptable after
-review, but a concurrent edit returns a conflict. New original text creates one
-BlockVersion and one PaperTrail text version. Position and counter updates do not
-create text versions. A reviewed identical final text still records its acceptance.
+Text and structure changes lock the document first. Published originals, their
+metadata and structure are immutable during collection. Unpublishing for
+corrections is allowed only without stored participation. Suggestions in every
+status, removed blocks, hidden/deleted comments and retained likes count; removing
+a like removes that stored contribution. Trash and restore retain all feedback.
+Manual translations can still be reviewed independently of the original.
 
-Removal sets `removed_at`, rejects every pending suggestion with a localized reason
-and retains contributions. Removed content and visible discussions are readable
-from the version history. Document trash similarly preserves blocks and contributions.
-Chapter likes remain across edits and moves. They are not revision supports.
+Decision, version and structure-history models/code remain, but evaluation is off
+by default. Its switch does not override collection immutability. The isolated
+legacy algorithm tests do not represent an available evaluation workflow.
 
 Editing an own pending suggestion rebases it to the current paragraph version.
 Its first like or comment sets a permanent feedback timestamp, preventing later
@@ -44,7 +44,10 @@ edits even if feedback is removed. Withdrawal remains possible while pending.
 
 Reads/writes scope IDs through the current component. Public writes check the
 organization, resource visibility, space participation, Core ActionAuthorizer and
-phase switches. Decisions require organization or participatory-space admin rights.
+phase switches and the active step’s end date in the organization’s time zone.
+The final end date remains open through its whole local day. Extending it reopens
+writes. These checks also cover the Core controllers and commands; following,
+reporting and deleting one’s own comment are exempt from the deadline.
 Core verification dialogs are used when required. Hidden suggestions are excluded
 from counts, lists and direct-link content; original blocks cannot be reported.
 
@@ -52,10 +55,14 @@ from counts, lists and direct-link content; original blocks cannot be reported.
 
 One Stimulus controller owns the selected paragraph, request cancellation, browser
 history, drafts, focus and mobile sheet. Panel GETs are cancellable; submitted
-comment writes finish before switching resources. The actual textarea moves into
-the document on desktop and stays in the sheet on mobile.
+comment writes finish before switching resources. The document stays fixed on the left. Lists, details and all form fields remain in
+the right panel on desktop, and in the same mobile sheet. The sticky holder has
+zero height; its own scroll area fits the viewport and the visible Core footer.
 
-The browser diff preserves whitespace, line breaks and punctuation. A bounded LCS
+The existing lossless token diff preserves whitespace, line breaks and punctuation.
+Presentation groups deletions before insertions and uses a before/after layout for
+large changes. Cards, details and live previews share this renderer; server-rendered
+comparison markup provides the before/after text without the browser renderer. A bounded LCS
 calculation falls back to a full replacement for very large differences. It writes
 text nodes, not participant-provided HTML. Markdown rendering accepts a small safe
 subset and escapes raw HTML.
@@ -64,7 +71,9 @@ The controls use Core Like/Unlike/CreateFollow commands with resource-specific
 responses. This avoids Core's single-resource DOM IDs without introducing another
 likes table. The comments adapter is a local subclass for cancellable reads and
 scoped sorting; it does not modify Core prototypes, forms, views or write endpoints.
-These two adapter boundaries need regression tests when upgrading Decidim.
+Scoped permission/command/cell extensions protect Core writes and closed comment
+controls. No Core file or JavaScript prototype is changed. These integration
+boundaries need regression tests when upgrading Decidim.
 
 ## Languages, events and files
 
@@ -76,7 +85,7 @@ if the same original returns. Failed jobs have bounded retries; later page reque
 can retry after a cooldown. Use a persistent queue in deployed applications; the
 local app deliberately uses memory-only jobs.
 
-Core events deliver to the suggestion author, chapter followers and/or people who
+Core events deliver to the suggestion author, document followers and/or people who
 agreed, according to the event. Recipients are deduplicated, the actor is excluded,
 and delivery waits until the enclosing transaction commits. Comment events remain
 Core events with the resource recipient hook. Rejection includes its reason.
@@ -84,10 +93,17 @@ Core events with the resource recipient hook. Rejection includes its reason.
 Editor, Markdown, ODT and DOCX inputs create headings and complete list/paragraph
 blocks. XML and ZIP sizes are bounded; external entities are rejected. Office page
 layout, tables, images, tracked changes and complex styles/numbering are outside
-the converter. Imported content must be reviewed before publication.
+the converter. Editor-uploaded images become separate blocks linked to Core EditorImage records,
+with their own stored alt text. External image URLs are never fetched. Display
+variants limit the longest edge to 1600 px without upscaling; enlargement uses the
+original. Empty or filename-derived descriptions trigger an editable reminder
+before publishing, with an explicit publish-anyway option. No caption is stored.
+Imported content must be reviewed before publication.
 
 Word export includes current text, pending visible suggestions, visible comments
-and agreement counts. It uses one requested language and refuses missing
+and paragraph/suggestion agreement counts, proposal dates, authors and reasons.
+Pending suggestions sort by agreement descending and oldest first at equal counts.
+Images appear as textual placeholders with alternative text. It uses one requested language and refuses missing
 translations instead of silently mixing languages. It is not a complete archive.
 
 ## Verification and limits

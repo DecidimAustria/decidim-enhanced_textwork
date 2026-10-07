@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe "Textwork notifications" do
-  let(:document) { create(:textwork_document) }
+  let(:document) { create(:textwork_document, published_at: nil) }
   let(:admin) { create(:user, :admin, :confirmed, organization: document.organization) }
   let(:author) { create(:user, :confirmed, organization: document.organization) }
   let(:follower) { create(:user, :confirmed, organization: document.organization) }
@@ -13,8 +13,9 @@ RSpec.describe "Textwork notifications" do
   let!(:block) { editor.add(kind: "paragraph", body: "More trees.") }
 
   before do
-    Decidim::Follow.create!(followable: chapter, user: follower)
-    Decidim::Like.create!(resource: chapter, author: liker)
+    document.publish!
+    Decidim::Follow.create!(followable: document, user: follower)
+    Decidim::Like.create!(resource: block, author: liker)
     allow(ActiveRecord).to receive(:after_all_transactions_commit).and_yield
     allow(Decidim::EventsManager).to receive(:publish)
   end
@@ -25,19 +26,28 @@ RSpec.describe "Textwork notifications" do
     result
   end
 
-  it "notifies chapter followers about a new suggestion" do
+  # Exercise preserved notification code independently of the new collection
+  # policy. Real admin/command access is covered in collection_lock_spec.
+  def allow_retained_evaluation
+    allow(document).to receive(:original_editable?).and_return(true)
+    document.component.update!(settings: { evaluation_enabled: true })
+  end
+
+  it "notifies document followers about a new suggestion" do
     record = suggestion
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.suggestion_created", resource: record, affected_users: [follower]))
   end
 
-  it "notifies author, chapter followers and likers exactly once after acceptance" do
+  it "notifies author, document followers and likers exactly once after acceptance" do
+    allow_retained_evaluation
     record = suggestion
-    Decidim::Like.create!(resource: chapter, author: follower)
+    Decidim::Like.create!(resource: block, author: follower)
     editor.decide(record, decision: "accepted", body: record.original, answer: "", expected_version: 1)
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.suggestion_accepted", affected_users: contain_exactly(author, follower, liker)))
   end
 
   it "notifies only the author of rejection and escapes the explanation" do
+    allow_retained_evaluation
     record = suggestion
     editor.decide(record, decision: "rejected", answer: "Please review <script>unsafe</script>")
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.suggestion_rejected", affected_users: [author]))
@@ -47,6 +57,7 @@ RSpec.describe "Textwork notifications" do
   end
 
   it "notifies followers and likers for editorial changes without a stale-suggestion event" do
+    allow_retained_evaluation
     suggestion
     editor.update(block, body: "Many trees.", expected_version: 1)
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.editorial_change", affected_users: contain_exactly(follower, liker)))
@@ -63,16 +74,18 @@ RSpec.describe "Textwork notifications" do
   end
 
   it "notifies affected followers and pending authors on structural removal" do
+    allow_retained_evaluation
     record = suggestion
     editor.remove(block)
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.structure_changed", affected_users: [follower]))
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.suggestion_rejected", resource: record, affected_users: [author]))
   end
 
-  it "notifies the new chapter for additions and both chapters for moves" do
+  it "notifies document followers for additions and moves" do
+    allow_retained_evaluation
     editor.add(kind: "paragraph", body: "Safe roads.")
-    other = editor.add(kind: "heading", body: "Other chapter")
-    Decidim::Follow.create!(followable: other, user: author)
+    editor.add(kind: "heading", body: "Other chapter")
+    Decidim::Follow.create!(followable: document, user: author)
     editor.move(block, position: 4)
     expect(Decidim::EventsManager).to have_received(:publish).with(hash_including(event: "decidim.events.textwork.structure_changed", affected_users: contain_exactly(follower, author)))
   end

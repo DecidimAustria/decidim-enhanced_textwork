@@ -2,58 +2,77 @@
 de:
   decidim:
     textwork:
-      marked_in_text: "Im Text markiert"
-      details: "Details"
-      suggestion_title: "Änderungsvorschlag zu Absatz %{number}"
-      change_marked: "Die Änderung ist im Text markiert."
-      suggestion_comments: "Kommentare zum Vorschlag"
-      comment_suggestion: "Vorschlag kommentieren"
-      decision_reason: "Begründung der Moderation"
-      propose_change: "Änderung vorschlagen"
-      edit_instruction: "Bearbeiten Sie den Absatz direkt im Text. Ihre Änderung wird dort markiert."
-      view_existing: "Vorhandene Vorschläge ansehen"
-      edit_directly: "Sie bearbeiten den Absatztext direkt."
-      preview_label: "Vorschau: Vorschlag %{index} von %{count} · %{name}"
-      preview_closed: "Vorschau: Vorschlag von %{name}"
-      last_changed: "zuletzt geändert am %{date}"
+      decision_reason: Begründung der Moderation
+      last_changed: zuletzt geändert am %{date}
       removed_reason: Der Absatz wurde entfernt.
       paragraph: Absatz %{number}
       paragraph_label: Absatz
-      suggestion_by: Änderungsvorschlag von %{name} zu Absatz %{number}
       by: Vorschlag von %{name}
-      contents: Inhaltsverzeichnis
-      intro: 'So beteiligen Sie sich: Neben jedem Absatz können Sie über die Sprechblase
-        kommentieren und über den Bleistift eine Änderung vorschlagen.'
-      summary: "%{paragraphs} Absätze · %{comments} Kommentare · %{suggestions} offene
-        Änderungsvorschläge"
-      like: Stimme zu
+      like: Zustimmen
       liked: Zugestimmt
-      follow: Folgen
-      followed: Gefolgt – nicht mehr folgen
       comments: Kommentare
-      suggestions: Änderungsvorschläge
-      suggestions_for: Änderungsvorschläge zu Absatz %{number}
-      comments_for: Kommentare zu Absatz %{number}
-      discussion: Beteiligung am Absatz
+      suggestions:
+        title: Änderungsvorschläge (%{count})
+        empty: Noch niemand hat eine Änderung vorgeschlagen.
+        show_all: Alle %{count} Änderungsvorschläge anzeigen
+        label: Änderungsvorschlag von %{author}
+        own: Ihr Vorschlag
+        before: Bisher
+        after: Vorschlag
+        justification: 'Begründung:'
+        like: Zustimmen · %{count}
+        liked: Zugestimmt · %{count}
+        like_label: Diesem Vorschlag zustimmen
+        unlike_label: Zustimmung zurücknehmen
+        likes_count:
+          one: 1 Zustimmung
+          other: "%{count} Zustimmungen"
+        comments_link: Kommentare (%{count})
+        edit: Bearbeiten
+        withdraw: Zurückziehen
+        report: Melden
+        unavailable: Dieser Änderungsvorschlag ist nicht verfügbar.
+        show:
+          back: "← Zurück zu Absatz %{number}"
+          title: Änderungsvorschlag von %{author}
+        form:
+          title: Änderung vorschlagen
+          title_edit: Eigenen Vorschlag bearbeiten
+          text_label: Neuer Text für Absatz %{number}
+          list_hint: Eine neue Zeile, die mit „- “ beginnt, fügt einen Listenpunkt
+            hinzu.
+          original_language_hint: Änderungen beziehen sich auf den Originaltext (%{language}).
+          preview_title: So sieht Ihre Änderung aus
+          preview_empty: Noch keine Änderung. Ändern Sie den Text im Feld oben.
+          justification_label: Begründung
+          optional: "(optional)"
+          cancel: Abbrechen
+          submit: Vorschlag einreichen
+        discard:
+          title: Entwurf verwerfen?
+          body: Ihre Änderung an Absatz %{number} ist noch nicht eingereicht.
+          keep: Weiter bearbeiten
+          confirm: Verwerfen
+        create:
+          success: Ihr Änderungsvorschlag wurde eingereicht.
+          invalid: Der Änderungsvorschlag konnte nicht gespeichert werden.
+          unchanged: Der Text wurde nicht geändert.
+        update:
+          success: Ihr Änderungsvorschlag wurde aktualisiert.
+          not_allowed: Der Vorschlag kann nicht mehr bearbeitet werden, weil bereits
+            jemand zugestimmt oder kommentiert hat.
+        withdraw_action:
+          confirm: Möchten Sie Ihren Änderungsvorschlag wirklich zurückziehen?
+          success: Ihr Änderungsvorschlag wurde zurückgezogen.
+        like_own_not_allowed: Dem eigenen Vorschlag können Sie nicht zustimmen.
+        unlike_own: Eigene Zustimmung zurücknehmen
       close: Schließen
       login: Anmelden
       error: Das hat nicht geklappt. Bitte versuchen Sie es erneut.
-      loading: Wird geladen …
-      copied: Link kopiert.
-      copy_link: Link kopieren
       versions: Versionsverlauf
       document_history: Änderungsverlauf des Dokuments
       version: Fassung %{number}
-      base_version: zu Fassung %{number}
       version_label: Fassung
-      initial_text: Ausgangstext
-      no_suggestions: Noch keine Änderungsvorschläge.
-      all_suggestions: Alle Änderungsvorschläge
-      closed: Abgeschlossene Vorschläge (%{count})
-      sort: Sortieren
-      most_liked: Meiste Zustimmung
-      newest: Neueste zuerst
-      new_suggestion: Eigene Änderung vorschlagen
       suggestions_blocked: In dieser Phase können keine neuen Änderungen vorgeschlagen
         werden.
       state_pending: Offen
@@ -68,21 +87,11 @@ de:
       optional_justification: Begründung (optional)
       answer: Begründung der Entscheidung (bei Ablehnung erforderlich)
       show_original: Original mit Markierung anzeigen
-      show_in_text: Im Text zeigen
       edit: Bearbeiten
       withdraw: Zurückziehen
       withdrawn: Ihr Änderungsvorschlag wurde zurückgezogen.
-      edit_original: Änderungen beziehen sich auf den Originaltext (%{language}).
-      existing_suggestions: Zu diesem Absatz gibt es bereits %{count} Vorschläge.
-        Passt einer davon, genügt Ihre Zustimmung.
-      you_edit: Sie bearbeiten diesen Absatz
-      live_preview: So sieht Ihre Änderung aus
-      list_hint: Eine neue Zeile, die mit „- “ beginnt, fügt einen Listenpunkt hinzu.
       cancel: Abbrechen
       submit: Vorschlag einreichen
-      submitted: Ihr Änderungsvorschlag wurde eingereicht.
-      discard_question: Entwurf verwerfen?
-      keep_editing: Weiter bearbeiten
       discard: Verwerfen
       removed: Dieser Absatz wurde entfernt.
       unavailable: Dieser Änderungsvorschlag ist nicht verfügbar.
@@ -107,8 +116,13 @@ de:
       description: Einleitung
       save: Speichern
       saved: Gespeichert.
-      export: Als Word exportieren
+      export:
+        block_likes:
+          one: 1 Zustimmung zum Absatz
+          other: "%{count} Zustimmungen zum Absatz"
+        image_placeholder: "[Abbildung: %{text}]"
       export_language: Exportsprache
+      export_action: Textarbeit exportieren
       author: Verfasser:in
       actions: Aktionen
       review: Prüfen und entscheiden
@@ -146,7 +160,6 @@ de:
       export_missing_translation: Der Export ist noch nicht vollständig in der gewählten
         Sprache verfügbar. Bitte ergänzen oder prüfen Sie die Übersetzungen und versuchen
         Sie es erneut.
-      withdraw_question: Änderungsvorschlag zurückziehen?
       trashed: Das Dokument liegt im Papierkorb. Seine Inhalte und Beiträge bleiben
         erhalten.
       restored: Das Dokument wurde wiederhergestellt.
@@ -154,9 +167,79 @@ de:
       restore: Wiederherstellen
       trash_confirm: Dokument in den Papierkorb verschieben? Es kann später wiederhergestellt
         werden.
-      previous: Vorheriger Vorschlag
-      next: Nächster Vorschlag
       translation_reviewed: Diese Übersetzung wurde gegen den neuen Originaltext geprüft.
+      documents:
+        show:
+          summary: "%{paragraphs} Absätze · %{comments} Kommentare · %{suggestions}
+            Änderungsvorschläge"
+          summary_deadline: Rückmeldungen bis %{date}
+          mobile_hint: Tippen Sie auf einen Absatz, um zuzustimmen, zu kommentieren
+            oder eine Änderung vorzuschlagen.
+      toc:
+        button: Inhaltsverzeichnis
+        count_hint: Zahl = Kommentare und Änderungsvorschläge
+      blocks:
+        number_link_label: Absatz %{number} öffnen
+        open_label: 'Absatz %{number} öffnen: %{likes} Zustimmungen, %{suggestions}
+          Änderungsvorschläge, %{comments} Kommentare'
+      images:
+        enlarge: Vergrößern
+        enlarged_label: Bild vergrößert
+        close: Schließen
+        title: Abbildung
+        alt: Bildbeschreibung (Alternativtext)
+        review_title: Bildbeschreibungen prüfen
+        save_descriptions: Beschreibungen speichern
+        skipped: Nicht unterstützte oder fremde Bilder und Videos wurden ausgelassen.
+        export: "[Abbildung: %{alt}]"
+      overview:
+        label: Überblick
+        back_to_block: "← Zurück zu Absatz %{number}"
+        help:
+          title: So beteiligen Sie sich
+          hide: Anleitung ausblenden
+          show: So beteiligen Sie sich
+          step_1_html: "<strong>Absatz anklicken.</strong> Hier erscheint dann alles,
+            was zu diesem Absatz gesagt und vorgeschlagen wurde."
+          step_2_html: "<strong>Kommentieren</strong> oder eine <strong>Änderung am
+            Text vorschlagen</strong>."
+          step_3_html: "<strong>Zustimmen:</strong> dem Absatz, wie er ist, oder einem
+            Vorschlag."
+          legend_likes: Zustimmungen zum Absatz
+          legend_suggestions: Änderungsvorschläge
+          legend_comments: Kommentare
+        most_discussed:
+          title: Am meisten besprochen
+          hint: 'Absatz öffnen, um zuzustimmen, zu kommentieren oder eine Änderung
+            vorzuschlagen:'
+        quiet:
+          one: 1 Absatz hat noch keinen Vorschlag und keinen Kommentar.
+          other: "%{count} Absätze haben noch keinen Vorschlag und keinen Kommentar."
+          open_first: Ersten davon öffnen
+        deadline: Rückmeldungen sind bis %{date} möglich. Danach werden sie ausgewertet
+          und der Text wird überarbeitet.
+        no_deadline: Die Rückmeldungen werden nach der Sammelphase ausgewertet. Danach
+          wird der Text überarbeitet.
+        closed: Die Sammelphase ist beendet. Die Rückmeldungen werden ausgewertet.
+      panel:
+        title: Absatz %{number}
+        close: Schließen
+        like: Zustimmen · %{count}
+        liked: Zugestimmt · %{count}
+        like_label: Dem Absatz zustimmen, wie er ist
+        unlike_label: Zustimmung zum Absatz zurücknehmen
+        suggest: Änderung vorschlagen
+        comment: Kommentieren
+      diff:
+        inserted: eingefügt
+        deleted: gestrichen
+      translations:
+        pending: Übersetzung wird erstellt
+        machine_translated: Maschinell übersetzt
+      export_likes: 'Zustimmungen: %{count}'
+      suggestion_by: Änderungsvorschlag von %{name} zu Absatz %{number}
+      base_version: zu Fassung %{number}
+      initial_text: Ausgangstext
     events:
       textwork:
         suggestion_created:
@@ -190,3 +273,15 @@ de:
           email_outro: Sie erhalten diese Nachricht wegen Ihres Beitrags, Ihrer Zustimmung
             oder Ihres Abonnements.
           notification_title: 'Dokumentaufbau geändert: <a href="%{resource_path}">%{resource_title}</a>.'
+    components:
+      textwork:
+        name: Textarbeit
+        actions:
+          comment: Kommentieren
+          like: Zustimmen
+          suggest: Änderung vorschlagen
+        settings:
+          step:
+            comments_blocked: Kommentare gesperrt
+            suggestions_blocked: Änderungsvorschläge gesperrt
+            likes_blocked: Zustimmung gesperrt

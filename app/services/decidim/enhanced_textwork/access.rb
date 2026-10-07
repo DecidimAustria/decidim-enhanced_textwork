@@ -17,6 +17,14 @@ module Decidim
 
         Decidim::ActionAuthorizer.new(user, action.to_s, resource.component, resource).authorize.ok?
       end
+
+      def self.evaluation_enabled?(component) = component.settings.evaluation_enabled?
+
+      # The switch does not override collection immutability. A future evaluation
+      # workflow needs its own explicit policy before it can change a document.
+      def self.evaluation_allowed?(user, document)
+        admin?(user, document.component) && evaluation_enabled?(document.component) && document.original_editable?
+      end
     end
   end
 end

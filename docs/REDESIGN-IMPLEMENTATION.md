@@ -1,4 +1,8 @@
-# Umsetzungsstand Redesign
+# Umsetzungsstand Redesign vom 5. Oktober 2026 (historisch)
+
+**Dieser Bericht beschreibt den früheren Aufbau.** Der aktuelle Stand der
+Sammelphase steht in [SAMMELPHASE-IMPLEMENTATION.md](SAMMELPHASE-IMPLEMENTATION.md).
+Der Umbau ersetzt insbesondere Kapitel-Likes, Inline-Editor und Vorschlagsblättern.
 
 Branch: `feature/textwork-redesign`, Version `2.0.0.alpha3`, Stand 5. Oktober 2026.
 Grundlage: übergebene Bauanleitung und Mockup, ergänzt durch die bestätigten

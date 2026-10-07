@@ -1,0 +1,14 @@
+<div class="item_show__header"><h1 class="item_show__header-title"><%= tw("images.review_title") %></h1></div>
+<div class="item__edit item__edit-1col"><div class="item__edit-form form-defaults">
+<p><%= tw("admin.images.missing_description", count: @images.size) %></p>
+<%= form_with url: image_descriptions_document_path, method: :patch do %>
+  <% @images.each do |image| %><div class="mb-8">
+    <%= image_tag main_app.rails_representation_path(image.display_image, only_path: true), alt: image.image_alt, style: "max-width: 100%; max-height: 160px; object-fit: contain" %>
+    <%= label_tag "image_alt_#{image.id}", tw("admin.images.description_label") %>
+    <%= text_area_tag "image_alts[#{image.id}]", image.image_alt, id: "image_alt_#{image.id}", maxlength: 2000 %>
+  </div><% end %>
+  <%= submit_tag tw("images.save_descriptions"), class: "button button__sm button__secondary" unless @images.empty? %>
+<% end %>
+<%= button_to tw("admin.images.publish_anyway"), publish_document_path, method: :patch, params: { confirm_images: "1" }, class: "button button__sm button__secondary" %>
+<%= link_to tw("cancel"), textwork_path %>
+</div></div>

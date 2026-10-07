@@ -19,15 +19,19 @@ module Decidim
           @word.html(Markdown.render(text(@document, :description)))
           @word.paragraph("#{t("liked")}: #{@document.likes_count}") if @document.likeable?
           @document.blocks.active.ordered.each do |block|
-            @word.paragraph("#{block.number} #{text(block)}", heading: true) if block.heading?
-            if block.heading?
-              @word.paragraph("#{t("liked")}: #{block.likes_count}")
+            if block.image?
+              @word.paragraph(t("images.export", alt: block.image_alt))
+            elsif block.heading?
+              @word.paragraph("#{block.number} #{text(block)}", heading: true)
             else
               @word.paragraph(t("paragraph", number: block.number), heading: true)
               @word.html(Markdown.render(text(block)))
+              @word.paragraph(t("export_likes", count: block.likes_count))
               comments(block)
-              block.suggestions.listed.where(status: "pending").order(:created_at).each do |suggestion|
+              block.suggestions.listed.where(status: "pending").order(likes_count: :desc, created_at: :asc, id: :asc).each do |suggestion|
                 @word.paragraph(t("by", name: suggestion.author.name), heading: true)
+                @word.paragraph(I18n.l(suggestion.created_at.to_date))
+                @word.paragraph(t("export_likes", count: suggestion.likes_count))
                 @word.html(Markdown.render(text(suggestion)))
                 @word.html(Markdown.render(text(suggestion, :justification)))
                 comments(suggestion)
@@ -46,10 +50,12 @@ module Decidim
         missing = false
         fields = [[@document, :title], [@document, :description]]
         @document.blocks.active.ordered.each do |block|
+          next if block.image?
+
           fields << [block, :body]
           resources = [block] + block.suggestions.listed.where(status: "pending").to_a
           resources.drop(1).each { |suggestion| fields.push([suggestion, :body], [suggestion, :justification]) }
-          missing ||= resources.any? { |resource| resource.comments.not_hidden.not_deleted.any? { |comment| comment_text(comment).blank? } }
+          missing ||= resources.any? { |resource| missing_comment_translation?(resource) }
         end
         fields.each do |resource, field|
           text(resource, field)
@@ -58,6 +64,8 @@ module Decidim
         end
         raise MissingTranslation if missing
       end
+
+      def missing_comment_translation?(resource) = resource.comments.not_hidden.not_deleted.any? { |comment| comment_text(comment).blank? }
 
       def comment_text(comment)
         comment.body[@locale].presence || comment.body.dig("machine_translations", @locale).presence

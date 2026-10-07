@@ -33,9 +33,10 @@ RSpec.describe "Redesign imports and exports" do
   end
 
   it "exports one selected language and refuses a mixed-language report" do
-    document = create(:textwork_document, title: { en: "A plan", de: "Ein Plan" }, description: { en: "", de: "" })
+    document = create(:textwork_document, published_at: nil, title: { en: "A plan", de: "Ein Plan" }, description: { en: "", de: "" })
     admin = create(:user, :admin, organization: document.organization)
     block = Decidim::EnhancedTextwork::EditDocument.new(document, admin).add(kind: "paragraph", body: "More trees.")
+    document.publish!
     expect { Decidim::EnhancedTextwork::ReadingExport.new(document, "de").export }.to raise_error(Decidim::EnhancedTextwork::ReadingExport::MissingTranslation)
     block.update!(body: block.body.merge("de" => "Mehr Bäume."))
     data = Decidim::EnhancedTextwork::ReadingExport.new(document, "de").export
@@ -43,5 +44,25 @@ RSpec.describe "Redesign imports and exports" do
     Zip::File.open_buffer(data) { |zip| xml = zip.read("word/document.xml") }
     expect(xml.force_encoding("UTF-8")).to include("Mehr Bäume.")
     expect(xml).not_to include("More trees.")
+  end
+
+  it "exports paragraph likes and suggestions in agreement order with author, date, reason and likes" do
+    document = create(:textwork_document, published_at: nil)
+    admin = create(:user, :admin, organization: document.organization)
+    block = Decidim::EnhancedTextwork::EditDocument.new(document, admin).add(kind: "paragraph", body: "More trees.")
+    document.publish!
+    author = create(:user, :confirmed, organization: document.organization)
+    low = block.suggestions.create!(component: document.component, author:, block_version: block.current_version,
+                                    body: { en: "Trees and benches." }, justification: { en: "A place to rest." },
+                                    changeset: { original: block.original, replace: "Trees and benches." })
+    high = block.suggestions.create!(component: document.component, author:, block_version: block.current_version,
+                                     body: { en: "Trees and water." }, changeset: { original: block.original, replace: "Trees and water." })
+    [block, high].each { |resource| Decidim::Like.create!(resource:, author: admin) }
+    bytes = Decidim::EnhancedTextwork::ReadingExport.new(document, "en").export
+    Zip::File.open_buffer(bytes) do |zip|
+      xml = zip.read("word/document.xml").force_encoding("UTF-8")
+      expect(xml).to include("Agreements: 1", "Agreements: 0", author.name, I18n.l(low.created_at.to_date), "A place to rest.")
+      expect(xml.index("Trees and water.")).to be < xml.index("Trees and benches.")
+    end
   end
 end

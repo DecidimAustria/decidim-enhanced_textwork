@@ -1,157 +1,169 @@
-// This controller owns one panel lifecycle, including its draft and focus state.
+// One paragraph resource is mounted at a time; document text never moves into a form.
 /* eslint max-lines: ["error", {"max": 800, "skipBlankLines": true, "skipComments": true}] */
 import { Controller } from "@hotwired/stimulus";
-import { renderDiff } from "src/decidim/textwork/diff.mjs";
+import { renderDiff, normalizeText } from "src/decidim/textwork/diff.mjs";
+import {
+  resizeReadingImage,
+  showImage,
+  hideImage
+} from "src/decidim/textwork/image_viewer";
 import { panelComments } from "src/decidim/textwork/panel_comments";
-
 export default class extends Controller {
-  static targets = [
-    "panel",
-    "document",
-    "toc",
-    "intro",
-    "overlay",
-    "status",
-    "login",
-    "confirm"
-  ];
-  static values = { panelUrl: String, signedIn: Boolean, labels: Object };
-
+  static targets = ["panel", "document", "toc", "intro", "rail", "overlay", "status", "login", "confirm", "imageDialog"];
+  static values = {
+    panelUrl: String,
+    statisticsUrl: String,
+    signedIn: Boolean,
+    labels: Object
+  };
   connect() {
     this.mobile = window.matchMedia("(max-width: 1023px)");
+    this.pendingWrites = new Set();
+    this.panelDialogs = new Set();
+    this.dialogHandler = (event) => {
+      if (event.detail && this.panelTarget.contains(event.detail)) {
+        this.rememberDialogs(event.detail);
+      }
+    };
+    document.addEventListener("ajax:loaded", this.dialogHandler, true);
     this.clickHandler = (event) => {
       const trigger = event.target.closest("[data-open-block]");
-      if (!trigger) {
-        return;
+      if (trigger) {
+        event.preventDefault();
+        this.open(
+          trigger.dataset.openBlock,
+          trigger.dataset.mode,
+          trigger.dataset.suggestionId,
+          trigger
+        );
       }
-      event.preventDefault();
-      this.open(
-        trigger.dataset.openBlock,
-        trigger.dataset.mode,
-        trigger.dataset.suggestionId,
-        trigger
-      );
     };
     this.popHandler = () => this.fromLocation(true);
-    this.resizeHandler = () => this.responsive();
     this.keyHandler = (event) => this.keydown(event);
+    this.resizeHandler = () => {
+      this.responsive();
+      this.element.
+        querySelectorAll("[data-reading-image]").
+        forEach((image) => this.imageLoaded({ currentTarget: image }));
+    };
+    this.scrollHandler = () => {
+      cancelAnimationFrame(this.railFrame);
+      this.railFrame = requestAnimationFrame(() => this.sizeRail());
+    };
     this.unloadHandler = (event) => {
       if (this.dirty) {
         event.preventDefault();
         event.returnValue = "";
       }
     };
-    this.pendingCommentWrites = new Set();
-    this.commentWriteHandler = (event) => {
+    this.writeHandler = (event) => {
       if (!event.target.closest("[data-decidim-comments]")) {
         return;
       }
       const pending = new Promise((resolve) =>
-        event.target.addEventListener("ajax:complete", resolve, { once: true })
+        event.target.addEventListener("ajax:complete", resolve, {
+          once: true
+        })
       );
-      this.pendingCommentWrites.add(pending);
-      pending.finally(() => this.pendingCommentWrites.delete(pending));
+      this.pendingWrites.add(pending);
+      pending.finally(() => this.pendingWrites.delete(pending));
     };
-    this.element.addEventListener("ajax:beforeSend", this.commentWriteHandler);
+    this.imageCancelHandler = (event) => {
+      event.preventDefault();
+      this.closeImage();
+    };
     this.element.addEventListener("click", this.clickHandler);
+    this.element.addEventListener("ajax:beforeSend", this.writeHandler);
     window.addEventListener("popstate", this.popHandler);
-    window.addEventListener("beforeunload", this.unloadHandler);
     window.addEventListener("keydown", this.keyHandler);
-    this.mobile.addEventListener("change", this.resizeHandler);
-    this.lastUrl = window.location.href;
+    window.addEventListener("beforeunload", this.unloadHandler);
+    window.addEventListener("scroll", this.scrollHandler, {
+      passive: true
+    });
+    window.addEventListener("resize", this.resizeHandler);
+    this.imageDialogTarget.addEventListener("cancel", this.imageCancelHandler);
+    this.sizeObserver = new ResizeObserver(this.scrollHandler);
+    this.sizeObserver.observe(this.documentTarget);
+    this.sizeObserver.observe(this.introTarget);
+    this.lastUrl = location.href;
+    this.configureOverview();
     this.fromLocation();
-    this.observeChapters();
+    this.responsive();
   }
-
   disconnect() {
+    document.removeEventListener("ajax:loaded", this.dialogHandler, true);
     this.abort?.abort();
+    this.statsAbort?.abort();
     this.unmountComments();
-    this.observer?.disconnect();
-    this.commentObserver?.disconnect();
-    this.element.removeEventListener(
-      "ajax:beforeSend",
-      this.commentWriteHandler
-    );
+    this.sizeObserver?.disconnect();
+    cancelAnimationFrame(this.railFrame);
     this.element.removeEventListener("click", this.clickHandler);
+    this.element.removeEventListener("ajax:beforeSend", this.writeHandler);
     window.removeEventListener("popstate", this.popHandler);
-    window.removeEventListener("beforeunload", this.unloadHandler);
     window.removeEventListener("keydown", this.keyHandler);
-    this.mobile.removeEventListener("change", this.resizeHandler);
+    window.removeEventListener("beforeunload", this.unloadHandler);
+    window.removeEventListener("scroll", this.scrollHandler);
+    window.removeEventListener("resize", this.resizeHandler);
+    this.imageDialogTarget.removeEventListener(
+      "cancel",
+      this.imageCancelHandler
+    );
     this.releaseBackground();
   }
-
   async fromLocation(pop = false) {
-    const url = new URL(window.location.href);
-    if (pop && this.dirty && !(await this.confirmDiscard())) {
+    if (pop && !(await this.confirmDiscard())) {
       history.pushState({}, "", this.lastUrl);
       return;
     }
-    if (url.searchParams.has("block")) {
+    const url = new URL(location.href);
+    const block = url.searchParams.get("block");
+    if (block) {
       await this.open(
-        url.searchParams.get("block"),
-        url.searchParams.get("suggestion")
-          ? "suggestions"
-          : "comments",
+        block,
+        "list",
         url.searchParams.get("suggestion"),
         null,
         false
       );
-      document.
-        getElementById(`block-${url.searchParams.get("block")}`)?.
-        scrollIntoView({ block: "center" });
-    } else {
-      this.hide(false);
+    } else if (this.block) {
+      await this.overview(false);
     }
-    this.lastUrl = window.location.href;
   }
-
-  // URL, presentation mode and focus origin are independent navigation inputs.
   // eslint-disable-next-line max-params
   async open(
     block,
-    mode = "comments",
+    mode = "list",
     suggestion = null,
     trigger = null,
     push = true
   ) {
+    const paragraph = this.element.querySelector(
+      `.tw-paragraph[data-block="${CSS.escape(String(block))}"]`
+    );
+    if (!paragraph) {
+      if (this.block) {
+        await this.overview(false);
+      }
+      this.setUrl(null, null, false);
+      return;
+    }
     if (!(await this.confirmDiscard())) {
       return;
     }
-    await Promise.all(this.pendingCommentWrites);
+    await Promise.all(this.pendingWrites);
     if (mode === "edit" && !this.signedInValue) {
-      this.setUrl(block, suggestion);
       this.loginTarget.click();
       return;
     }
-    this.returnFocus = trigger || this.returnFocus;
-    this.block = String(block);
-    this.mode = mode;
     this.abort?.abort();
     const abort = new AbortController();
     this.abort = abort;
-    this.clearEditor();
-    this.unmountComments();
-    this.panelTarget.hidden = false;
     this.panelTarget.setAttribute("aria-busy", "true");
-    this.panelTarget.textContent = this.labelsValue.loading;
-    this.panelTarget.focus({ preventScroll: true });
-    this.element.classList.add("tw-is-open");
-    this.tocTarget.open = false;
-    this.element.
-      querySelectorAll(".tw-paragraph").
-      forEach((element) =>
-        element.classList.toggle(
-          "tw-selected",
-          element.dataset.block === this.block
-        )
-      );
-    this.responsive();
-    const url = new URL(this.panelUrlValue, window.location.origin);
+    const url = new URL(this.panelUrlValue, location.origin);
     Object.entries({
       block,
       mode,
       suggestion,
-      sort: this.order,
       original: new URL(location.href).searchParams.get("original")
     }).forEach(([key, value]) => {
       if (value) {
@@ -161,64 +173,72 @@ export default class extends Controller {
     try {
       const response = await fetch(url, {
         signal: abort.signal,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
       });
       if (!response.ok) {
-        throw new Error(this.labelsValue.error);
+        throw new Error();
       }
       const html = await response.text();
       if (abort.signal.aborted) {
         return;
       }
+      this.unmountComments();
       this.panelTarget.innerHTML = html;
-      this.panelTarget.removeAttribute("aria-busy");
+      this.block = String(block);
+      this.mode =
+        this.panelTarget.querySelector("[data-panel-mode]")?.dataset.
+          panelMode || "list";
+      this.lastBlock = this.block;
+      this.lastNumber = this.panelTarget.querySelector(
+        "[data-panel-number]"
+      )?.dataset.panelNumber;
+      this.returnFocus =
+        paragraph.querySelector("[data-block-pill]") || trigger;
+      this.form = this.panelTarget.querySelector("[data-suggestion-form]");
+      this.initialDraft = this.draftSignature();
+      this.dirty = false;
+      this.element.
+        querySelectorAll(".tw-paragraph").
+        forEach((row) =>
+          row.classList.toggle("tw-selected", row.dataset.block === this.block)
+        );
+      this.element.classList.toggle("tw-editing", this.mode === "edit");
       if (push) {
         this.setUrl(block, suggestion);
       }
-      this.panelTarget.
-        querySelector("[data-panel-title]")?.
-        focus({ preventScroll: true });
+      this.responsive();
+      this.renderComparisons();
+      this.rememberDialogs(this.panelTarget);
+      document.dispatchEvent(
+        new CustomEvent("ajax:loaded", { detail: this.panelTarget })
+      );
       this.mountComments();
-      this.panelTarget.querySelectorAll("[data-suggestion]").forEach((card) => {
-        const source = this.previewSource(card.dataset.suggestion);
-        const output = card.querySelector("[data-diff-output]");
-        if (source && output && source.dataset.translated !== "true") {
-          renderDiff(output, source.dataset.original, source.dataset.replacement, output.dataset.compact === "true");
-        }
+      this.panelTarget.querySelector("[data-panel-title]")?.focus({
+        preventScroll: true
       });
-      this.syncCounts();
-      const editor = this.panelTarget.querySelector("[data-editor]");
-      if (editor) {
-        this.editor = editor;
-        this.form = this.panelTarget.querySelector("[data-suggestion-form]");
-        this.initialDraft = this.draftSignature();
-        this.responsive();
+      if (this.form) {
         this.changed();
-      } else if (mode === "suggestions") {
-        const selected = this.panelTarget.querySelector("[data-detail-id]").dataset.detailId;
-        const source = selected
-          ? this.previewSource(selected)
-          : this.panelTarget.querySelector('[data-preview-suggestion][data-pending="true"]');
-        this.showPreview(source);
+        const field = this.form.elements.body;
+        field.focus({
+          preventScroll: true
+        });
+        field.setSelectionRange(field.value.length, field.value.length);
       }
+      this.refreshStatistics();
     } catch (error) {
       if (error.name !== "AbortError") {
-        const message = document.createElement("p");
-        message.textContent = this.labelsValue.error;
-        const closeButton = document.createElement("button");
-        closeButton.type = "button";
-        closeButton.textContent = this.labelsValue.close;
-        closeButton.dataset.action = "textwork#close";
-        this.panelTarget.replaceChildren(message, closeButton);
-        closeButton.focus({ preventScroll: true });
-        this.panelTarget.removeAttribute("aria-busy");
         this.statusTarget.textContent = this.labelsValue.error;
+      }
+    } finally {
+      if (!abort.signal.aborted) {
+        this.panelTarget.removeAttribute("aria-busy");
       }
     }
   }
-
-  setUrl(block, suggestion) {
-    const url = new URL(window.location.href);
+  setUrl(block, suggestion, push = true) {
+    const url = new URL(location.href);
     ["block", "suggestion"].forEach((key) => url.searchParams.delete(key));
     if (block) {
       url.searchParams.set("block", block);
@@ -227,49 +247,65 @@ export default class extends Controller {
       url.searchParams.set("suggestion", suggestion);
     }
     url.hash = "";
-    if (url.href !== window.location.href) {
-      history.pushState({}, "", url);
+    if (url.href !== location.href) {
+      history[push
+        ? "pushState"
+        : "replaceState"]({}, "", url);
     }
     this.lastUrl = url.href;
   }
-
   async close() {
-    if (await this.confirmDiscard()) {
-      await Promise.all(this.pendingCommentWrites);
-      this.hide(true);
+    if (this.mode === "edit" || this.mode === "detail") {
+      await this.open(this.block);
+    } else if (await this.confirmDiscard()) {
+      await this.overview();
     }
   }
-  hide(push) {
+  async overview(push = true) {
+    await Promise.all(this.pendingWrites);
     this.abort?.abort();
-    this.unmountComments();
-    this.clearEditor();
-    this.panelTarget.hidden = true;
-    this.element.classList.remove("tw-is-open");
-    this.element.
-      querySelectorAll(".tw-selected").
-      forEach((element) => element.classList.remove("tw-selected"));
-    this.releaseBackground();
-    this.tocTarget.open = !this.mobile.matches;
-    if (push) {
-      this.setUrl(null, null);
+    const abort = new AbortController();
+    this.abort = abort;
+    try {
+      const response = await fetch(this.panelUrlValue, {
+        signal: abort.signal
+      });
+      if (!response.ok) {
+        throw new Error();
+      }
+      const html = await response.text();
+      if (abort.signal.aborted) {
+        return;
+      }
+      this.unmountComments();
+      this.panelTarget.innerHTML = html;
+      this.block = null;
+      this.mode = "overview";
+      this.form = null;
+      this.dirty = false;
+      this.element.classList.remove("tw-editing");
+      this.element.
+        querySelectorAll(".tw-selected").
+        forEach((row) => row.classList.remove("tw-selected"));
+      if (push) {
+        this.setUrl(null, null);
+      }
+      this.configureOverview();
+      this.responsive();
+      this.returnFocus?.focus({
+        preventScroll: true
+      });
+      this.refreshStatistics();
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        this.statusTarget.textContent = this.labelsValue.error;
+      }
     }
-    this.returnFocus?.focus({ preventScroll: true });
   }
-
-  releaseBackground() {
-    this.documentTarget.inert = false;
-    this.tocTarget.inert = false;
-    this.introTarget.inert = false;
-    this.overlayTarget.hidden = true;
-    this.panelTarget.removeAttribute("aria-modal");
-  }
-
   responsive() {
-    const modal = this.mobile.matches && !this.panelTarget.hidden;
-    this.documentTarget.inert = modal;
-    this.tocTarget.inert = modal;
-    this.introTarget.inert = modal;
-    this.overlayTarget.hidden = !modal;
+    const modal = this.mobile.matches && Boolean(this.block);
+    this.panelTarget.hidden = this.mobile.matches && !this.block;
+    this.panelTarget.setAttribute("aria-label", this.panelTarget.querySelector("[data-panel-title]").textContent);
     this.panelTarget.setAttribute("role", modal
       ? "dialog"
       : "complementary");
@@ -278,51 +314,124 @@ export default class extends Controller {
     } else {
       this.panelTarget.removeAttribute("aria-modal");
     }
-    if (!this.editor && this.previewId) {
-      const preview = this.element.querySelector(`#block-${this.block} [data-preview]`);
-      const valid = this.element.querySelector(`#block-${this.block} [data-valid-text]`);
-      if (this.mobile.matches) {
-        if (preview) {
-          preview.hidden = true;
-        }
-        if (valid) {
-          valid.hidden = false;
-        }
-      } else {
-        this.showPreview(this.previewSource(this.previewId));
-      }
+    this.documentTarget.inert = modal;
+    this.introTarget.inert = modal;
+    this.overlayTarget.hidden = !modal;
+    document.documentElement.classList.toggle("tw-sheet-open", modal);
+    this.sizeRail();
+  }
+  releaseBackground() {
+    this.documentTarget.inert = false;
+    this.introTarget.inert = false;
+    document.documentElement.classList.remove("tw-sheet-open");
+  }
+  sizeRail() {
+    if (this.mobile.matches) {
+      this.panelTarget.style.removeProperty("visibility");
+      this.panelTarget.style.removeProperty("height");
+      return;
     }
-    if (this.editor) {
-      const host = this.mobile.matches
-        ? this.panelTarget.querySelector("[data-editor-home]")
-        : this.element.querySelector(
-          `#block-${this.block} [data-inline-editor]`
-        );
-      host?.append(this.editor);
-      const valid = this.element.querySelector(
-        `#block-${this.block} [data-valid-text]`
+    const top = this.railTarget.getBoundingClientRect().top;
+    const footer = document.querySelector('footer[role="contentinfo"]');
+    const bottom = Math.min(
+      innerHeight,
+      footer?.getBoundingClientRect().top ?? innerHeight
+    );
+    const available = bottom - Math.max(16, top) - 16;
+    this.panelTarget.style.height = `${Math.max(0, available)}px`;
+    this.panelTarget.style.visibility = available > 0
+      ? ""
+      : "hidden";
+  }
+  paragraph(event) {
+    if (
+      event.target.closest("a,button,input,textarea,select") ||
+      window.getSelection()?.toString()
+    ) {
+      return;
+    }
+    this.open(event.currentTarget.dataset.block);
+  }
+  chapter(event) {
+    event.preventDefault();
+    document.
+      querySelector(event.currentTarget.getAttribute("href"))?.
+      scrollIntoView({
+        block: "start"
+      });
+    this.tocTarget.open = false;
+  }
+  configureOverview() {
+    const button = this.panelTarget.querySelector("[data-return-block]");
+    if (button && this.lastBlock) {
+      button.hidden = false;
+      button.dataset.openBlock = this.lastBlock;
+      button.textContent = this.labelsValue.returnBlock.replace(
+        "%NUMBER%",
+        this.lastNumber
       );
-      if (valid) {
-        valid.hidden = !this.mobile.matches;
-      }
+    }
+    let hidden = false;
+    try {
+      hidden = localStorage.getItem("textwork-help-hidden") === "true";
+    } catch {
+
+      /* Restricted storage keeps help visible. */
+    }
+    this.setHelp(hidden);
+  }
+  setHelp(hidden) {
+    const help = this.panelTarget.querySelector("[data-help]");
+    const link = this.panelTarget.querySelector("[data-show-help]");
+    if (help) {
+      help.hidden = hidden;
+    }
+    if (link) {
+      link.hidden = !hidden;
     }
   }
+  hideHelp() {
+    this.setHelp(true);
+    try {
+      localStorage.setItem("textwork-help-hidden", "true");
+    } catch {
 
-  clearEditor() {
-    this.editor?.remove();
-    this.editor = null;
-    this.previewId = null;
-    this.form = null;
-    this.dirty = false;
-    this.element.querySelectorAll("[data-preview]").forEach((element) => {
-      element.hidden = true;
-      element.replaceChildren();
-    });
-    this.element.querySelectorAll("[data-valid-text]").forEach((element) => {
-      element.hidden = false;
-    });
+      /* Optional preference. */
+    }
+    this.panelTarget.querySelector("[data-show-help]")?.focus();
   }
+  showHelp() {
+    this.setHelp(false);
+    try {
+      localStorage.removeItem("textwork-help-hidden");
+    } catch {
 
+      /* Optional preference. */
+    }
+    this.panelTarget.querySelector("[data-help] button")?.focus();
+  }
+  showAll(event) {
+    this.panelTarget.
+      querySelectorAll("[data-extra-suggestion]").
+      forEach((card) => {
+        card.hidden = false;
+      });
+    event.currentTarget.hidden = true;
+    this.panelTarget.querySelector("[data-extra-suggestion] button")?.focus();
+  }
+  renderComparisons() {
+    this.panelTarget.
+      querySelectorAll('[data-diff-output][data-translated="false"]').
+      forEach((output) => {
+        renderDiff(
+          output,
+          output.dataset.original,
+          output.dataset.replacement,
+          output.dataset.compact === "true",
+          this.labelsValue
+        );
+      });
+  }
   draftSignature() {
     return this.form
       ? JSON.stringify([
@@ -337,15 +446,17 @@ export default class extends Controller {
     }
     this.dirty = this.draftSignature() !== this.initialDraft;
     const body = this.form.elements.body.value;
+    const original = this.form.querySelector("[data-editor]").dataset.original;
     renderDiff(
-      this.editor.querySelector("[data-live-diff]"),
-      this.editor.dataset.original,
-      body
+      this.form.querySelector("[data-live-diff]"),
+      original,
+      body,
+      false,
+      this.labelsValue
     );
     this.panelTarget.querySelector("[data-submit]").disabled =
-      body.trim() === this.editor.dataset.original.trim() || !body.trim();
+      normalizeText(body) === normalizeText(original) || !body.trim();
   }
-
   confirmDiscard(force = false, withdrawal = false) {
     if (!this.dirty && !force) {
       return Promise.resolve(true);
@@ -372,6 +483,10 @@ export default class extends Controller {
         dialog.removeEventListener("cancel", cancel);
         if (discard) {
           this.dirty = false;
+        } else {
+          this.form?.elements.body.focus({
+            preventScroll: true
+          });
         }
         resolve(discard);
       };
@@ -391,7 +506,6 @@ export default class extends Controller {
       dialog.querySelector('[data-tw-choice="keep"]').focus();
     });
   }
-
   async submit(event) {
     event.preventDefault();
     const form = this.form;
@@ -401,36 +515,72 @@ export default class extends Controller {
       const response = await fetch(form.action, {
         method: "POST",
         body: new FormData(form),
-        headers: { Accept: "application/json" }
+        headers: {
+          Accept: "application/json"
+        }
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || this.labelsValue.error);
       }
       this.dirty = false;
-      await this.open(data.block, "suggestions", data.suggestion);
-      this.statusTarget.textContent = data.message;
+      await this.open(data.block);
+      this.notice(data.message);
     } catch (error) {
       form.querySelector("[data-form-error]").textContent = error.message;
       button.disabled = false;
     }
   }
-
+  notice(message) {
+    const notice = this.panelTarget.querySelector("[data-notice]");
+    if (notice) {
+      notice.textContent = message;
+      notice.hidden = false;
+    }
+    this.panelTarget.querySelector(".tw-panel-body").scrollTop = 0;
+  }
+  async withdraw(event) {
+    const url = event.currentTarget.dataset.url;
+    if (!(await this.confirmDiscard(true, true))) {
+      return;
+    }
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: this.requestHeaders()
+      });
+      if (!response.ok) {
+        throw new Error();
+      }
+      const data = await response.json();
+      await this.open(data.block);
+      this.notice(data.message);
+    } catch {
+      this.statusTarget.textContent = this.labelsValue.error;
+    }
+  }
+  requestHeaders() {
+    return {
+      "X-CSRF-Token":
+        document.querySelector('meta[name="csrf-token"]')?.content || "",
+      Accept: "application/json"
+    };
+  }
   async interact(event) {
     const button = event.currentTarget;
     if (!this.signedInValue) {
       this.loginTarget.click();
       return;
     }
-    const authorization = button.closest("[data-resource]").querySelector(`[data-tw-authorize="${button.dataset.kind}"]`);
+    const resource = button.closest("[data-resource]");
+    const authorization = resource.querySelector('[data-tw-authorize="like"]');
     if (authorization) {
       authorization.click();
       return;
     }
-    const key = button.closest("[data-resource]").dataset.resource;
     const buttons = [
       ...this.element.querySelectorAll(
-        `[data-resource="${key}"] button[data-kind="${button.dataset.kind}"]`
+        `[data-resource="${resource.dataset.resource}"] [data-kind="like"]`
       )
     ];
     buttons.forEach((item) => {
@@ -442,11 +592,7 @@ export default class extends Controller {
           button.getAttribute("aria-pressed") === "true"
             ? "DELETE"
             : "POST",
-        headers: {
-          "X-CSRF-Token":
-            document.querySelector('meta[name="csrf-token"]')?.content || "",
-          Accept: "application/json"
-        }
+        headers: this.requestHeaders()
       });
       if (!response.ok) {
         throw new Error();
@@ -454,28 +600,30 @@ export default class extends Controller {
       const data = await response.json();
       this.element.
         querySelectorAll(`[data-resource="${data.key}"]`).
-        forEach((resource) => {
-          resource.querySelectorAll('[data-kind="like"]').forEach((item) => {
-            item.setAttribute("aria-pressed", data.liked);
-            item.querySelector("[data-interaction-label]").textContent =
-              this.labelsValue[data.liked
-                ? "liked"
-                : "like"];
+        forEach((container) => {
+          container.querySelectorAll("[data-likes-label]").forEach((label) => {
+            label.textContent = data.likes_label;
           });
-          resource.querySelectorAll("[data-likes-count]").forEach((item) => {
-            item.textContent = data.likes;
+          container.querySelectorAll("[data-likes-count]").forEach((count) => {
+            count.textContent = data.likes;
           });
-          resource.querySelectorAll('[data-kind="follow"]').forEach((item) => {
-            item.setAttribute("aria-pressed", data.followed);
-            item.setAttribute(
-              "aria-label",
-              this.labelsValue[data.followed
-                ? "followed"
-                : "follow"]
-            );
-            item.title = item.getAttribute("aria-label");
-          });
+          container.
+            querySelectorAll('[data-kind="like"]').
+            forEach((control) => {
+              control.setAttribute("aria-pressed", data.liked);
+              const label = control.querySelector("[data-interaction-label]");
+              if (label) {
+                label.textContent =
+                  this.labelsValue[data.liked
+                    ? "liked"
+                    : "like"];
+              }
+              if (control.hasAttribute("data-own-unlike") && !data.liked) {
+                control.remove();
+              }
+            });
         });
+      await this.refreshStatistics();
     } catch {
       this.statusTarget.textContent = this.labelsValue.error;
     } finally {
@@ -484,26 +632,71 @@ export default class extends Controller {
       });
     }
   }
+  async refreshStatistics() {
+    this.statsAbort?.abort();
+    const abort = new AbortController();
+    this.statsAbort = abort;
+    try {
+      const response = await fetch(this.statisticsUrlValue, {
+        signal: abort.signal
+      });
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      this.element.querySelector("[data-summary]").textContent =
+        data.summary_text;
+      Object.entries(data.counts).forEach(([block, counts]) => {
+        const label = this.labelsValue.openLabel.
+          replace("%NUMBER%", data.numbers[block]).
+          replace("%LIKES%", counts.likes).
+          replace("%SUGGESTIONS%", counts.suggestions).
+          replace("%COMMENTS%", counts.comments);
+        this.element.
+          querySelectorAll(
+            `[data-open-block="${block}"][aria-label]:not(.tw-number)`
+          ).
+          forEach((item) => {
+            item.setAttribute("aria-label", label);
+          });
+        Object.entries(counts).forEach(([kind, count]) =>
+          this.element.
+            querySelectorAll(
+              `[data-block-count="${block}"][data-count-kind="${kind}"]`
+            ).
+            forEach((item) => {
+              item.textContent = count;
+            })
+        );
+      });
+      this.element.querySelectorAll("[data-chapter-count]").forEach((item) => {
+        item.textContent = data.chapters[item.dataset.chapterCount] || 0;
+      });
+    } catch {
 
+      /* The next panel navigation retries counters without disturbing reading. */
+    }
+  }
   mountComments() {
     this.panelTarget.
       querySelectorAll("[data-decidim-comments]").
-      forEach((element) => {
-        panelComments(element);
-      });
-    this.commentObserver?.disconnect();
+      forEach((element) => panelComments(element));
+    this.lastCommentCount = null;
     this.commentObserver = new MutationObserver(() => {
+      const counter = this.panelTarget.querySelector(".comments-count");
+      const count = Number(
+        counter?.textContent.match(/[\d.,]+/)?.[0].replace(/\D/g, "") || 0
+      );
+      const comments = this.panelTarget.querySelector("[data-comments-small]");
+      if (comments) {
+        comments.dataset.commentsSmall = count < 5;
+      }
+      if (count !== this.lastCommentCount) {
+        this.lastCommentCount = count;
+        this.refreshStatistics();
+      }
       if (this.commentFocusPending) {
         this.focusComment();
-      }
-      if (this.mode !== "comments") {
-        return;
-      }
-      const counter = this.panelTarget.querySelector(".comments-count");
-      if (counter) {
-        this.element.querySelector(
-          `[data-comment-count="${this.block}"]`
-        ).textContent = Number(counter.textContent.match(/\d+/)?.[0]) || "";
       }
     });
     this.commentObserver.observe(this.panelTarget, {
@@ -514,244 +707,97 @@ export default class extends Controller {
       attributeFilter: ["disabled"]
     });
   }
+  rememberDialogs(element) {
+    element.
+      querySelectorAll("[data-dialog]").
+      forEach((dialog) => this.panelDialogs.add(dialog.dataset.dialog));
+  }
   unmountComments() {
-    this.commentFocusPending = false;
+    this.panelDialogs.forEach((id) => {
+      const dialog = window.Decidim.currentDialogs?.[id];
+      dialog?.destroy();
+      dialog?.dialog.remove();
+      if (window.Decidim.currentDialogs) {
+        Reflect.deleteProperty(window.Decidim.currentDialogs, id);
+      }
+    });
+    this.panelDialogs.clear();
     this.commentObserver?.disconnect();
+    this.commentFocusPending = false;
     this.panelTarget.
       querySelectorAll("[data-decidim-comments]").
       forEach((element) =>
         window.$(element).data("comments")?.unmountComponent()
       );
   }
-  syncCounts() {
-    const state = this.panelTarget.querySelector("[data-panel-block]");
-    if (!state) {
-      return;
-    }
-    ["comment", "suggestion"].forEach((kind) => {
-      const element = this.element.querySelector(
-        `[data-${kind}-count="${this.block}"]`
-      );
-      if (element) {
-        element.textContent = Number(state.dataset[`${kind}Total`]) || "";
-      }
-    });
-  }
-  sort(event) {
-    this.order = event.target.value;
-    this.open(this.block, "suggestions");
-  }
-  previewSource(id) {
-    return this.panelTarget.querySelector(`[data-preview-suggestion="${id}"]`);
-  }
-  preview(event) {
-    this.showPreview(this.previewSource(event.currentTarget.dataset.previewId));
-    this.element.querySelector(`#block-${this.block} .tw-preview-label`)?.focus();
-  }
-  showPreview(source) {
-    if (!source) {
-      return;
-    }
-    this.previewId = source.dataset.previewSuggestion;
-    if (this.mobile.matches) {
-      return;
-    }
-    const host = this.element.querySelector(`#block-${this.block} [data-preview]`);
-    if (!host) {
-      return;
-    }
-    const heading = document.createElement("div");
-    heading.className = "tw-preview-heading";
-    const title = document.createElement("p");
-    title.className = "tw-preview-label";
-    title.tabIndex = -1;
-    title.textContent = source.dataset.label;
-    heading.append(title);
-    const diff = document.createElement("div");
-    diff.className = "tw-diff";
-    if (source.dataset.translated === "true") {
-      diff.append(source.content.cloneNode(true));
-    } else {
-      renderDiff(diff, source.dataset.original, source.dataset.replacement);
-    }
-    const sources = [...this.panelTarget.querySelectorAll('[data-preview-suggestion][data-pending="true"]')];
-    const position = sources.indexOf(source);
-    if (position >= 0 && sources.length > 1) {
-      heading.append(this.previewControls(sources, position));
-    }
-    host.replaceChildren(heading, diff);
-    host.hidden = false;
-    this.panelTarget.querySelectorAll("[data-preview-id]").forEach((button) => {
-      const selected = button.dataset.previewId === this.previewId;
-      button.hidden = selected;
-      button.setAttribute("aria-pressed", selected);
-    });
-    this.panelTarget.querySelectorAll("[data-marked-id]").forEach((label) => {
-      label.hidden = label.dataset.markedId !== this.previewId;
-    });
-    this.element.querySelector(`#block-${this.block} [data-valid-text]`).hidden = true;
-  }
-  previewControls(sources, position) {
-    const controls = document.createElement("div");
-    controls.className = "tw-preview-controls";
-    [-1, 1].forEach((direction) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "button button__sm button__transparent-secondary tw-preview-arrow";
-      button.setAttribute("aria-label", this.labelsValue[direction < 0
-        ? "previous"
-        : "next"]);
-      const arrow = document.createElement("span");
-      arrow.setAttribute("aria-hidden", "true");
-      arrow.textContent = direction < 0
-        ? "‹"
-        : "›";
-      button.append(arrow);
-      button.disabled = position + direction < 0 || position + direction >= sources.length;
-      button.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const next = sources[position + direction];
-        if (this.panelTarget.querySelector("[data-detail-id]").dataset.detailId) {
-          this.open(this.block, "suggestions", next.dataset.previewSuggestion);
-        } else {
-          this.showPreview(next);
-          const focus = this.element.querySelector(`[data-preview] button[aria-label="${button.getAttribute("aria-label")}"]:not([disabled])`) || this.element.querySelector("[data-preview] button:not([disabled])");
-          focus?.focus({ preventScroll: true });
-        }
-      });
-      controls.append(button);
-    });
-    return controls;
-  }
-  commentSuggestion() {
+  focusComment() {
     if (!this.signedInValue) {
       this.loginTarget.click();
       return;
     }
-    this.commentFocusPending = true;
-    this.focusComment();
-  }
-  focusComment() {
-    const field = this.panelTarget.querySelector("[data-decidim-comments] textarea:not([disabled])");
-    if (field) {
-      this.commentFocusPending = false;
-      field.focus();
-      field.scrollIntoView({ block: "center" });
-    }
-  }
-  async withdraw(event) {
-    const url = event.currentTarget.dataset.url;
-    if (!(await this.confirmDiscard(true, true))) {
+    const field = this.panelTarget.querySelector("textarea:not([disabled])");
+    if (!field) {
+      this.commentFocusPending = true;
       return;
     }
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "X-CSRF-Token":
-          document.querySelector('meta[name="csrf-token"]')?.content || "",
-        Accept: "application/json"
-      }
+    this.commentFocusPending = false;
+    const body = this.panelTarget.querySelector(".tw-panel-body");
+    body.scrollTop +=
+      field.getBoundingClientRect().top -
+      body.getBoundingClientRect().top -
+      body.clientHeight / 3;
+    field.focus({
+      preventScroll: true
     });
-    if (!response.ok) {
-      this.statusTarget.textContent = this.labelsValue.error;
-      return;
-    }
-    const data = await response.json();
-    await this.open(data.block, "suggestions");
-    this.statusTarget.textContent = data.message;
   }
-  async copy() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      this.statusTarget.textContent = this.labelsValue.copied;
-    } catch {
-      this.statusTarget.textContent = window.location.href;
+  imageLoaded(event) {
+    resizeReadingImage(event.currentTarget);
+  }
+  imageBackdrop(event) {
+    if (event.target === this.imageDialogTarget) {
+      this.closeImage();
     }
   }
-  paragraph(event) {
-    if (
-      this.mobile.matches ||
-      window.getSelection().toString() ||
-      event.target.closest("a,button,input,textarea,select,label,[data-editor]")
-    ) {
-      return;
-    }
-    this.open(
-      event.currentTarget.dataset.block,
-      "comments",
-      null,
-      event.currentTarget.querySelector("a")
-    );
+  openImage(event) {
+    this.imageOrigin = event.currentTarget;
+    showImage(this.imageDialogTarget, this.imageOrigin);
   }
-  chapter(event) {
-    event.preventDefault();
-    const target = this.element.querySelector(event.currentTarget.hash);
-    target?.scrollIntoView({
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
-      block: "start"
-    });
-    target?.focus({ preventScroll: true });
-  }
-  observeChapters() {
-    this.observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-          this.tocTarget.querySelectorAll("a").forEach((link) => {
-            if (link.hash === `#${entry.target.id}`) {
-              link.setAttribute("aria-current", "location");
-            } else {
-              link.removeAttribute("aria-current");
-            }
-          });
-        }),
-      { rootMargin: "-5% 0px -70% 0px" }
-    );
-    this.element.
-      querySelectorAll(".tw-heading").
-      forEach((heading) => this.observer.observe(heading));
+  closeImage() {
+    hideImage(this.imageDialogTarget, this.imageOrigin);
   }
   keydown(event) {
-    if (this.panelTarget.hidden || this.confirmTarget.open) {
-      return;
-    }
-    const activeDialog = document.activeElement?.closest(
-      '[role="dialog"],dialog[open]'
-    );
     if (
-      activeDialog &&
-      activeDialog !== this.panelTarget &&
-      !this.panelTarget.contains(activeDialog)
+      this.confirmTarget.open ||
+      this.imageDialogTarget.open ||
+      document.querySelector('[data-dialog][aria-hidden="false"]')
     ) {
       return;
     }
-    if (event.key === "Escape") {
+    if (event.key === "Escape" && this.block) {
       event.preventDefault();
       this.close();
+      return;
     }
-    if (event.key === "Tab" && this.mobile.matches) {
-      const elements = [
-        ...this.panelTarget.querySelectorAll(
-          'a[href],button:not([disabled]),textarea,input,select,[tabindex="0"]'
-        )
-      ].filter((item) => item.getClientRects().length);
-      const first = elements[0],
-          last = elements.at(-1);
-      if (
-        event.shiftKey &&
-        (document.activeElement === first ||
-          !elements.includes(document.activeElement))
-      ) {
-        event.preventDefault();
-        last?.focus();
-      } else if (!event.shiftKey && (document.activeElement === last || !elements.includes(document.activeElement))) {
-        event.preventDefault();
-        first?.focus();
-      }
+    if (event.key !== "Tab" || !this.mobile.matches || !this.block) {
+      return;
+    }
+    const controls = [
+      ...this.panelTarget.querySelectorAll(
+        'button:not([disabled]),a[href],textarea:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled])'
+      )
+    ].filter((control) => control.getClientRects().length > 0);
+    const first = controls[0];
+    const last = controls.at(-1);
+    if (
+      event.shiftKey &&
+      (document.activeElement === first ||
+        document.activeElement.hasAttribute("data-panel-title"))
+    ) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
     }
   }
 }

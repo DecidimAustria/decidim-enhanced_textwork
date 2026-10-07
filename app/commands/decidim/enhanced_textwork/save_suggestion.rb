@@ -48,7 +48,7 @@ module Decidim
       end
 
       def allowed?
-        Access.allowed?(@user, @block, :suggest) && @block.paragraph? && !@block.component.current_settings.suggestions_blocked
+        Access.allowed?(@user, @block, :suggest) && @block.paragraph? && Participation.open?(@block.component, :suggestions)
       end
     end
   end

@@ -1,19 +1,8 @@
-<button type="button" class="tw-text-button tw-back" data-open-block="<%= @block.id %>" data-mode="suggestions"><%= icon "arrow-left-line" %><%= tw("all_suggestions") %></button>
-<section class="tw-suggestion-detail" data-suggestion="<%= @suggestion.id %>" aria-labelledby="tw-suggestion-title">
-  <%= render "suggestion_meta", suggestion: @suggestion, author: true %>
-  <h3 id="tw-suggestion-title"><%= tw("suggestion_title", number: @block.number) %></h3>
-  <p class="tw-muted tw-desktop"><%= tw("change_marked") %></p>
-  <div class="tw-mobile"><%= render "suggestion_diff", suggestion: @suggestion %></div>
-  <% if @suggestion.outdated? %><p class="tw-outdated"><%= tw("outdated") %></p><% end %>
-  <% if @suggestion.original(:justification).present? %><div><h4><%= tw("justification") %></h4><%= textwork_reading(@suggestion, :justification) %></div><% end %>
-  <% if @suggestion.original(:answer).present? %><div><h4><%= tw("decision_reason") %></h4><%= textwork_reading(@suggestion, :answer) %></div><% end %>
-  <%= render "suggestion_actions", suggestion: @suggestion %>
-  <div class="tw-card-actions">
-    <%= render "interactions", resource: @suggestion, follow: false %>
-    <%= cell "decidim/report_button", @suggestion, modal_id: "tw-report-#{@suggestion.id}" %>
-  </div>
+<button type="button" class="tw-text-button tw-back" data-open-block="<%= @block.id %>"><%= tw('suggestions.show.back', number: textwork_number(@block)) %></button>
+<section class="tw-suggestion-detail" data-suggestion="<%= @suggestion.id %>">
+  <h3><%= tw('suggestions.show.title', author: @suggestion.author&.name) %></h3><time class="tw-muted" datetime="<%= @suggestion.created_at.iso8601 %>"><%= l(@suggestion.created_at.to_date) %></time>
+  <%= render 'suggestion_diff', suggestion: @suggestion, compact: false %>
+  <% if @suggestion.original(:justification).present? %><div class="tw-justification"><strong><%= tw('suggestions.justification') %></strong> <%= textwork_reading(@suggestion, :justification) %></div><% end %>
+  <div class="tw-card-actions"><%= render 'interactions', resource: @suggestion %><div class="tw-own-actions"><%= render 'suggestion_actions', suggestion: @suggestion %></div><%= cell 'decidim/report_button', @suggestion, modal_id: "tw-report-#{@suggestion.id}" %></div>
 </section>
-<section class="tw-suggestion-comments" aria-label="<%= tw('suggestion_comments') %>">
-  <h3><%= tw("suggestion_comments") %></h3>
-  <%= inline_comments_for(@suggestion) %>
-</section>
+<section class="tw-comments" data-comments-open="<%= textwork_open?(:comments) %>" data-comments-kind="suggestion" data-comments-small="<%= @suggestion.comments_count < 5 %>"><%= inline_comments_for(@suggestion) %></section>

@@ -1,3 +1,4 @@
+---
 de:
   decidim:
     components:
@@ -15,10 +16,33 @@ de:
             comments_max_length: Maximale Kommentarlänge
             likes_enabled: Zustimmung aktiviert
             resources_permissions_enabled: Berechtigungen je Inhalt aktiviert
+            evaluation_enabled: Auswertung aktiviert
           step:
             announcement: Ankündigung
             comments_blocked: Kommentare gesperrt
             likes_blocked: Zustimmung gesperrt
             suggestions_blocked: Änderungsvorschläge gesperrt
+            likes_enabled: Zustimmungen aktiviert
     textwork:
-      existing_document: Diese Komponente enthält bereits ein Dokument. Stellen Sie es aus dem Papierkorb wieder her oder verwenden Sie eine leere Komponente.
+      existing_document: Diese Komponente enthält bereits ein Dokument. Stellen Sie
+        es aus dem Papierkorb wieder her oder verwenden Sie eine leere Komponente.
+      admin:
+        documents:
+          locked: Dieses Dokument ist veröffentlicht. Text und Aufbau lassen sich
+            nicht mehr ändern.
+          locked_has_feedback: Zu diesem Dokument gibt es bereits Rückmeldungen. Es
+            lässt sich nicht mehr zurückziehen oder ändern. In den Papierkorb verschieben
+            ist weiter möglich.
+          edit_translations: Übersetzungen bearbeiten
+        images:
+          missing_description:
+            one: 1 Bild hat noch keine Beschreibung. Menschen, die das Bild nicht
+              sehen, erfahren dann nicht, was es zeigt.
+            other: "%{count} Bilder haben noch keine Beschreibung. Menschen, die das
+              Bild nicht sehen, erfahren dann nicht, was sie zeigen."
+          description_label: Was ist auf dem Bild zu sehen?
+          publish_anyway: Trotzdem veröffentlichen
+        import:
+          images_skipped: Bilder aus der Datei wurden nicht übernommen. Bilder fügen
+            Sie über den Editor ein.
+          video_skipped: Videos werden nicht übernommen.

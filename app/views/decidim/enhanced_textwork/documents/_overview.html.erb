@@ -1,0 +1,17 @@
+<div class="tw-panel-content tw-overview" data-overview>
+  <header class="tw-panel-header"><h2 tabindex="-1" data-panel-title><%= tw('overview.label') %></h2></header>
+  <div class="tw-panel-body">
+    <button type="button" class="button button__sm button__secondary tw-return" data-return-block hidden></button>
+    <% unless textwork_closed? %>
+      <section class="tw-help" data-help>
+        <div class="tw-help-heading"><h3><%= tw('overview.help.title') %></h3><button type="button" class="tw-icon" data-action="textwork#hideHelp" aria-label="<%= tw('overview.help.hide') %>"><%= icon 'close-line' %></button></div>
+        <ol><li><%= tw('overview.help.step_1_html') %></li><li><%= tw('overview.help.step_2_html') %></li><li><%= tw('overview.help.step_3_html') %></li></ol>
+        <ul class="tw-legend"><li><%= icon 'thumb-up-line' %><%= tw('overview.help.legend_likes') %></li><li><%= icon 'pencil-line' %><%= tw('overview.help.legend_suggestions') %></li><li><%= icon 'chat-1-line' %><%= tw('overview.help.legend_comments') %></li></ul>
+      </section>
+      <button type="button" class="tw-text-button" data-show-help data-action="textwork#showHelp" hidden><%= tw('overview.help.show') %></button>
+    <% end %>
+    <% if @stats.most_discussed.any? %><section class="tw-discussed"><h3><%= tw('overview.most_discussed.title') %></h3><p class="tw-muted"><%= tw('overview.most_discussed.hint') %></p><% @stats.most_discussed.each do |block| %><button type="button" class="tw-hot-block" data-open-block="<%= block.id %>" aria-label="<%= textwork_block_label(block) %>"><strong><%= textwork_number(block) %></strong><span class="tw-hot-excerpt"><%= textwork_excerpt(block, length: 48) %></span><span class="tw-counts"><%= render 'counts', block: %></span></button><% end %></section><% end %>
+    <% if @stats.quiet.any? %><p class="tw-muted"><%= tw('overview.quiet', count: @stats.quiet.size) %> <button type="button" class="tw-text-button" data-open-block="<%= @stats.quiet.first.id %>"><%= tw('overview.quiet.open_first') %></button></p><% end %>
+    <p class="tw-muted tw-deadline"><%= textwork_closed? ? tw('overview.closed') : textwork_deadline ? tw('overview.deadline', date: l(textwork_deadline)) : tw('overview.no_deadline') %></p>
+  </div>
+</div>

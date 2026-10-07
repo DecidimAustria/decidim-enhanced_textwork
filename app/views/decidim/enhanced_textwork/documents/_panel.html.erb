@@ -1,49 +1,25 @@
-<div class="tw-panel-content" data-panel-block="<%= @block.id %>" data-panel-mode="<%= @mode %>" data-detail-id="<%= @suggestion.id if @suggestion && @mode == 'suggestions' %>" data-comment-total="<%= @block.comments_count %>" data-suggestion-total="<%= @block.pending_suggestions_count %>">
+<div class="tw-panel-content" data-panel-block="<%= @block.id %>" data-panel-mode="<%= @mode %>" data-panel-number="<%= textwork_number(@block) %>" data-comment-total="<%= @block.comments_count %>" data-suggestion-total="<%= @suggestions.size %>">
   <header class="tw-panel-header">
-    <div><h2 tabindex="-1" data-panel-title><%= tw("paragraph", number: @block.number) %></h2><p class="tw-muted"><%= tw("version", number: @block.current_version_number) %> · <%= @block.current_version_number == 1 ? tw("initial_text") : tw("last_changed", date: l(@block.current_version.created_at.to_date)) %></p></div>
-    <div class="tw-panel-tools relative">
-      <button type="button" class="tw-icon" data-controller="dropdown" data-target="tw-tools-<%= @block.id %>" aria-label="<%= tw('actions') %>"><%= icon "more-fill" %></button>
-      <ul id="tw-tools-<%= @block.id %>" class="dropdown dropdown__action" aria-hidden="true">
-        <li class="dropdown__item" role="presentation"><button type="button" class="dropdown__button" role="menuitem" data-action="textwork#copy"><%= tw("copy_link") %></button></li>
-        <li class="dropdown__item" role="presentation"><%= link_to tw("versions"), block_versions_path(@block), class: "dropdown__button", role: "menuitem" %></li>
-      </ul>
-      <button type="button" class="tw-icon" data-action="textwork#close" aria-label="<%= tw('close') %>"><%= icon "close-line" %></button>
-    </div>
+    <div class="tw-panel-title"><h2 tabindex="-1" data-panel-title><%= tw('panel.title', number: textwork_number(@block)) %></h2><button type="button" class="tw-icon" data-action="textwork#close" aria-label="<%= tw('panel.close') %>"><%= icon 'close-line' %></button></div>
+    <p class="tw-panel-excerpt"><%= textwork_excerpt(@block) %></p>
+    <% if @mode == 'list' %><div class="tw-panel-actions">
+      <% if textwork_open?(:likes) %><%= render 'interactions', resource: @block, panel: true %><% end %>
+      <% if textwork_open?(:suggestions) %><button type="button" class="tw-action" data-open-block="<%= @block.id %>" data-mode="edit"><%= icon 'pencil-line' %><span><%= tw('panel.suggest') %></span></button><% end %>
+      <% if textwork_open?(:comments) %><button type="button" class="tw-action" data-action="textwork#focusComment"><%= icon 'chat-1-line' %><span><%= tw('panel.comment') %></span></button><% end %>
+    </div><% end %>
   </header>
-  <% unless @mode == "edit" || @suggestion %>
-    <nav class="tw-tabs" aria-label="<%= tw('discussion') %>">
-      <button type="button" data-open-block="<%= @block.id %>" data-mode="comments" aria-current="<%= @mode == 'comments' ? 'page' : 'false' %>"><%= tw("comments") %> (<%= @block.comments_count %>)</button>
-      <button type="button" data-open-block="<%= @block.id %>" data-mode="suggestions" aria-current="<%= @mode == 'suggestions' ? 'page' : 'false' %>"><%= tw("suggestions") %> (<%= @block.pending_suggestions_count %>)</button>
-    </nav>
-  <% end %>
   <div class="tw-panel-body">
-    <% unless @suggestion || @mode == "edit" %><blockquote class="tw-mobile-quote"><%= textwork_reading(@block) %></blockquote><% end %>
-    <% if @mode == "edit" %>
-      <%= render "editor" %>
-    <% elsif @mode == "comments" %>
-      <%= inline_comments_for(@block) %>
-    <% elsif @suggestion %>
-      <%= render "suggestion_detail" %>
+    <p class="tw-notice" data-notice role="status" aria-live="polite" hidden></p>
+    <% if @mode == 'edit' %><%= render 'editor' %>
+    <% elsif @mode == 'detail' %><%= render 'suggestion_detail' %>
     <% else %>
-      <% pending = @suggestions.select(&:pending?) %>
-      <% if pending.size > 1 %><div class="tw-sort"><%= label_tag :tw_sort, tw("sort") %><%= select_tag :tw_sort, options_for_select([[tw("most_liked"), "likes"], [tw("newest"), "newest"]], params[:sort]), data: { action: "change->textwork#sort" } %></div><% end %>
-      <% if pending.empty? %><p><%= tw("no_suggestions") %></p><% end %>
-      <div class="tw-suggestions"><% pending.each do |suggestion| %><%= render "suggestion", suggestion: %><% end %></div>
-      <% closed = @suggestions.reject(&:pending?) %>
-      <% if closed.any? %><details class="tw-closed"><summary><%= tw("closed", count: closed.size) %></summary><div class="tw-suggestions"><% closed.each do |suggestion| %><%= render "suggestion", suggestion: %><% end %></div></details><% end %>
+      <blockquote class="tw-mobile-quote"><%= textwork_reading(@block) %></blockquote>
+      <h3 class="tw-suggestions-title"><%= tw('suggestions.title', count: @suggestions.size) %></h3>
+      <% if @suggestions.empty? %><p class="tw-muted"><%= tw('suggestions.empty') %></p><% end %>
+      <div class="tw-suggestions"><% @suggestions.each_with_index do |suggestion, index| %><%= render 'suggestion', suggestion:, extra: index >= 3 %><% end %></div>
+      <% if @suggestions.size > 3 %><button type="button" class="tw-text-button tw-show-all" data-action="textwork#showAll"><%= tw('suggestions.show_all', count: @suggestions.size) %></button><% end %>
+      <section class="tw-comments" data-comments-open="<%= textwork_open?(:comments) %>" data-comments-kind="block" data-comments-small="<%= @block.comments_count < 5 %>"><%= inline_comments_for(@block) %></section>
     <% end %>
   </div>
-  <% if @mode == "edit" && !current_component.current_settings.suggestions_blocked && Decidim::EnhancedTextwork::Access.allowed?(current_user, @block, :suggest) %>
-    <footer class="tw-panel-footer tw-form-actions">
-      <button type="button" class="button button__sm button__transparent-secondary" data-open-block="<%= @block.id %>" data-mode="suggestions"><%= tw("cancel") %></button>
-      <button type="submit" form="tw-suggestion-form" class="button button__sm button__secondary" data-submit><%= tw("submit") %></button>
-    </footer>
-  <% elsif @mode == "suggestions" && !@suggestion %>
-    <footer class="tw-panel-footer">
-      <% if current_component.current_settings.suggestions_blocked %><p role="status"><%= tw("suggestions_blocked") %></p><% else %><button type="button" class="button button__sm button__secondary tw-new" data-open-block="<%= @block.id %>" data-mode="edit"><%= tw("new_suggestion") %></button><p class="tw-muted"><%= tw("edit_directly") %></p><% end %>
-    </footer>
-  <% elsif @mode == "suggestions" && @suggestion && @suggestion.accepts_new_comments? %>
-    <footer class="tw-panel-footer tw-mobile"><button type="button" class="button button__sm button__secondary tw-new" data-action="textwork#commentSuggestion"><%= tw("comment_suggestion") %></button></footer>
-  <% end %>
-  <% if @mode == "suggestions" %><%= render "suggestion_previews" %><% end %>
+  <% if @mode == 'edit' %><footer class="tw-panel-footer"><button type="button" class="button button__sm button__transparent-secondary" data-open-block="<%= @block.id %>"><%= tw('suggestions.form.cancel') %></button><% if @editor_allowed %><button type="submit" form="tw-suggestion-form" class="button button__sm button__secondary" data-submit disabled><%= tw('suggestions.form.submit') %></button><% end %></footer><% end %>
 </div>

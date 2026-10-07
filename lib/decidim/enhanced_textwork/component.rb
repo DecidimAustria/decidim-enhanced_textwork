@@ -12,8 +12,10 @@ Decidim.register_component(:textwork) do |component|
     settings.attribute :comments_max_length, type: :integer, default: 1000
     settings.attribute :likes_enabled, type: :boolean, default: true
     settings.attribute :resources_permissions_enabled, type: :boolean, default: true
+    settings.attribute :evaluation_enabled, type: :boolean, default: false
   end
   component.settings(:step) do |settings|
+    settings.attribute :likes_enabled, type: :boolean, default: true
     settings.attribute :announcement, type: :text, translated: true, editor: true
     settings.attribute :comments_blocked, type: :boolean, default: false
     settings.attribute :likes_blocked, type: :boolean, default: false

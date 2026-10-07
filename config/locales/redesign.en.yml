@@ -2,58 +2,76 @@
 en:
   decidim:
     textwork:
-      marked_in_text: "Highlighted in the text"
-      details: "Details"
-      suggestion_title: "Suggested change to paragraph %{number}"
-      change_marked: "The change is highlighted in the text."
-      suggestion_comments: "Comments on the suggestion"
-      comment_suggestion: "Comment on this suggestion"
-      decision_reason: "Moderation decision"
-      propose_change: "Suggest a change"
-      edit_instruction: "Edit the paragraph directly in the text. Your change will be highlighted there."
-      view_existing: "View existing suggestions"
-      edit_directly: "You will edit the paragraph text directly."
-      preview_label: "Preview: suggestion %{index} of %{count} · %{name}"
-      preview_closed: "Preview: suggestion by %{name}"
-      last_changed: "last changed on %{date}"
+      decision_reason: Moderation decision
+      last_changed: last changed on %{date}
       removed_reason: The paragraph was removed.
       paragraph: Paragraph %{number}
       paragraph_label: Paragraph
-      suggestion_by: Suggestion by %{name} for paragraph %{number}
       by: Suggestion by %{name}
-      contents: Contents
-      intro: 'How to participate: use the speech bubble beside a paragraph to comment,
-        or the pencil to suggest a change.'
-      summary: "%{paragraphs} paragraphs · %{comments} comments · %{suggestions} pending
-        suggestions"
       like: Agree
       liked: Agreed
-      follow: Follow
-      followed: Following – unfollow
       comments: Comments
-      suggestions: Suggestions
-      suggestions_for: Suggestions for paragraph %{number}
-      comments_for: Comments on paragraph %{number}
-      discussion: Paragraph discussion
+      suggestions:
+        title: Suggestions (%{count})
+        empty: Nobody has suggested a change yet.
+        show_all: Show all %{count} suggestions
+        label: Suggestion by %{author}
+        own: Your suggestion
+        before: Current
+        after: Suggested
+        justification: 'Reason:'
+        like: Agree · %{count}
+        liked: Agreed · %{count}
+        like_label: Agree with this suggestion
+        unlike_label: Withdraw agreement
+        likes_count:
+          one: 1 agreement
+          other: "%{count} agreements"
+        comments_link: Comments (%{count})
+        edit: Edit
+        withdraw: Withdraw
+        report: Report
+        unavailable: This suggestion is not available.
+        show:
+          back: "← Back to paragraph %{number}"
+          title: Suggestion by %{author}
+        form:
+          title: Suggest a change
+          title_edit: Edit your suggestion
+          text_label: New text for paragraph %{number}
+          list_hint: A new line starting with “- ” adds a list item.
+          original_language_hint: Changes apply to the original text (%{language}).
+          preview_title: This is what your change looks like
+          preview_empty: No change yet. Edit the text in the field above.
+          justification_label: Reason
+          optional: "(optional)"
+          cancel: Cancel
+          submit: Submit suggestion
+        discard:
+          title: Discard draft?
+          body: Your change to paragraph %{number} has not been submitted yet.
+          keep: Keep editing
+          confirm: Discard
+        create:
+          success: Your suggestion has been submitted.
+          invalid: The suggestion could not be saved.
+          unchanged: The text has not been changed.
+        update:
+          success: Your suggestion has been updated.
+          not_allowed: The suggestion can no longer be edited because someone has
+            already agreed or commented.
+        withdraw_action:
+          confirm: Do you really want to withdraw your suggestion?
+          success: Your suggestion has been withdrawn.
+        like_own_not_allowed: You cannot agree with your own suggestion.
+        unlike_own: Withdraw your own agreement
       close: Close
       login: Sign in
       error: Something went wrong. Please try again.
-      loading: Loading …
-      copied: Link copied.
-      copy_link: Copy link
       versions: Version history
       document_history: Document history
       version: Version %{number}
-      base_version: based on version %{number}
       version_label: Version
-      initial_text: Original text
-      no_suggestions: No suggestions yet.
-      all_suggestions: All suggestions
-      closed: Closed suggestions (%{count})
-      sort: Sort
-      most_liked: Most agreement
-      newest: Newest first
-      new_suggestion: Suggest your own change
       suggestions_blocked: New suggestions are closed in this phase.
       state_pending: Pending
       state_accepted: Accepted
@@ -66,21 +84,11 @@ en:
       optional_justification: Justification (optional)
       answer: Decision explanation (required for rejection)
       show_original: Show original with changes
-      show_in_text: Show in text
       edit: Edit
       withdraw: Withdraw
       withdrawn: Your suggestion was withdrawn.
-      edit_original: Changes refer to the original text (%{language}).
-      existing_suggestions: This paragraph already has %{count} suggestions. If one
-        matches your idea, you can agree with it.
-      you_edit: You are editing this paragraph
-      live_preview: Your changes
-      list_hint: Start a new line with “- ” to add a list item.
       cancel: Cancel
       submit: Submit suggestion
-      submitted: Your suggestion was submitted.
-      discard_question: Discard draft?
-      keep_editing: Keep editing
       discard: Discard
       removed: This paragraph was removed.
       unavailable: This suggestion is unavailable.
@@ -104,8 +112,13 @@ en:
       description: Introduction
       save: Save
       saved: Saved.
-      export: Export Word document
+      export:
+        block_likes:
+          one: 1 agreement with the paragraph
+          other: "%{count} agreements with the paragraph"
+        image_placeholder: "[Figure: %{text}]"
       export_language: Export language
+      export_action: Export textwork
       author: Author
       actions: Actions
       review: Review and decide
@@ -143,15 +156,82 @@ en:
         reject: "%{user_name} changed the Textwork content."
       export_missing_translation: The export is not yet fully available in the selected
         language. Complete or review translations and try again.
-      withdraw_question: Withdraw suggestion?
       trashed: The document is in the trash. Its content and contributions are preserved.
       restored: The document was restored.
       trash: Move to trash
       restore: Restore
       trash_confirm: Move the document to the trash? It can be restored later.
-      previous: Previous suggestion
-      next: Next suggestion
       translation_reviewed: This translation has been reviewed against the new original.
+      documents:
+        show:
+          summary: "%{paragraphs} paragraphs · %{comments} comments · %{suggestions}
+            suggestions"
+          summary_deadline: Feedback until %{date}
+          mobile_hint: Tap a paragraph to agree, comment or suggest a change.
+      toc:
+        button: Table of contents
+        count_hint: Number = comments and suggestions
+      blocks:
+        number_link_label: Open paragraph %{number}
+        open_label: 'Open paragraph %{number}: %{likes} agreements, %{suggestions}
+          suggestions, %{comments} comments'
+      images:
+        enlarge: Enlarge
+        enlarged_label: Enlarged image
+        close: Close
+        title: Figure
+        alt: Image description (alternative text)
+        review_title: Review image descriptions
+        save_descriptions: Save descriptions
+        skipped: Unsupported or external images and videos were omitted.
+        export: "[Figure: %{alt}]"
+      overview:
+        label: Overview
+        back_to_block: "← Back to paragraph %{number}"
+        help:
+          title: How to take part
+          hide: Hide instructions
+          show: How to take part
+          step_1_html: "<strong>Click a paragraph.</strong> Everything said and suggested
+            about it then appears here."
+          step_2_html: "<strong>Comment</strong> or <strong>suggest a change to the
+            text</strong>."
+          step_3_html: "<strong>Agree:</strong> with the paragraph as it is, or with
+            a suggestion."
+          legend_likes: Agreements with the paragraph
+          legend_suggestions: Suggestions
+          legend_comments: Comments
+        most_discussed:
+          title: Most discussed
+          hint: 'Open a paragraph to agree, comment or suggest a change:'
+        quiet:
+          one: 1 paragraph has no suggestion and no comment yet.
+          other: "%{count} paragraphs have no suggestion and no comment yet."
+          open_first: Open the first one
+        deadline: Feedback is possible until %{date}. After that it will be evaluated
+          and the text will be revised.
+        no_deadline: Feedback will be evaluated after the collection phase. The text
+          will then be revised.
+        closed: The collection phase has ended. The feedback is being evaluated.
+      panel:
+        title: Paragraph %{number}
+        close: Close
+        like: Agree · %{count}
+        liked: Agreed · %{count}
+        like_label: Agree with the paragraph as it is
+        unlike_label: Withdraw agreement with the paragraph
+        suggest: Suggest a change
+        comment: Comment
+      diff:
+        inserted: inserted
+        deleted: deleted
+      translations:
+        pending: Translation in progress
+        machine_translated: Machine translated
+      export_likes: 'Agreements: %{count}'
+      suggestion_by: Suggestion by %{name} for paragraph %{number}
+      base_version: based on version %{number}
+      initial_text: Original text
     events:
       textwork:
         suggestion_created:
@@ -185,3 +265,15 @@ en:
           email_outro: You receive this message because of your contribution, agreement
             or subscription.
           notification_title: 'Document structure changed: <a href="%{resource_path}">%{resource_title}</a>.'
+    components:
+      textwork:
+        name: Textwork
+        actions:
+          comment: Comment
+          like: Agree
+          suggest: Suggest a change
+        settings:
+          step:
+            comments_blocked: Comments blocked
+            suggestions_blocked: Suggestions blocked
+            likes_blocked: Agreement blocked

@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Decidim::EnhancedTextwork::TranslationRequest do
-  let(:document) { create(:textwork_document) }
+  let(:document) { create(:textwork_document, published_at: nil) }
   let(:admin) { create(:user, :admin, :confirmed, organization: document.organization) }
   let(:editor) { Decidim::EnhancedTextwork::EditDocument.new(document, admin) }
   let!(:block) { editor.add(kind: "paragraph", body: "More trees.") }
@@ -22,6 +22,7 @@ RSpec.describe Decidim::EnhancedTextwork::TranslationRequest do
   end
 
   it "saves a provider response without creating a content or PaperTrail version" do
+    document.publish!
     request = described_class.request(block, :body, :de)
     versions = block.versions.count
     Decidim::MachineTranslationSaveJob.perform_now(request, :payload, "de", "Mehr Bäume.")

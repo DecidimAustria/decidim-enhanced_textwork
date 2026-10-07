@@ -1,6 +1,5 @@
-<div class="tw-diff <%= local_assigns[:compact] ? 'tw-diff-snippet' : 'tw-diff-full' %>" data-diff-output data-compact="<%= !!local_assigns[:compact] %>">
-  <% if I18n.locale.to_s != @document.locale && params[:original] != '1' %>
-    <%= textwork_reading(suggestion) %>
-    <%= link_to tw("show_original"), document_path(@document, block: @block.id, suggestion: suggestion.id, original: 1) %>
-  <% end %>
+<% translated = I18n.locale.to_s != @document.locale && params[:original] != '1' %>
+<div class="tw-diff" data-diff-output data-original="<%= suggestion.changeset['original'] %>" data-replacement="<%= suggestion.original %>" data-translated="<%= translated %>" data-compact="<%= !!local_assigns[:compact] %>">
+  <% if translated %><%= textwork_reading(suggestion) %><%= link_to tw('show_original'), document_path(@document, block: @block.id, suggestion: suggestion.id, original: 1) %>
+  <% else %><div class="tw-before"><strong><%= tw('suggestions.before') %></strong><div><%= Decidim::EnhancedTextwork::Markdown.render(suggestion.changeset['original']) %></div></div><div class="tw-after"><strong><%= tw('suggestions.after') %></strong><div><%= textwork_reading(suggestion) %></div></div><% end %>
 </div>

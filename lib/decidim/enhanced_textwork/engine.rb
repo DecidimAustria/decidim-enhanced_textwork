@@ -8,6 +8,7 @@ module Decidim
         root to: "documents#index"
         resources :documents, only: [:index, :show] do
           get :panel, on: :member
+          get :statistics, on: :member
           get :history, on: :member
         end
         resources :blocks, only: [:index, :show] do
@@ -23,6 +24,32 @@ module Decidim
       end
       initializer "decidim_enhanced_textwork.assets" do
         Decidim.register_assets_path root.join("app/packs").to_s
+      end
+      initializer "decidim_enhanced_textwork.comment_visibility" do
+        config.to_prepare do
+          Decidim::Comments::Comment.prepend(CommentVisibility) unless Decidim::Comments::Comment < CommentVisibility
+        end
+      end
+      initializer "decidim_enhanced_textwork.participation" do
+        config.to_prepare do
+          integrations = {
+            Decidim::Permissions => CorePermissions::Global,
+            Decidim::FollowsController => CoreFollowContext,
+            Decidim::Comments::Permissions => CoreCommentPermissions,
+            Decidim::LikeResource => CoreCommands::Like,
+            Decidim::UnlikeResource => CoreCommands::Unlike,
+            Decidim::CreateFollow => CoreCommands::Follow,
+            Decidim::DeleteFollow => CoreCommands::Follow,
+            Decidim::Comments::CreateComment => CoreCommands::CreateComment,
+            Decidim::Comments::UpdateComment => CoreCommands::UpdateComment,
+            Decidim::Comments::VoteComment => CoreCommands::VoteComment,
+            Decidim::Comments::CommentsCell => CommentControls::List,
+            Decidim::Comments::CommentFormCell => CommentControls::Form,
+            Decidim::AuthorCell => CommentControls::Author,
+            Decidim::Comments::CommentCell => CommentControls::Comment
+          }
+          integrations.each { |klass, extension| klass.prepend(extension) unless klass < extension }
+        end
       end
       initializer "decidim_enhanced_textwork.icons" do
         %w(Document Block Suggestion).each do |name|

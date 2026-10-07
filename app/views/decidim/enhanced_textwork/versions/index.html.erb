@@ -6,7 +6,7 @@
     <div class="editor-content"><%= Decidim::EnhancedTextwork::Markdown.render(versioned_resource.original) %></div>
     <h2><%= tw("comments") %></h2>
     <% @archived_comments.each do |comment| %><article class="my-6"><h3><%= comment.author.name %> · <%= l(comment.created_at.to_date) %></h3><%= decidim_sanitize_editor(translated_attribute(comment.body)) %></article><% end %>
-    <h2><%= tw("suggestions") %></h2>
+    <h2><%= tw("suggestions.title", count: @suggestions&.count || @archived_suggestions&.count || 0) %></h2>
     <% @archived_suggestions.each do |suggestion| %><article class="my-6"><h3><%= tw("by", name: suggestion.author.name) %> · <%= tw("state_#{suggestion.status}") %></h3><%= textwork_reading(suggestion) %><p><%= suggestion.original(:answer) %></p>
       <% suggestion.comments.not_hidden.not_deleted.order(:created_at).each do |comment| %><blockquote><%= comment.author.name %>: <%= decidim_sanitize_editor(translated_attribute(comment.body)) %></blockquote><% end %>
     </article><% end %>

@@ -15,24 +15,28 @@ module Decidim
         raise Decidim::ActionForbidden unless Access.admin?(user, document.component)
       end
 
-      def add(body:, kind:, depth: 1, position: nil, origin: "editorial")
+      # rubocop:disable Metrics/ParameterLists -- import describes one typed block
+      def add(kind:, body: "", depth: 1, position: nil, origin: "editorial", editor_image: nil, image_alt: "")
         change do
           blocks = @document.blocks.active.ordered.to_a
           position = (position || (blocks.size + 1)).to_i.clamp(1, blocks.size + 1)
           block = @document.blocks.create!(component: @document.component, kind:, heading_depth: depth, position:,
-                                           body: { @document.locale => body })
+                                           body: { @document.locale => body }, editor_image:, image_alt:)
           blocks.insert(position - 1, block)
           reorder(blocks)
-          block.block_versions.create!(number: 1, body:, origin:, author: @user)
+          snapshot = block.image? ? "[image:#{editor_image.id}] #{image_alt}" : body
+          block.block_versions.create!(number: 1, body: snapshot, origin:, author: @user)
           record("block_added", block, position:, number: block.number, body:) unless origin == "import"
           notify("structure_changed", block, block.notification_scope.followers.to_a)
           block
         end
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def update(block, body:, expected_version:, origin: "editorial", suggestion: nil)
         change do
           block.reload
+          raise Invalid unless block.document_id == @document.id
           raise Invalid if block.removed?
           raise Conflict unless block.current_version_number == expected_version.to_i
           raise Invalid if body.blank?
@@ -47,9 +51,9 @@ module Decidim
 
       def decide(suggestion, decision:, answer:, body: nil, expected_version: nil)
         change do
-          suggestion.reload
-          raise Invalid unless suggestion.pending? && !suggestion.block.removed? && !suggestion.hidden?
-          raise Invalid unless %w(accepted rejected).include?(decision)
+          raise Decidim::ActionForbidden unless Access.evaluation_allowed?(@user, @document)
+
+          validate_decision!(suggestion, decision)
 
           if decision == "accepted"
             raise Invalid if body.blank? || body.length > 5000
@@ -68,9 +72,10 @@ module Decidim
       def remove(block, note: nil)
         change do
           block.reload
+          raise Invalid unless block.document_id == @document.id
           raise Invalid if block.removed?
 
-          recipients = (block.heading? ? block : block.notification_scope).followers.to_a
+          recipients = block.notification_scope.followers.to_a
           details = { position: block.position, number: block.number, body: block.original }
           block.suggestions.where(status: "pending").each do |suggestion|
             suggestion.update!(status: "rejected", answer: { @document.locale => I18n.t("decidim.textwork.removed_reason", locale: @document.locale) },
@@ -87,10 +92,11 @@ module Decidim
       def move(block, position:, note: nil)
         change do
           block.reload
+          raise Invalid unless block.document_id == @document.id
           raise Invalid if block.removed?
 
           old = { position: block.position, number: block.number }
-          recipients = (block.heading? ? block : block.notification_scope).followers.to_a
+          recipients = block.notification_scope.followers.to_a
           blocks = @document.blocks.active.ordered.to_a.reject { |item| item.id == block.id }
           blocks.insert(position.to_i.clamp(1, blocks.size + 1) - 1, block)
           reorder(blocks)
@@ -102,8 +108,17 @@ module Decidim
 
       private
 
+      def validate_decision!(suggestion, decision)
+        suggestion.reload
+        raise Invalid unless suggestion.document.id == @document.id
+        raise Invalid unless suggestion.pending? && !suggestion.block.removed? && !suggestion.hidden?
+        raise Invalid unless %w(accepted rejected).include?(decision)
+      end
+
       def change(&operation)
         @document.with_lock do
+          raise Decidim::ActionForbidden unless @document.original_editable?
+
           Decidim.traceability.perform_action!(:update, @document, @user) do
             result = operation.call
             @document.try_update_index_for_search_resource
@@ -122,8 +137,8 @@ module Decidim
       end
 
       def notify_text_change(block, suggestion)
-        scope = block.heading? ? block : block.notification_scope
-        recipients = scope.followers.to_a + scope.likes.map(&:author)
+        scope = block.notification_scope
+        recipients = scope.followers.to_a + block.likes.map(&:author)
         recipients << suggestion.author if suggestion
         notify(suggestion ? "suggestion_accepted" : "editorial_change", suggestion || block, recipients)
       end

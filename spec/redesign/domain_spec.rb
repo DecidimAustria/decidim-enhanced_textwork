@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe "Textwork redesign domain" do
-  let(:document) { create(:textwork_document) }
+  let(:document) { create(:textwork_document, published_at: nil) }
   let(:admin) { create(:user, :admin, :confirmed, organization: document.organization) }
   let(:author) { create(:user, :confirmed, organization: document.organization) }
   let(:editor) { Decidim::EnhancedTextwork::EditDocument.new(document, admin) }
@@ -11,6 +11,7 @@ RSpec.describe "Textwork redesign domain" do
   let!(:block) { editor.add(body: "More trees.", kind: "paragraph") }
 
   def suggest(body = "More trees and benches.")
+    document.publish!
     result = nil
     Decidim::EnhancedTextwork::SaveSuggestion.call(block, author, body:, expected_version: block.current_version_number) do
       on(:ok) { |record| result = record }
@@ -43,6 +44,10 @@ RSpec.describe "Textwork redesign domain" do
   end
 
   it "accepts a reviewed stale suggestion and records the adjusted result" do
+    # Preserve regression coverage of the retained legacy decision algorithm.
+    # Its collection policy is tested without stubs in collection_lock_spec.
+    allow(document).to receive(:original_editable?).and_return(true)
+    document.component.update!(settings: { evaluation_enabled: true })
     suggestion = suggest
     editor.update(block, body: "More trees, shade and drinking water.", expected_version: 1)
     expect(suggestion.outdated?).to be(true)
@@ -54,6 +59,7 @@ RSpec.describe "Textwork redesign domain" do
   end
 
   it "soft removes and rejects open suggestions, preserving contributions" do
+    allow(document).to receive(:original_editable?).and_return(true)
     suggestion = suggest
     old_id = block.id
     editor.remove(block)
@@ -80,12 +86,14 @@ RSpec.describe "Textwork redesign domain" do
     expect(Decidim::EnhancedTextwork::Suggestion.normalize("- a\n- b")).not_to eq(Decidim::EnhancedTextwork::Suggestion.normalize("- a - b"))
   end
 
-  it "keeps chapter likes across text versions" do
+  it "retains chapter likes and locks preparation once feedback exists" do
     Decidim::Like.create!(resource: heading, author:)
-    editor.update(block, body: "Many trees.", expected_version: 1)
+    expect { editor.update(block, body: "Many trees.", expected_version: 1) }.to raise_error(Decidim::ActionForbidden)
     expect(heading.reload.likes_count).to eq(1)
     expect(heading.liked_by?(author)).to be(true)
-    expect(block.likeable?).to be(false)
+    document.publish!
+    expect(block.likeable?).to be(true)
+    expect(heading.likeable?).to be(false)
   end
 
   it "protects admin changes against participants" do

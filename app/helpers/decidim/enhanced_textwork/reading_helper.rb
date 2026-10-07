@@ -5,6 +5,32 @@ module Decidim
     module ReadingHelper
       def tw(key, **) = t("decidim.textwork.#{key}", **)
 
+      def textwork_history_enabled? = Access.evaluation_enabled?(current_component)
+
+      def textwork_open?(kind) = Participation.open?(current_component, kind)
+
+      def textwork_closed? = Participation.closed?(current_component)
+
+      def textwork_deadline = Participation.deadline(current_component)&.to_date
+
+      def textwork_number(block) = @numbers ? @numbers[block.id] : block.number
+
+      def textwork_excerpt(block, length: 100)
+        text = strip_tags(Markdown.render(textwork_plain(block))).squish
+        truncate(text, length:)
+      end
+
+      def textwork_liked?(resource)
+        return false unless current_user
+        return @stats.liked_ids.include?(resource.id) if resource.is_a?(Block) && @stats
+
+        resource.liked_by?(current_user)
+      end
+
+      def textwork_block_label(block)
+        tw("blocks.open_label", number: textwork_number(block), **@stats.counts.fetch(block.id))
+      end
+
       def textwork_reading(resource, field = :body)
         original = params[:original] == "1"
         locale = original ? resource.original_locale : I18n.locale.to_s

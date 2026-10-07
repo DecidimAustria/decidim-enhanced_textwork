@@ -15,6 +15,8 @@ module Decidim
         patch "documents/restore", to: "documents#restore", as: :restore_document
         post "documents", to: "documents#create", as: :create_document
         patch "documents", to: "documents#update", as: :update_document
+        get "documents/publish-warning", to: "documents#publish_warning", as: :publish_warning_document
+        patch "documents/image-descriptions", to: "documents#image_descriptions", as: :image_descriptions_document
         patch "documents/publish", to: "documents#publish", as: :publish_document
         get "documents/export", to: "documents#export", as: :export_document
         get "documents", to: "documents#show"

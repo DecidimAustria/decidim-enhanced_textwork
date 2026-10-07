@@ -1,6 +1,0 @@
-<% pending = @suggestions.select(&:pending?) %>
-<% @suggestions.each do |suggestion| %>
-  <% label = pending.include?(suggestion) ? tw("preview_label", index: pending.index(suggestion) + 1, count: pending.size, name: suggestion.author.name) : tw("preview_closed", name: suggestion.author.name) %>
-  <% label = "#{label} · #{tw('base_version', number: suggestion.block_version.number)}" if suggestion.outdated? %>
-  <template data-preview-suggestion="<%= suggestion.id %>" data-label="<%= label %>" data-pending="<%= suggestion.pending? %>" data-original="<%= suggestion.changeset['original'] %>" data-replacement="<%= suggestion.original %>" data-translated="<%= I18n.locale.to_s != @document.locale && params[:original] != '1' %>"><% if I18n.locale.to_s != @document.locale && params[:original] != '1' %><%= textwork_reading(suggestion) %><%= link_to tw("show_original"), document_path(@document, block: @block.id, suggestion: suggestion.id, original: 1) %><% end %></template>
-<% end %>

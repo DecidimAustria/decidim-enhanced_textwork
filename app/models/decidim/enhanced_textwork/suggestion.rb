@@ -28,9 +28,11 @@ module Decidim
 
       def outdated? = pending? && block_version.number < block.current_version_number
 
-      def editable_by?(user) = pending? && authored_by?(user) && feedback_received_at.nil? && likes_count.zero? && comments_count.zero? && visible?
+      def editable_by?(user)
+        withdrawable_by?(user) && feedback_received_at.nil? && likes_count.zero? && comments_count.zero?
+      end
 
-      def withdrawable_by?(user) = pending? && authored_by?(user) && visible?
+      def withdrawable_by?(user) = pending? && authored_by?(user) && visible? && Participation.open?(component, :suggestions)
 
       def visible? = block.visible? && !hidden? && status != "withdrawn"
 
@@ -41,6 +43,8 @@ module Decidim
       def allow_resource_permissions? = true
 
       def comments_have_votes? = true
+
+      def commentable? = visible? && component.settings.comments_enabled?
 
       def title = { original_locale => I18n.t("decidim.textwork.suggestion_by", name: author&.name, number: block.number) }
 
@@ -54,7 +58,7 @@ module Decidim
 
       def users_to_notify_on_comment_created = [author].compact
 
-      def accepts_new_comments? = visible? && component.settings.comments_enabled? && !component.current_settings.comments_blocked
+      def accepts_new_comments? = commentable? && Participation.open?(component, :comments)
 
       def user_allowed_to_comment?(user) = accepts_new_comments? && Access.allowed?(user, self, :comment)
 
@@ -70,7 +74,7 @@ module Decidim
       end
 
       def self.normalize(text)
-        text.to_s.lines.map { |line| line.strip.gsub(/[ \t]+/, " ") }.join("\n").strip
+        text.to_s.gsub(/\r\n?/, "\n").split("\n").map { |line| line.strip.gsub(/[ \t]+/, " ") }.join("\n").strip
       end
 
       private

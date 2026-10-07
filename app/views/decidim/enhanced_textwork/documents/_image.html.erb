@@ -1,0 +1,4 @@
+<figure class="tw-image" id="block-<%= block.id %>">
+  <div class="tw-image-surface"><%= image_tag main_app.rails_representation_path(block.display_image, only_path: true), alt: block.image_alt, loading: "lazy", data: { action: "load->textwork#imageLoaded", reading_image: true } %></div>
+  <button type="button" class="tw-text-button" data-action="textwork#openImage" data-image-url="<%= main_app.rails_blob_path(block.editor_image.file, only_path: true) %>" data-image-alt="<%= block.image_alt %>"><%= tw('images.enlarge') %></button>
+</figure>

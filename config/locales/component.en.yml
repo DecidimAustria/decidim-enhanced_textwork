@@ -1,3 +1,4 @@
+---
 en:
   decidim:
     components:
@@ -15,10 +16,32 @@ en:
             comments_max_length: Maximum comment length
             likes_enabled: Agreement enabled
             resources_permissions_enabled: Resource permissions enabled
+            evaluation_enabled: Evaluation enabled
           step:
             announcement: Announcement
             comments_blocked: Comments blocked
             likes_blocked: Agreement blocked
             suggestions_blocked: Suggestions blocked
+            likes_enabled: Agreement enabled
     textwork:
-      existing_document: This component already contains a document. Restore it from trash or use an empty component.
+      existing_document: This component already contains a document. Restore it from
+        trash or use an empty component.
+      admin:
+        documents:
+          locked: This document is published. Its text and structure can no longer
+            be changed.
+          locked_has_feedback: This document has already received feedback. It can
+            no longer be unpublished or changed. Moving it to the trash is still possible.
+          edit_translations: Edit translations
+        images:
+          missing_description:
+            one: 1 image has no description yet. People who cannot see the image will
+              not learn what it shows.
+            other: "%{count} images have no description yet. People who cannot see
+              the images will not learn what they show."
+          description_label: What does the image show?
+          publish_anyway: Publish anyway
+        import:
+          images_skipped: Images from the file were not imported. Add images using
+            the editor.
+          video_skipped: Videos are not imported.

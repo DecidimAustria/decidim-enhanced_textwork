@@ -1,13 +1,9 @@
-<div class="tw-interactions" data-resource="<%= textwork_key(resource) %>">
-  <% if current_user && !Decidim::EnhancedTextwork::Access.allowed?(current_user, resource, :like) %>
-    <%= action_authorized_link_to :like, tw("like"), document_path(@document), resource: resource, hidden: true, data: { tw_authorize: "like" } %>
-  <% end %>
-  <% liked = current_user && resource.liked_by?(current_user) %>
-  <button type="button" class="tw-like" data-action="textwork#interact" data-kind="like" data-url="<%= textwork_interaction_path(resource, :like) %>" aria-pressed="<%= !!liked %>" <%= "disabled" if !current_component.settings.likes_enabled || current_component.current_settings.likes_blocked %>>
-    <%= icon "thumb-up-line" %><span data-interaction-label><%= tw(liked ? "liked" : "like") %></span><span aria-hidden="true"> · </span><span data-likes-count><%= resource.likes_count %></span>
-  </button>
-  <% if local_assigns[:follow] %>
-    <% followed = current_user && Decidim::Follow.exists?(followable: resource, user: current_user) %>
-    <button type="button" class="tw-icon" data-action="textwork#interact" data-kind="follow" data-url="<%= textwork_interaction_path(resource, :follow) %>" aria-pressed="<%= !!followed %>" aria-label="<%= tw(followed ? 'followed' : 'follow') %>" title="<%= tw(followed ? 'followed' : 'follow') %>"><%= icon "notification-3-line" %></button>
-  <% end %>
+<% own = resource.is_a?(Decidim::EnhancedTextwork::Suggestion) && resource.authored_by?(current_user) %>
+<% liked = textwork_liked?(resource) %>
+<div class="tw-interactions <%= 'tw-panel-like' if local_assigns[:panel] %>" data-resource="<%= textwork_key(resource) %>">
+  <% if textwork_open?(:likes) && !own %>
+    <% if current_user && !Decidim::EnhancedTextwork::Access.allowed?(current_user, resource, :like) %><%= action_authorized_link_to :like, tw('like'), document_path(@document), resource: resource, hidden: true, data: { tw_authorize: 'like' } %><% end %>
+    <button type="button" class="<%= local_assigns[:panel] ? 'tw-action' : 'tw-like' %>" data-action="textwork#interact" data-kind="like" data-url="<%= textwork_interaction_path(resource, :like) %>" aria-pressed="<%= !!liked %>"><%= icon 'thumb-up-line' %><span><span data-interaction-label><%= tw(liked ? 'liked' : 'like') %></span> · <span data-likes-count><%= resource.likes_count %></span></span></button>
+  <% else %><span class="tw-like-count"><%= icon 'thumb-up-line' %><span data-likes-label><%= tw('suggestions.likes_count', count: resource.likes_count) %></span></span><% end %>
+  <% if own && liked && textwork_open?(:likes) %><button type="button" class="tw-text-button" data-own-unlike data-action="textwork#interact" data-kind="like" data-url="<%= textwork_interaction_path(resource, :like) %>" aria-pressed="true"><%= tw('suggestions.unlike_own') %></button><% end %>
 </div>

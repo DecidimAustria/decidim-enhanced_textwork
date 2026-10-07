@@ -1,0 +1,6 @@
+<figure data-textwork-admin-image style="margin: 1rem 0; max-width: 100%">
+  <div style="display: flex; align-items: center; min-width: 0">
+    <%= image_tag main_app.rails_representation_path(block.display_image, only_path: true), alt: block.image_alt, style: "display: block; width: auto; height: auto; max-width: 100%; max-height: 15rem; object-fit: contain" %>
+  </div>
+  <% if block.image_alt.present? %><figcaption class="text-sm text-gray-2 mt-2"><%= block.image_alt %></figcaption><% end %>
+</figure>

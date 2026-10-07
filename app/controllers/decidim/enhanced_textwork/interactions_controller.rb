@@ -34,11 +34,12 @@ module Decidim
         end
         render json: { key: "#{params[:resource_type]}-#{resource.id}",
                        liked: resource.liked_by?(current_user), likes: resource.reload.likes_count,
+                       likes_label: I18n.t("decidim.textwork.suggestions.likes_count", count: resource.likes_count),
                        followed: resource.respond_to?(:follows) && Decidim::Follow.exists?(followable: resource, user: current_user) }
       end
 
       def toggle_like(resource, add)
-        raise Decidim::ActionForbidden unless resource.likeable? && current_component.settings.likes_enabled && !current_component.current_settings.likes_blocked
+        raise Decidim::ActionForbidden unless Participation.like_allowed?(current_user, resource, add:)
         return if resource.liked_by?(current_user) == add
 
         command = add ? Decidim::LikeResource : Decidim::UnlikeResource

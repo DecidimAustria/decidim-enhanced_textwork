@@ -1,0 +1,2 @@
+<% values = @stats.counts.fetch(block.id) %>
+<span aria-hidden="true"><%= icon "thumb-up-line" %><span data-block-count="<%= block.id %>" data-count-kind="likes"><%= values[:likes] %></span></span><span aria-hidden="true"><%= icon "pencil-line" %><span data-block-count="<%= block.id %>" data-count-kind="suggestions"><%= values[:suggestions] %></span></span><span aria-hidden="true"><%= icon "chat-1-line" %><span data-block-count="<%= block.id %>" data-count-kind="comments"><%= values[:comments] %></span></span>
