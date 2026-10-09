@@ -200,7 +200,7 @@ RSpec.describe "Textwork reading and participation", type: :system do
       find(".js-comment__votes--up").click
       expect(page).to have_css(".js-comment__votes--up.is-vote-selected", text: "1")
       find(".comment__actions button[data-controls]").click
-      find("textarea").set("Good point, especially in summer.")
+      fill_in "Your reply", with: "Good point, especially in summer."
       click_button "Publish reply"
     end
     expect(page).to have_content("Good point, especially in summer.")
@@ -351,6 +351,8 @@ RSpec.describe "Textwork reading and participation", type: :system do
       find("#block-#{block.id} .tw-copy").click
       expect(page).to have_css('.tw-panel[aria-modal="true"][aria-label="Paragraph 1.1"]')
       expect(page).to have_css("[data-panel-title]:focus")
+      expect(page.evaluate_script("[...document.querySelectorAll('body header, footer[role=contentinfo], .tw-intro, .tw-document')].filter(el => !el.closest('.tw-panel')).every(el => el.closest('[inert]'))")).to be(true)
+      expect(page).to have_field("Your comment")
       expect(page).to have_css(".tw-mobile-quote", text: block.original)
       page.execute_script("const controls = [...document.querySelectorAll('.tw-panel button,.tw-panel a,.tw-panel textarea')].filter(el => !el.disabled && el.getClientRects().length); controls.at(-1).focus()")
       page.driver.browser.action.send_keys(:tab).perform
@@ -359,7 +361,24 @@ RSpec.describe "Textwork reading and participation", type: :system do
       page.driver.browser.action.send_keys(:escape).perform
       expect(page).to have_no_css(".tw-panel")
       expect(page).to have_css("[data-block-pill='#{block.id}']:focus")
+      expect(page.evaluate_script("document.querySelector('footer[role=contentinfo]').closest('[inert]') === null")).to be(true)
     end
+  end
+
+  it "restores the background and keeps reporting available inside the mobile sheet" do
+    propose
+    page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 576, height: 844, deviceScaleFactor: 1, mobile: true)
+    within(".tw-suggestion") { find("[data-suggestion-id]:not([data-mode=edit])").click }
+    find("[data-dialog-open^=tw-report]").click
+    expect(page).to have_css("[data-dialog^=tw-report][aria-hidden=false]")
+    expect(page.evaluate_script("document.querySelector('[data-dialog^=tw-report][aria-hidden=false]').closest('[inert]') === null")).to be(true)
+    expect(page.evaluate_script("document.querySelector('[data-dialog^=tw-report][aria-hidden=false]').contains(document.activeElement)")).to be(true)
+    page.driver.browser.action.send_keys(:escape).perform
+    expect(page).to have_css('.tw-panel[aria-modal="true"]')
+    expect(page).to have_css("[data-panel-title]:focus")
+    page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
+    expect(page).to have_no_css('.tw-panel[aria-modal="true"]')
+    expect(page.evaluate_script("document.querySelector('footer[role=contentinfo]').closest('[inert]') === null")).to be(true)
   end
 
   it "keeps editor buttons inside the viewport and supports enlarged text spacing" do
@@ -396,6 +415,7 @@ RSpec.describe "Textwork reading and participation", type: :system do
     within(".tw-toc nav") { find("a[href='#block-#{heading.id}']").click }
     expect(page).to have_no_css(".tw-toc nav")
     open_paragraph
+    expect(page.evaluate_script("[...document.querySelectorAll('[data-chapter-count]')].every(el => el.querySelector('.sr-only').textContent.includes('contributions'))")).to be(true)
     expect(page.evaluate_script("document.querySelector('.tw-panel').getBoundingClientRect().right <= innerWidth")).to be(true)
     page.execute_script("window.scrollTo(0, document.body.scrollHeight)")
     page.document.synchronize(errors: [Capybara::ExpectationNotMet]) do
@@ -403,6 +423,32 @@ RSpec.describe "Textwork reading and participation", type: :system do
       raise Capybara::ExpectationNotMet, measurements.inspect unless measurements["visibility"] == "hidden" || measurements["bottom"] <= measurements["footer"]
     end
     capture_screen("/private/tmp/textwork-desktop-1054.png")
+  end
+
+  it "dismisses contents outside the document, on focus leaving and with Escape without closing the paragraph" do
+    summary = find(".tw-toc summary")
+    summary.click
+    expect(page).to have_css(".tw-toc[open]")
+    find(".tw-intro h1").click
+    expect(page).to have_no_css(".tw-toc[open]")
+    summary.click
+    find("footer[role=contentinfo]").scroll_to(:center)
+    find("footer[role=contentinfo]").click
+    expect(page).to have_no_css(".tw-toc[open]")
+    summary.scroll_to(:center)
+    summary.click
+    open_paragraph(second_block)
+    expect(page).to have_no_css(".tw-toc[open]")
+    expect(page).to have_css("[data-panel-mode=list]")
+    summary.click
+    page.driver.browser.action.send_keys(:escape).perform
+    expect(page).to have_no_css(".tw-toc[open]")
+    expect(page).to have_css(".tw-toc summary:focus")
+    expect(page).to have_css("[data-panel-mode=list]")
+    summary.click
+    page.execute_script("document.querySelector('.tw-panel [data-panel-title]').focus()")
+    expect(page).to have_no_css(".tw-toc[open]")
+    expect(page).to have_css("[data-panel-title]:focus")
   end
 
   it "keeps only the last requested paragraph when switching quickly" do

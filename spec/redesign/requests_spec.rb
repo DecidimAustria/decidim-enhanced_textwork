@@ -43,6 +43,26 @@ RSpec.describe "Redesigned Textwork", type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it "names the document, normalizes imported headings and labels the discussion" do
+    heading.update!(heading_depth: 2)
+    document.unpublish!
+    child = editor.add(kind: "heading", depth: 3, body: "Details")
+    document.publish!
+    sign_in user
+    get routes.document_path(document)
+    html = Nokogiri::HTML(response.body)
+    expect(html.at_css("title").text).to include(document.original(:title))
+    expect(html.at_css("#block-#{heading.id} h2")).to be_present
+    expect(html.at_css("#block-#{child.id} h3")).to be_present
+    expect(html.at_css("[data-chapter-count] .sr-only").text).to include("contributions")
+    get routes.panel_document_path(document, block: block.id)
+    html = Nokogiri::HTML.fragment(response.body)
+    field = html.at_css("textarea")
+    expect(html.at_css("label[for='#{field["id"]}']").text).to eq("Your comment")
+    expect(html.at_css(".comments__header h3")).to be_present
+    expect(html.at_css(".comments__header h2")).to be_nil
+  end
+
   it "rejects chapter follows and cross-component resource IDs" do
     sign_in user
     post routes.interaction_path(resource_type: :block, resource_id: heading.id, kind: :follow)

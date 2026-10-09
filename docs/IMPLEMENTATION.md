@@ -115,3 +115,60 @@ Automatic accessibility checks and keyboard/reflow tests cover the reading view
 and panel. They are not a complete WCAG 2.2 AA certification. Instance colors,
 assistive technologies, large real documents and the chosen production translation
 provider still require acceptance testing before a production release.
+
+## Frontend accessibility report follow-up, 2026-10-09
+
+The reported Textwork findings led to these plugin changes:
+
+- Comment and reply fields have visible, associated labels and a description
+  referencing their character counters. The adaptations apply only to Textwork
+  resources, including forms loaded through Core's asynchronous comment endpoints.
+- Document headings start at H2 below the document H1. Missing imported levels
+  are normalized for display without changing stored depths, numbering or data.
+  Suggestions and comments in the paragraph panel both use H3.
+- The browser title includes the localized document title through Decidim's
+  current page-title helper.
+- Contents counters include a hidden description identifying comments and
+  suggestions. Refreshing counters preserves that description.
+- A mobile paragraph panel makes all surrounding page branches inert, including
+  the header, breadcrumbs and footer. Closing, resizing and disconnecting restore
+  their previous inert states. Core reporting dialogs moved to the document body
+  remain operable above the panel; closing them restores the panel's modal state.
+
+Regression coverage includes imported heading levels, document titles, root and
+reply labels, keyboard focus, nested reporting, restoring the page background,
+320/390 px viewports and enlarged text. These technical tests do not replace a
+manual screenreader check or establish accessibility of an individual deployment.
+
+The report's process hero, user menu, process navigation and unused Core dialog
+placeholders belong to the host application or Decidim. No global Core override
+was added for them. Hidden placeholders must be checked in their visible state
+before treating their empty names as user-facing barriers. A 32 × 24 px rectangular
+target meets the 24 × 24 px minimum; smaller targets require checking the spacing
+exceptions before concluding that they fail.
+
+Reference guidance: [W3C modal dialogs](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/),
+[form labels](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html),
+[heading hierarchy](https://www.w3.org/WAI/tutorials/page-structure/headings/) and
+[minimum target size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html).
+
+The authenticated frontend of `klima.participation.works` was subsequently checked
+on the same date. Its deployed document still shows the earlier unlabelled comment
+field, H3/H4 chapter headings, organization-only page title and incomplete modal
+background isolation; the fixes above are local and have not been deployed.
+
+The contents list also remained open after clicking the document title. The plugin
+now closes it on outside clicks anywhere in the page, focus leaving the list, or
+Escape. Escape restores focus to the summary when focus was inside the list and
+does not also close an open paragraph panel. Choosing a chapter closes the list
+and focuses that chapter. Native details/summary behavior is retained.
+
+Additional live findings belong to the host application/Core: the mobile user menu
+has only an initial as its accessible name, and the process hero has white text
+without a background-color or gradient fallback when its image cannot load.
+The 20 px process navigation trigger has ample separation from adjacent visible
+targets in the inspected 603 px viewport, so its height alone does not establish
+a target-size failure. The authorization dialog is hidden; its open state was not
+tested. The reported other unnamed buttons and SVGs were not reproduced on the
+current process/document pages. No administration or participation submission was
+performed during this live check.

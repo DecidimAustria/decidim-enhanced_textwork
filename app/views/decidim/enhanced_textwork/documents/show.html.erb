@@ -1,5 +1,7 @@
 <% append_stylesheet_pack_tag "decidim_enhanced_textwork", "decidim_comments" %>
 <% append_javascript_pack_tag "decidim_comments", "decidim_enhanced_textwork", defer: false %>
+<% add_decidim_page_title(textwork_plain(@document, :title)) %>
+<% heading_levels = textwork_heading_levels %>
 <main class="tw-page <%= 'tw-closed-phase' if textwork_closed? %>" data-controller="textwork" data-textwork-panel-url-value="<%= panel_document_path(@document) %>" data-textwork-statistics-url-value="<%= statistics_document_path(@document) %>" data-textwork-signed-in-value="<%= current_user.present? %>" data-textwork-labels-value="<%= { error: tw('error'), close: tw('panel.close'), like: tw('like'), liked: tw('liked'), discard: tw('suggestions.discard.title'), withdrawQuestion: tw('suggestions.withdraw_action.confirm'), cancel: tw('suggestions.form.cancel'), keepEditing: tw('suggestions.discard.keep'), withdraw: tw('suggestions.withdraw'), discardAction: tw('suggestions.discard.confirm'), openLabel: tw('blocks.open_label', number: '%NUMBER%', likes: '%LIKES%', suggestions: '%SUGGESTIONS%', comments: '%COMMENTS%'), before: tw('suggestions.before'), after: tw('suggestions.after'), previewEmpty: tw('suggestions.form.preview_empty'), returnBlock: tw('overview.back_to_block', number: '%NUMBER%') }.to_json %>">
   <header class="tw-intro" data-textwork-target="intro">
     <h1 class="title-decorator"><%= textwork_plain(@document, :title) %></h1>
@@ -14,13 +16,13 @@
         <details class="tw-toc" data-textwork-target="toc">
           <summary><%= icon "menu-line" %><%= tw("toc.button") %></summary>
           <nav aria-label="<%= tw('toc.button') %>"><ol>
-            <% @blocks.select(&:heading?).each do |heading| %><li class="tw-toc-depth-<%= heading.heading_depth %>"><a href="#block-<%= heading.id %>" data-action="textwork#chapter"><span class="tw-muted"><%= @numbers[heading.id] %></span> <%= textwork_plain(heading) %><span data-chapter-count="<%= heading.id %>"><%= @stats.chapter_counts[heading.id] %></span></a></li><% end %>
+            <% @blocks.select(&:heading?).each do |heading| %><li class="tw-toc-depth-<%= heading_levels[heading.id] - 1 %>"><a href="#block-<%= heading.id %>" data-action="textwork#chapter"><span class="tw-muted"><%= @numbers[heading.id] %></span> <%= textwork_plain(heading) %><span data-chapter-count="<%= heading.id %>"><span data-chapter-value><%= @stats.chapter_counts[heading.id] %></span><span class="sr-only"> <%= tw('toc.count_label') %></span></span></a></li><% end %>
           </ol><p class="tw-muted"><%= tw('toc.count_hint') %></p></nav>
         </details>
       </div>
       <% @blocks.each do |block| %>
         <% if block.heading? %>
-          <section class="tw-heading" id="block-<%= block.id %>" tabindex="-1"><%= content_tag("h#{block.heading_depth + 1}") do %><span class="tw-number"><%= @numbers[block.id] %></span><span><%= textwork_plain(block) %></span><% end %></section>
+          <section class="tw-heading" id="block-<%= block.id %>" tabindex="-1"><%= content_tag("h#{heading_levels[block.id]}") do %><span class="tw-number"><%= @numbers[block.id] %></span><span><%= textwork_plain(block) %></span><% end %></section>
         <% elsif block.paragraph? %>
           <section class="tw-paragraph" id="block-<%= block.id %>" data-block="<%= block.id %>" data-action="click->textwork#paragraph">
             <a class="tw-number" tabindex="-1" href="<%= document_path(@document, block: block.id) %>" data-open-block="<%= block.id %>" aria-label="<%= tw('blocks.number_link_label', number: @numbers[block.id]) %>"><%= @numbers[block.id] %></a>
@@ -34,7 +36,7 @@
     </article>
     <div class="tw-rail" data-textwork-target="rail"><div role="complementary" class="tw-panel" data-textwork-target="panel" aria-label="<%= tw('overview.label') %>" tabindex="-1"><%= render "overview" %></div></div>
   </div>
-  <button type="button" class="tw-overlay" data-textwork-target="overlay" data-action="textwork#close" hidden aria-label="<%= tw('panel.close') %>" tabindex="-1"></button>
+  <button type="button" class="tw-overlay" data-textwork-target="overlay" data-action="textwork#close" hidden aria-hidden="true" aria-label="<%= tw('panel.close') %>" tabindex="-1"></button>
   <p class="tw-status" data-textwork-target="status" role="status" aria-live="polite"></p>
   <button type="button" hidden data-dialog-open="loginModal" data-textwork-target="login"><%= tw("login") %></button>
   <dialog class="tw-confirm" data-textwork-target="confirm" aria-labelledby="tw-discard-title"><h2 id="tw-discard-title"><%= tw('suggestions.discard.title') %></h2><div><button type="button" class="button button__sm button__secondary" data-tw-choice="keep"><%= tw('suggestions.discard.keep') %></button><button type="button" class="button button__sm button__transparent-secondary" data-tw-choice="discard"><%= tw('suggestions.discard.confirm') %></button></div></dialog>

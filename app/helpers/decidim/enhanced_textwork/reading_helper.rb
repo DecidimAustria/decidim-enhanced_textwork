@@ -15,6 +15,18 @@ module Decidim
 
       def textwork_number(block) = @numbers ? @numbers[block.id] : block.number
 
+      # Imported headings may start at h2 or omit a level. Build the displayed
+      # hierarchy below the document h1 without changing stored depths/numbers.
+      def textwork_heading_levels
+        depths = []
+        @blocks.select(&:heading?).to_h do |block|
+          depths.pop while depths.any? && depths.last >= block.heading_depth
+          level = depths.size + 2
+          depths << block.heading_depth
+          [block.id, level]
+        end
+      end
+
       def textwork_excerpt(block, length: 100)
         text = strip_tags(Markdown.render(textwork_plain(block))).squish
         truncate(text, length:)

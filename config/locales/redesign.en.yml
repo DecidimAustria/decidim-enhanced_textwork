@@ -171,6 +171,10 @@ en:
       toc:
         button: Table of contents
         count_hint: Number = comments and suggestions
+        count_label: contributions (comments and suggestions)
+      comment_form:
+        form_label: Your comment
+        reply_label: Your reply
       blocks:
         number_link_label: Open paragraph %{number}
         open_label: 'Open paragraph %{number}: %{likes} agreements, %{suggestions}

@@ -8,6 +8,8 @@ import {
   hideImage
 } from "src/decidim/textwork/image_viewer";
 import { panelComments } from "src/decidim/textwork/panel_comments";
+import { ModalBackground } from "src/decidim/textwork/modal_background";
+import { contentsDisclosure, contentsChapter } from "src/decidim/textwork/contents_disclosure";
 export default class extends Controller {
   static targets = ["panel", "document", "toc", "intro", "rail", "overlay", "status", "login", "confirm", "imageDialog"];
   static values = {
@@ -20,6 +22,14 @@ export default class extends Controller {
     this.mobile = window.matchMedia("(max-width: 1023px)");
     this.pendingWrites = new Set();
     this.panelDialogs = new Set();
+    this.releaseContents = contentsDisclosure(this.tocTarget);
+    this.background = new ModalBackground((focus) => {
+      this.responsive();
+      if (focus) {
+        (this.background.dialog || this.panelTarget).
+          querySelector('[data-panel-title],[id^="dialog-title"]')?.focus();
+      }
+    });
     this.dialogHandler = (event) => {
       if (event.detail && this.panelTarget.contains(event.detail)) {
         this.rememberDialogs(event.detail);
@@ -91,6 +101,8 @@ export default class extends Controller {
     this.responsive();
   }
   disconnect() {
+    this.releaseContents();
+    this.background.disconnect();
     document.removeEventListener("ajax:loaded", this.dialogHandler, true);
     this.abort?.abort();
     this.statsAbort?.abort();
@@ -309,20 +321,19 @@ export default class extends Controller {
     this.panelTarget.setAttribute("role", modal
       ? "dialog"
       : "complementary");
-    if (modal) {
+    this.background.update(this.panelTarget, modal,
+      [this.overlayTarget, this.confirmTarget, this.imageDialogTarget]);
+    if (modal && !this.background.dialog) {
       this.panelTarget.setAttribute("aria-modal", "true");
     } else {
       this.panelTarget.removeAttribute("aria-modal");
     }
-    this.documentTarget.inert = modal;
-    this.introTarget.inert = modal;
     this.overlayTarget.hidden = !modal;
     document.documentElement.classList.toggle("tw-sheet-open", modal);
     this.sizeRail();
   }
   releaseBackground() {
-    this.documentTarget.inert = false;
-    this.introTarget.inert = false;
+    this.background.release();
     document.documentElement.classList.remove("tw-sheet-open");
   }
   sizeRail() {
@@ -353,13 +364,7 @@ export default class extends Controller {
     this.open(event.currentTarget.dataset.block);
   }
   chapter(event) {
-    event.preventDefault();
-    document.
-      querySelector(event.currentTarget.getAttribute("href"))?.
-      scrollIntoView({
-        block: "start"
-      });
-    this.tocTarget.open = false;
+    contentsChapter(event, this.tocTarget);
   }
   configureOverview() {
     const button = this.panelTarget.querySelector("[data-return-block]");
@@ -670,7 +675,7 @@ export default class extends Controller {
         );
       });
       this.element.querySelectorAll("[data-chapter-count]").forEach((item) => {
-        item.textContent = data.chapters[item.dataset.chapterCount] || 0;
+        item.querySelector("[data-chapter-value]").textContent = data.chapters[item.dataset.chapterCount] || 0;
       });
     } catch {
 

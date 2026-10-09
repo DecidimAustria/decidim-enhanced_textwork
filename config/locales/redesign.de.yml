@@ -178,6 +178,10 @@ de:
       toc:
         button: Inhaltsverzeichnis
         count_hint: Zahl = Kommentare und Änderungsvorschläge
+        count_label: Beiträge (Kommentare und Änderungsvorschläge)
+      comment_form:
+        form_label: Ihr Kommentar
+        reply_label: Ihre Antwort
       blocks:
         number_link_label: Absatz %{number} öffnen
         open_label: 'Absatz %{number} öffnen: %{likes} Zustimmungen, %{suggestions}

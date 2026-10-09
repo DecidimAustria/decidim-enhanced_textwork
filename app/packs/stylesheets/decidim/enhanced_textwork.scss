@@ -760,7 +760,7 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     margin: 0 0 0.75rem;
-    h2 {
+    h3 {
       @apply font-bold;
       font-size: var(--tw-font-body);
       line-height: 1.3;
@@ -787,6 +787,12 @@
     padding: 0;
     background: transparent;
     border-radius: 0;
+  }
+  .tw-comment-label {
+    display: block;
+    font-size: var(--tw-font-meta);
+    font-weight: 600;
+    margin-block-end: 0.5rem;
   }
   .new_comment {
     display: grid;
